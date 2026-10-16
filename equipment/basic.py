@@ -8,7 +8,12 @@ _mats = {}
 
 
 def mat(name):
-    if not _mats:
+    try:
+        valid = bool(_mats) and all(m.name in bpy.data.materials for m in _mats.values())
+    except ReferenceError:
+        valid = False
+    if not valid:
+        _mats.clear()
         _mats["steel"] = flat_material("steel", (0.75, 0.76, 0.78), 0.28, 1.0)
         _mats["dark"] = flat_material("dark_steel", (0.09, 0.095, 0.1), 0.45, 0.6)
         _mats["rubber"] = flat_material("rubber", (0.05, 0.05, 0.055), 0.75)
