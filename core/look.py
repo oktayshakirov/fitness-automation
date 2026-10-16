@@ -16,15 +16,16 @@ def mask_slot(group):
 def load_masks():
     imgs = []
     for i in range(math.ceil(len(GROUPS) / 3)):
-        p = MAPS + f"mask_{i}.png"
+        p = MAPS + f"soft/mask_{i}.png"
+        if not os.path.exists(p): p = MAPS + f"mask_{i}.png"
         img = bpy.data.images.load(p, check_existing=True)
         img.colorspace_settings.name = "Non-Color"
         imgs.append(img)
     return imgs
 
 
-def muscle_material(primary=(), secondary=(), name="body", use_normal=False,
-                    base=(0.5, 0.52, 0.56), hot=(0.86, 0.06, 0.03), warm=(0.98, 0.42, 0.06)):
+def muscle_material(primary=(), secondary=(), name="body", use_normal=True,
+                    base=(0.32, 0.36, 0.42), hot=(0.72, 0.025, 0.018), warm=(0.95, 0.26, 0.025)):
     m = bpy.data.materials.new(name)
     m.use_nodes = True
     nt = m.node_tree
@@ -63,22 +64,28 @@ def muscle_material(primary=(), secondary=(), name="body", use_normal=False,
         mix = nt.nodes.new("ShaderNodeMix"); mix.data_type = "RGBA"
         mix.inputs["B"].default_value = (*rgb, 1)
         nt.links.new(color, mix.inputs["A"])
-        # sharpen the baked mask edge a little
+        # Soft source masks; smoothstep avoids a harsh cutoff without enlarging regions.
         ramp = nt.nodes.new("ShaderNodeMapRange")
-        ramp.inputs["From Min"].default_value = 0.25
-        ramp.inputs["From Max"].default_value = 0.6
+        ramp.interpolation_type = "SMOOTHSTEP"
+        ramp.inputs["From Min"].default_value = 0.08
+        ramp.inputs["From Max"].default_value = 0.92
         nt.links.new(combined(groups), ramp.inputs["Value"])
         nt.links.new(ramp.outputs["Result"], mix.inputs["Factor"])
         color = mix.outputs["Result"]
     nt.links.new(color, bsdf.inputs["Base Color"])
-    nmap_path = MAPS + "muscle_normal.png"
-    if use_normal and os.path.exists(nmap_path):
+    # Scalar-height bump derives tangents on the deformed surface, avoiding the
+    # mirrored tangent sign split in the old selected-to-active normal atlas.
+    # It has no face/neck detail and is intentionally a subtle surface cue.
+    height_path = MAPS + "muscle_detail_height.png"
+    if use_normal and os.path.exists(height_path):
         t = nt.nodes.new("ShaderNodeTexImage")
-        t.image = bpy.data.images.load(nmap_path, check_existing=True)
+        t.image = bpy.data.images.load(height_path, check_existing=True)
         t.image.colorspace_settings.name = "Non-Color"
-        nm = nt.nodes.new("ShaderNodeNormalMap"); nm.inputs["Strength"].default_value = 0.8
-        nt.links.new(t.outputs["Color"], nm.inputs["Color"])
-        nt.links.new(nm.outputs["Normal"], bsdf.inputs["Normal"])
+        bump = nt.nodes.new("ShaderNodeBump")
+        bump.inputs["Strength"].default_value = 0.24
+        bump.inputs["Distance"].default_value = 0.0015
+        nt.links.new(t.outputs["Color"], bump.inputs["Height"])
+        nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
     return m
 
 
