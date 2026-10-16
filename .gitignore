@@ -1,0 +1,16 @@
+# large third-party sources (re-downloadable, see research/FINDINGS.md)
+assets/za/
+assets/*.zip
+assets/*.7z
+assets/Z-Biomechanics*/
+assets/mocap/
+assets/maps/muscle_normal.png
+# renders and builds
+review/
+dist/
+*.blend1
+# local Blender profile with MPFB2
+.blender-profile/
+__pycache__/
+*.pyc
+.DS_Store
