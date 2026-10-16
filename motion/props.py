@@ -124,7 +124,63 @@ class Barbell:
         pass
 
 
-KINDS = {"dumbbell": Dumbbells, "cable_bar": CableBar, "barbell": Barbell}
+class FixedBars:
+    """Pull-up bar or parallel dip bars (stand-ins until equipment/ has them): built
+    where the pattern says the hands are, keyed in place every frame."""
+
+    def __init__(self, P, spec):
+        self.P = P
+        self.kind = spec["kind"]
+        self.objs = None
+
+    def _build(self, contacts):
+        if self.kind == "pullup_bar":
+            c, axis = contacts["bar"]
+            maker = getattr(eq, "pullup_bar", None)
+            if maker:
+                return [(maker("pullup_bar", c.z), c, Vector((1, 0, 0)))]
+            # wall-mounted: brackets run back to the wall, so side views stay clear
+            root = eq.empty("pullup_bar")
+            eq.cyl_x("pullup_bar_tube", "steel", 0.016, 1.3, parent=root)
+            for sgn in (1, -1):
+                arm = eq.cyl_x("pullup_bracket", "frame", 0.022, 0.6, parent=root)
+                arm.rotation_euler = (math.radians(90), 0, 0)
+                arm.location = (sgn * 0.6, 0.3, 0)
+            wall = eq.cyl_x("pullup_wall_rail", "frame", 0.03, 1.3, parent=root)
+            wall.location = (0, 0.6, 0)
+            return [(root, c, Vector((1, 0, 0)))]
+        hL, hR = contacts["dip"]
+        out = []
+        for side, h in (("L", hL), ("R", hR)):
+            root = eq.empty(f"dip_bar_{side}")
+            eq.cyl_x(f"dip_bar_{side}_tube", "steel", 0.02, 0.7, parent=root)
+            for dy in (0.3, -0.3):
+                post = eq.cyl_x(f"dip_post", "frame", 0.03, h.z, parent=root)
+                post.rotation_euler = (0, 0, 0)
+                post.location = (dy, 0, -h.z / 2)
+            out.append((root, h, Vector((0, 1, 0))))
+        return out
+
+    def attach(self, f, contacts=None):
+        if not contacts:
+            return {}
+        if self.objs is None:
+            self.objs = self._build(contacts)
+        for o, c, axis in self.objs:
+            o.rotation_mode = "QUATERNION"
+            z = Vector((0, 0, 1))
+            o.location = c
+            o.rotation_quaternion = Matrix((axis, z.cross(axis), z)).transposed().to_quaternion()
+            o.keyframe_insert("location", frame=f)
+            o.keyframe_insert("rotation_quaternion", frame=f)
+        return {}
+
+    def finish(self, n):
+        pass
+
+
+KINDS = {"dumbbell": Dumbbells, "cable_bar": CableBar, "barbell": Barbell,
+         "pullup_bar": FixedBars, "dip_bars": FixedBars}
 
 
 def build(P, specs):

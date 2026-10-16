@@ -12,7 +12,7 @@ touch (where the bar meets the body, metres up the torso from the hip line)."""
 import math
 from mathutils import Vector
 from .stand_hinge import Pattern as Hinge, lerp, smooth
-from ..contact import reach, bar_palm
+from ..contact import reach, bar_palm, knuckles
 
 X = Vector((1, 0, 0))
 
@@ -53,7 +53,7 @@ class Pattern(Hinge):
                 reach(P, side, g, pole, knuckle_dir=body @ Vector((0, -1, 0)),
                       palm=lambda fd, sgn=sgn: (body @ Vector((-sgn, 0, 0))))
             else:
-                reach(P, side, g, pole, knuckle_dir=X * sgn,
+                reach(P, side, g, pole, knuckle_dir=knuckles(sgn, grip),
                       palm=lambda fd, grip=grip: bar_palm(X, fd, grip))
         if p["load"] == "hang_bar":
             out["bar"] = (c, X.copy())

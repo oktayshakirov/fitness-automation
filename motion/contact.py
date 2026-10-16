@@ -1,3 +1,4 @@
+import math
 import os
 """Hand contact: where an implement sits in the closed hand."""
 
@@ -18,6 +19,14 @@ def grip_point(P, side, mode="hook"):
 
 
 GRIPS = ("over", "under", "neutral", "mixed")
+
+
+def knuckles(sgn, grip, axis=None):
+    """Index -> little-finger direction for a hand on a bar along axis (default world X).
+    Overhand: the little finger is on the outside; underhand (supinated) flips it."""
+    from mathutils import Vector as V
+    a = axis if axis is not None else V((1, 0, 0))
+    return a * sgn if grip == "over" else a * -sgn
 
 
 def bar_palm(bar_axis, forearm, grip):
@@ -41,6 +50,8 @@ def reach(P, side, grip_target, pole, knuckle_dir=None, palm=None, elbow=None, i
         P.curl_fingers(side)
     wrist = grip_target.copy()
     err = None
+    max_reach = ((P.rest_head(lower) - P.rest_head(upper)).length +
+                 (P.rest_head(end) - P.rest_head(lower)).length)
     for it in range(iters):
         sh = P.head(upper)
         k_guess = elbow if elbow is not None else None
@@ -56,6 +67,10 @@ def reach(P, side, grip_target, pole, knuckle_dir=None, palm=None, elbow=None, i
         if err.length < 0.0005:
             break
         wrist = wrist + err * (1.0 if it == 0 else 0.6)     # damped: folded arms oscillate
+        # never ask for more than the arm can reach: a clamped arm doesn't move
+        sh = P.head(upper)
+        if (wrist - sh).length > 0.998 * max_reach:
+            wrist = sh + (wrist - sh).normalized() * 0.998 * max_reach
     if os.environ.get("FIT_DEBUG"):
         d = (grip_target - P.head(upper)).length
         print(f"REACH {side} err {err.length * 1000:.1f} mm, shoulder->target {d:.3f}")

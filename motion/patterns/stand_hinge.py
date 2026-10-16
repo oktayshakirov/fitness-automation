@@ -24,7 +24,7 @@ import math
 from mathutils import Vector, Matrix
 from core.solver import rot_x
 from ..stance import Stance, place_pelvis, arm_lengths, UP
-from ..contact import reach, bar_palm, grip_point
+from ..contact import reach, bar_palm, grip_point, knuckles
 
 X = Vector((1, 0, 0))
 
@@ -248,7 +248,7 @@ class Pattern:
             g = c + X * sgn * p["grip_w"]
             grip = p["grip"] if p["grip"] != "mixed" else ("over" if side == "R" else "under")
             pole = body @ Vector((sgn * 0.4, 1, 0))           # elbows point back and out
-            reach(P, side, g, pole, knuckle_dir=X * sgn,
+            reach(P, side, g, pole, knuckle_dir=knuckles(sgn, grip),
                   palm=lambda fd, grip=grip: bar_palm(X, fd, grip))
         return {"bar": (c, X.copy())}
 

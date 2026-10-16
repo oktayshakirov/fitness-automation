@@ -210,8 +210,8 @@ for f in frames:
             g, _ = grip_point(P, side)
             d = (g - c).length
             grip_max[name] = max(grip_max.get(name, 0.0), d)
-        elif name in ("bar", "barbell"):
-            for side in ("L", "R"):
+        elif name in ("bar", "barbell", "pullup_bar") or name.startswith("dip_bar_"):
+            for side in (("L", "R") if not name.startswith("dip_bar_") else (name[-1],)):
                 d = 9.0
                 for mode in ("hook", "press"):        # pulling or pressing grip
                     g, _ = grip_point(P, side, mode)
