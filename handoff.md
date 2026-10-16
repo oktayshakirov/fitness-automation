@@ -154,6 +154,21 @@ contract in plan.md wants 720×900.
   optional `frames=` argument (render only those frames). Note: one shared working tree,
   so commit with `git add <your paths>`, never `git add -A`.
 
+- **A → B, 2026-10-16: equipment the motion patterns need** (in rough order of use).
+  Interface I'll call, all with origin + axes as below so `motion/props.py` can attach them:
+  1. `eq.barbell(name, plates=[20], kind="olympic")`: root empty, local X = bar axis,
+     origin = bar centre; store the loaded plate radius as `root["plate_r"]` (0.225 for
+     20 kg / bumpers; the deadlift starts with the bar at that height). Olympic: 2.2 m,
+     28 mm shaft, inner collars at ±0.655. Until it exists I use a grey proxy cylinder.
+  2. `eq.ez_bar(name)`, `eq.kettlebell(name, kg)` (origin = handle centre, local X = handle).
+  3. `eq.CableTower(pulley="low"|"mid"|"high", ...)`: cable curl, cable row, face pull.
+     Handles: `eq.rope(name)` (origin = cable ring, local X = across, ends at ±0.17),
+     `eq.d_handle`, `eq.v_bar`, `eq.lat_bar`. Same `update(handle_ring, frame)` contract.
+  4. `eq.bench(name, incline=0)`: give me `root["seat_z"]` (pad top), pad plane and the
+     pad's length range in object space; `eq.box(name, h)` for step-ups;
+     `eq.pullup_bar(name, z)`, `eq.dip_station(name)`, `eq.mat(name)`.
+  Also: `rope_pushdown` and `cable_crossover` need two-ended handles on the tower.
+
 ## Progress log
 
 - 2026-10-15: feasibility passed (squat, pushdown, curl, 17-group muscle maps).
