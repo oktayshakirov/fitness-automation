@@ -1,0 +1,32 @@
+{
+  "id": "triceps_pushdown",
+  "name": "Straight-bar Triceps Pushdown",
+  "equipment": [
+    "cable_tower",
+    "straight_bar"
+  ],
+  "primary": [
+    "triceps"
+  ],
+  "secondary": [],
+  "level": "beginner",
+  "steps": [
+    "Attach a straight bar to a high pulley and grip overhand.",
+    "Stand close enough for the cable to pull mostly upward, with elbows near the ribs.",
+    "Extend the elbows to press the bar down.",
+    "Return slowly without letting the upper arms swing forward."
+  ],
+  "cues": [
+    "Keep wrists neutral.",
+    "Move mainly at the elbows."
+  ],
+  "mistakes": [
+    "Leaning body weight onto the bar.",
+    "Letting elbows flare or drift with every rep."
+  ],
+  "breathing": "Exhale as you push down; inhale as you return.",
+  "source": "free-exercise-db:Triceps_Pushdown",
+  "source_equipment": "cable",
+  "adaptation": "",
+  "reviewed": false
+}

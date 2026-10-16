@@ -1,0 +1,33 @@
+{
+  "id": "dumbbell_curl",
+  "name": "Dumbbell Curl",
+  "equipment": [
+    "dumbbell"
+  ],
+  "primary": [
+    "biceps"
+  ],
+  "secondary": [
+    "forearms"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Stand tall holding dumbbells beside the thighs, palms forward.",
+    "Keep upper arms near the ribs and curl the weights toward the shoulders.",
+    "Pause without moving elbows forward.",
+    "Lower until the elbows are nearly straight."
+  ],
+  "cues": [
+    "Keep wrists in line with forearms.",
+    "Keep the torso still."
+  ],
+  "mistakes": [
+    "Swinging the weights with the hips.",
+    "Bending wrists back at the top."
+  ],
+  "breathing": "Exhale as you curl; inhale as you lower.",
+  "source": "free-exercise-db:Dumbbell_Bicep_Curl",
+  "source_equipment": "dumbbell",
+  "adaptation": "",
+  "reviewed": false
+}

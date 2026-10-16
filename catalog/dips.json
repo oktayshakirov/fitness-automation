@@ -1,0 +1,34 @@
+{
+  "id": "dips",
+  "name": "Parallel-bar Dip",
+  "equipment": [
+    "dip_station"
+  ],
+  "primary": [
+    "triceps"
+  ],
+  "secondary": [
+    "chest",
+    "shoulders"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Support yourself on parallel bars with straight arms.",
+    "Bend elbows and lower slowly with a mostly upright torso.",
+    "Stop at a depth you can control comfortably, around upper arms parallel to the floor.",
+    "Press through the bars to return to support."
+  ],
+  "cues": [
+    "Keep the shoulders controlled.",
+    "Keep elbows tracking back."
+  ],
+  "mistakes": [
+    "Dropping abruptly into the bottom.",
+    "Shrugging or forcing excessive shoulder depth."
+  ],
+  "breathing": "Inhale while lowering; exhale while pressing up.",
+  "source": "free-exercise-db:Dips_-_Triceps_Version",
+  "source_equipment": "body only",
+  "adaptation": "",
+  "reviewed": false
+}

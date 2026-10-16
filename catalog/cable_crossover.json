@@ -1,0 +1,34 @@
+{
+  "id": "cable_crossover",
+  "name": "Cable Crossover",
+  "equipment": [
+    "dual_cable",
+    "d_handle"
+  ],
+  "primary": [
+    "chest"
+  ],
+  "secondary": [
+    "shoulders"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Hold a handle from each high pulley and stand between the towers in a stable split stance.",
+    "Lean slightly forward with elbows softly bent.",
+    "Bring hands down and together in front of the chest.",
+    "Open the arms under control without forcing the shoulders far behind the torso."
+  ],
+  "cues": [
+    "Maintain the elbow bend.",
+    "Keep the torso still as the arms sweep."
+  ],
+  "mistakes": [
+    "Turning the fly into a press.",
+    "Reaching too far backward under tension."
+  ],
+  "breathing": "Exhale as the hands come together; inhale as the arms open.",
+  "source": "free-exercise-db:Cable_Crossover",
+  "source_equipment": "cable",
+  "adaptation": "",
+  "reviewed": false
+}

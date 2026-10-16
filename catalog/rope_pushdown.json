@@ -1,0 +1,32 @@
+{
+  "id": "rope_pushdown",
+  "name": "Rope Triceps Pushdown",
+  "equipment": [
+    "cable_tower",
+    "rope"
+  ],
+  "primary": [
+    "triceps"
+  ],
+  "secondary": [],
+  "level": "beginner",
+  "steps": [
+    "Attach a rope to a high pulley and hold one end in each hand.",
+    "Keep elbows close to the sides and brace the trunk.",
+    "Extend the elbows, separating the rope ends slightly beside the thighs.",
+    "Return slowly with upper arms steady."
+  ],
+  "cues": [
+    "Keep shoulders quiet.",
+    "Keep the wrists aligned with the forearms."
+  ],
+  "mistakes": [
+    "Using a torso dip to finish.",
+    "Pulling elbows backward instead of extending them."
+  ],
+  "breathing": "Exhale during extension; inhale on the controlled return.",
+  "source": "free-exercise-db:Triceps_Pushdown_-_Rope_Attachment",
+  "source_equipment": "cable",
+  "adaptation": "",
+  "reviewed": false
+}

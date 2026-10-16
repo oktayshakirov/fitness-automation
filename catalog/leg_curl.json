@@ -1,0 +1,31 @@
+{
+  "id": "leg_curl",
+  "name": "Seated Leg Curl",
+  "equipment": [
+    "leg_curl"
+  ],
+  "primary": [
+    "hamstrings"
+  ],
+  "secondary": [],
+  "level": "beginner",
+  "steps": [
+    "Adjust the seat so knees line up with the pivot and the lower roller rests above the heels.",
+    "Secure the thigh pad and keep the back against the support.",
+    "Bend the knees to draw the roller under the seat.",
+    "Return slowly without letting the stack slam."
+  ],
+  "cues": [
+    "Keep the pelvis still.",
+    "Curl through the knees with smooth tension."
+  ],
+  "mistakes": [
+    "Lifting the hips away from the pad.",
+    "Using a load that prevents a controlled return."
+  ],
+  "breathing": "Exhale as you curl; inhale as you extend.",
+  "source": "free-exercise-db:Seated_Leg_Curl",
+  "source_equipment": "machine",
+  "adaptation": "",
+  "reviewed": false
+}

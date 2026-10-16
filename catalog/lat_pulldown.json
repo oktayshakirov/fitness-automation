@@ -1,0 +1,36 @@
+{
+  "id": "lat_pulldown",
+  "name": "Lat Pulldown",
+  "equipment": [
+    "lat_pulldown",
+    "lat_bar"
+  ],
+  "primary": [
+    "lats"
+  ],
+  "secondary": [
+    "biceps",
+    "middle back",
+    "shoulders"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Sit with thighs held under the pad and grip the overhead bar wider than shoulder width.",
+    "Keep the chest tall with a small backward lean.",
+    "Pull the bar toward the upper chest by driving elbows down.",
+    "Let the arms extend overhead under control."
+  ],
+  "cues": [
+    "Pull in front of the head.",
+    "Keep the torso angle steady."
+  ],
+  "mistakes": [
+    "Pulling behind the neck.",
+    "Rocking backward or yanking the stack."
+  ],
+  "breathing": "Exhale while pulling down; inhale on the return.",
+  "source": "free-exercise-db:Wide-Grip_Lat_Pulldown",
+  "source_equipment": "cable",
+  "adaptation": "",
+  "reviewed": false
+}

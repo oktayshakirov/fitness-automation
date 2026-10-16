@@ -1,0 +1,36 @@
+{
+  "id": "barbell_bench_press",
+  "name": "Barbell Bench Press",
+  "equipment": [
+    "barbell",
+    "bench",
+    "power_rack"
+  ],
+  "primary": [
+    "chest"
+  ],
+  "secondary": [
+    "shoulders",
+    "triceps"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Lie on a flat bench with feet planted and head, upper back and pelvis supported.",
+    "Grip the bar evenly, set the shoulder blades and unrack over the shoulders.",
+    "Lower to the lower chest with forearms near vertical.",
+    "Press up and slightly back to the starting position; rack securely after the set."
+  ],
+  "cues": [
+    "Keep wrists stacked over forearms.",
+    "Use rack safeties or an attentive spotter."
+  ],
+  "mistakes": [
+    "Bouncing the bar off the chest.",
+    "Lifting the pelvis off the pad."
+  ],
+  "breathing": "Inhale and brace as the bar lowers; exhale during the press.",
+  "source": "free-exercise-db:Barbell_Bench_Press_-_Medium_Grip",
+  "source_equipment": "barbell",
+  "adaptation": "",
+  "reviewed": false
+}

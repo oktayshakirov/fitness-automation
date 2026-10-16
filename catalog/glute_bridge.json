@@ -1,0 +1,33 @@
+{
+  "id": "glute_bridge",
+  "name": "Glute Bridge",
+  "equipment": [
+    "mat"
+  ],
+  "primary": [
+    "glutes"
+  ],
+  "secondary": [
+    "hamstrings"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Lie on your back with knees bent and feet about hip width.",
+    "Keep the ribs down and press through both feet.",
+    "Lift the pelvis until hips line up with shoulders and knees.",
+    "Pause, then lower the pelvis with control."
+  ],
+  "cues": [
+    "Squeeze the glutes at the top.",
+    "Keep both sides of the pelvis level."
+  ],
+  "mistakes": [
+    "Arching the lower back to gain height.",
+    "Pushing mainly through the toes."
+  ],
+  "breathing": "Exhale as you lift; inhale as you lower.",
+  "source": "free-exercise-db:Butt_Lift_Bridge",
+  "source_equipment": "body only",
+  "adaptation": "",
+  "reviewed": false
+}

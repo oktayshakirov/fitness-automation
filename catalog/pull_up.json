@@ -1,0 +1,34 @@
+{
+  "id": "pull_up",
+  "name": "Pull-up",
+  "equipment": [
+    "pullup_bar"
+  ],
+  "primary": [
+    "lats"
+  ],
+  "secondary": [
+    "biceps",
+    "middle back"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Grip the bar overhand slightly wider than shoulder width.",
+    "Hang with a braced trunk and controlled shoulders.",
+    "Drive elbows down to lift until the chin clears the bar without craning the neck.",
+    "Lower under control to straight arms."
+  ],
+  "cues": [
+    "Keep the legs quiet.",
+    "Let the shoulder blades rotate as the arms move."
+  ],
+  "mistakes": [
+    "Kicking or swinging to finish the rep.",
+    "Reaching with the chin while the body stays low."
+  ],
+  "breathing": "Exhale as you pull up; inhale as you lower.",
+  "source": "free-exercise-db:Pullups",
+  "source_equipment": "body only",
+  "adaptation": "",
+  "reviewed": false
+}

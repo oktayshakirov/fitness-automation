@@ -1,0 +1,36 @@
+{
+  "id": "kettlebell_swing",
+  "name": "Two-hand Kettlebell Swing",
+  "equipment": [
+    "kettlebell"
+  ],
+  "primary": [
+    "hamstrings"
+  ],
+  "secondary": [
+    "calves",
+    "glutes",
+    "lower back",
+    "shoulders"
+  ],
+  "level": "intermediate",
+  "steps": [
+    "Stand behind the kettlebell with feet wider than hip width, hinge and grip with both hands.",
+    "Hike the bell back high between the thighs.",
+    "Drive the hips forward to let the bell float to about chest height with relaxed arms.",
+    "Wait for the bell to return, then hinge again; park it under control to finish."
+  ],
+  "cues": [
+    "Use a hip hinge with soft knees.",
+    "Finish tall without leaning backward."
+  ],
+  "mistakes": [
+    "Lifting the bell with the shoulders.",
+    "Squatting deeply or hinging too early on the return."
+  ],
+  "breathing": "Exhale sharply as the hips extend; inhale as the bell swings back.",
+  "source": "free-exercise-db:One-Arm_Kettlebell_Swings",
+  "source_equipment": "kettlebells",
+  "adaptation": "Two-hand chest-height swing adapted from the one-arm source; muscle data retained; source instructions are empty.",
+  "reviewed": false
+}

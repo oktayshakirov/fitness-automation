@@ -1,0 +1,33 @@
+{
+  "id": "lunge",
+  "name": "Forward Lunge",
+  "equipment": [],
+  "primary": [
+    "quadriceps"
+  ],
+  "secondary": [
+    "calves",
+    "glutes",
+    "hamstrings"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Stand upright with feet hip width.",
+    "Step one foot forward, keeping some side-to-side space between the feet.",
+    "Bend both knees to lower the rear knee toward the floor.",
+    "Push through the front foot to return to standing; repeat on the other side."
+  ],
+  "cues": [
+    "Keep the front knee tracking over the toes.",
+    "Lower with control and keep the pelvis level."
+  ],
+  "mistakes": [
+    "Stepping onto a tightrope line.",
+    "Bouncing the rear knee off the floor."
+  ],
+  "breathing": "Inhale as you lower; exhale as you push back.",
+  "source": "free-exercise-db:Bodyweight_Walking_Lunge",
+  "source_equipment": null,
+  "adaptation": "Stationary forward lunge adapted from walking lunge; muscle data retained.",
+  "reviewed": false
+}

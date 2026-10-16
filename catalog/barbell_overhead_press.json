@@ -1,0 +1,34 @@
+{
+  "id": "barbell_overhead_press",
+  "name": "Barbell Overhead Press",
+  "equipment": [
+    "barbell",
+    "power_rack"
+  ],
+  "primary": [
+    "shoulders"
+  ],
+  "secondary": [
+    "triceps"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Stand with the bar at the upper chest, hands just outside shoulder width.",
+    "Brace the abdomen and move the head back slightly to clear the bar.",
+    "Press overhead, then bring the head naturally between the arms.",
+    "Lower the bar under control to the upper chest."
+  ],
+  "cues": [
+    "Keep the bar close to the face as it passes.",
+    "Finish with ribs over pelvis."
+  ],
+  "mistakes": [
+    "Excessively arching the lower back.",
+    "Using knee drive in a strict press."
+  ],
+  "breathing": "Inhale and brace before the press; exhale as you finish overhead.",
+  "source": "free-exercise-db:Standing_Military_Press",
+  "source_equipment": "barbell",
+  "adaptation": "",
+  "reviewed": false
+}

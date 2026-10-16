@@ -1,0 +1,31 @@
+{
+  "id": "leg_extension",
+  "name": "Leg Extension",
+  "equipment": [
+    "leg_extension"
+  ],
+  "primary": [
+    "quadriceps"
+  ],
+  "secondary": [],
+  "level": "beginner",
+  "steps": [
+    "Adjust the seat so knees line up with the machine pivot and the roller sits above the ankles.",
+    "Sit back against the pad and hold the handles.",
+    "Straighten the knees smoothly without snapping them.",
+    "Lower the roller slowly to the starting position."
+  ],
+  "cues": [
+    "Keep hips against the seat.",
+    "Use a controlled range and even effort from both legs."
+  ],
+  "mistakes": [
+    "Kicking the roller with momentum.",
+    "Lifting the hips to move the weight."
+  ],
+  "breathing": "Exhale as you extend; inhale as you lower.",
+  "source": "free-exercise-db:Leg_Extensions",
+  "source_equipment": "machine",
+  "adaptation": "",
+  "reviewed": false
+}

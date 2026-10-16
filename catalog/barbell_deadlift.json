@@ -1,0 +1,40 @@
+{
+  "id": "barbell_deadlift",
+  "name": "Barbell Deadlift",
+  "equipment": [
+    "barbell"
+  ],
+  "primary": [
+    "lower back"
+  ],
+  "secondary": [
+    "calves",
+    "forearms",
+    "glutes",
+    "hamstrings",
+    "lats",
+    "middle back",
+    "quadriceps",
+    "traps"
+  ],
+  "level": "intermediate",
+  "steps": [
+    "Stand with the bar over midfoot and feet about hip width.",
+    "Hinge and bend the knees to grip just outside the legs; brace with the bar close to the shins.",
+    "Push the floor away and extend hips and knees together.",
+    "Stand tall, then hinge and bend the knees to lower the bar to the floor."
+  ],
+  "cues": [
+    "Keep the bar close to the legs.",
+    "Take tension through the arms before lifting."
+  ],
+  "mistakes": [
+    "Jerking the bar from the floor.",
+    "Leaning backward at lockout."
+  ],
+  "breathing": "Inhale and brace before lifting; exhale near the top and reset before the next rep.",
+  "source": "free-exercise-db:Barbell_Deadlift",
+  "source_equipment": "barbell",
+  "adaptation": "",
+  "reviewed": false
+}

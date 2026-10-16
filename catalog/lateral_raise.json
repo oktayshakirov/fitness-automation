@@ -1,0 +1,31 @@
+{
+  "id": "lateral_raise",
+  "name": "Dumbbell Lateral Raise",
+  "equipment": [
+    "dumbbell"
+  ],
+  "primary": [
+    "shoulders"
+  ],
+  "secondary": [],
+  "level": "beginner",
+  "steps": [
+    "Stand holding dumbbells beside the thighs with elbows slightly bent.",
+    "Raise the arms out and a little forward to about shoulder height.",
+    "Pause without shrugging.",
+    "Lower slowly along the same path."
+  ],
+  "cues": [
+    "Lead with the upper arms.",
+    "Keep hands and elbows at a similar height."
+  ],
+  "mistakes": [
+    "Throwing the weights upward.",
+    "Shrugging or turning thumbs sharply downward."
+  ],
+  "breathing": "Exhale as you raise; inhale as you lower.",
+  "source": "free-exercise-db:Side_Lateral_Raise",
+  "source_equipment": "dumbbell",
+  "adaptation": "",
+  "reviewed": false
+}

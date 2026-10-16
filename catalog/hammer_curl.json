@@ -1,0 +1,31 @@
+{
+  "id": "hammer_curl",
+  "name": "Hammer Curl",
+  "equipment": [
+    "dumbbell"
+  ],
+  "primary": [
+    "biceps"
+  ],
+  "secondary": [],
+  "level": "beginner",
+  "steps": [
+    "Stand holding dumbbells with palms facing each other.",
+    "Keep elbows close to the sides and curl the weights.",
+    "Maintain the neutral grip at the top.",
+    "Lower slowly to the starting position."
+  ],
+  "cues": [
+    "Keep thumbs pointing up.",
+    "Keep shoulders quiet."
+  ],
+  "mistakes": [
+    "Twisting the palms upward mid-rep.",
+    "Rocking backward to lift the weights."
+  ],
+  "breathing": "Exhale on the curl; inhale on the lowering phase.",
+  "source": "free-exercise-db:Hammer_Curls",
+  "source_equipment": "dumbbell",
+  "adaptation": "",
+  "reviewed": false
+}

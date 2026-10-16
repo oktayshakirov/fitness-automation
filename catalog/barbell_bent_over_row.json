@@ -1,0 +1,35 @@
+{
+  "id": "barbell_bent_over_row",
+  "name": "Barbell Bent-over Row",
+  "equipment": [
+    "barbell"
+  ],
+  "primary": [
+    "middle back"
+  ],
+  "secondary": [
+    "biceps",
+    "lats",
+    "shoulders"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Hold the bar overhand and hinge at the hips with knees softly bent.",
+    "Maintain a steady trunk angle and let the bar hang below the shoulders.",
+    "Pull the bar toward the lower ribs.",
+    "Lower to straight arms without changing the trunk position."
+  ],
+  "cues": [
+    "Drive elbows back.",
+    "Keep the neck aligned with the back."
+  ],
+  "mistakes": [
+    "Standing up to lift each rep.",
+    "Rounding the lower back under load."
+  ],
+  "breathing": "Exhale while rowing; inhale on the return while maintaining the brace.",
+  "source": "free-exercise-db:Bent_Over_Barbell_Row",
+  "source_equipment": "barbell",
+  "adaptation": "",
+  "reviewed": false
+}

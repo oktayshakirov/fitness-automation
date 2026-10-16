@@ -1,0 +1,33 @@
+{
+  "id": "dumbbell_shoulder_press",
+  "name": "Standing Dumbbell Shoulder Press",
+  "equipment": [
+    "dumbbell"
+  ],
+  "primary": [
+    "shoulders"
+  ],
+  "secondary": [
+    "triceps"
+  ],
+  "level": "intermediate",
+  "steps": [
+    "Stand with feet stable and dumbbells at shoulder height.",
+    "Brace the abdomen and press the weights overhead.",
+    "Finish with arms extended and ribs stacked above the pelvis.",
+    "Lower under control to shoulder height."
+  ],
+  "cues": [
+    "Keep wrists above elbows.",
+    "Let the shoulder blades rotate upward."
+  ],
+  "mistakes": [
+    "Leaning back to turn the movement into an incline press.",
+    "Banging the dumbbells together."
+  ],
+  "breathing": "Exhale as you press; inhale as you lower.",
+  "source": "free-exercise-db:Dumbbell_Shoulder_Press",
+  "source_equipment": "dumbbell",
+  "adaptation": "Standing variation of the source seated press; muscle data retained; no bench required.",
+  "reviewed": false
+}

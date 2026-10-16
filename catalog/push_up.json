@@ -1,0 +1,34 @@
+{
+  "id": "push_up",
+  "name": "Push-up",
+  "equipment": [
+    "mat"
+  ],
+  "primary": [
+    "chest"
+  ],
+  "secondary": [
+    "shoulders",
+    "triceps"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Place hands just outside shoulder width with legs extended and toes on the floor.",
+    "Brace the trunk so head, hips and heels form one line.",
+    "Bend elbows and lower the chest between the hands.",
+    "Press back to the starting position, letting the shoulder blades move around the ribs."
+  ],
+  "cues": [
+    "Keep elbows angled back from the torso.",
+    "Move chest and hips together."
+  ],
+  "mistakes": [
+    "Letting the hips sag.",
+    "Reaching the chin forward instead of lowering the chest."
+  ],
+  "breathing": "Inhale while lowering; exhale while pressing up.",
+  "source": "free-exercise-db:Pushups",
+  "source_equipment": "body only",
+  "adaptation": "",
+  "reviewed": false
+}

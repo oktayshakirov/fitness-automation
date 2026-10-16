@@ -1,0 +1,37 @@
+{
+  "id": "barbell_back_squat",
+  "name": "Barbell Back Squat",
+  "equipment": [
+    "barbell",
+    "power_rack"
+  ],
+  "primary": [
+    "quadriceps"
+  ],
+  "secondary": [
+    "calves",
+    "glutes",
+    "hamstrings",
+    "lower back"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Set the rack hooks below shoulder height and safeties just below your intended depth.",
+    "Place the bar across the upper back, grip it securely and step clear.",
+    "Bend hips and knees to squat while keeping the bar balanced over the feet.",
+    "Stand tall, then return the bar to both hooks after the set."
+  ],
+  "cues": [
+    "Brace before each rep.",
+    "Keep knees tracking with toes and heels grounded."
+  ],
+  "mistakes": [
+    "Resting the bar on the neck.",
+    "Losing trunk position at the bottom."
+  ],
+  "breathing": "Inhale and brace before descending; exhale through the upward effort and reset at the top.",
+  "source": "free-exercise-db:Barbell_Squat",
+  "source_equipment": "barbell",
+  "adaptation": "",
+  "reviewed": false
+}

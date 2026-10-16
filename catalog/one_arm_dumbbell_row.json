@@ -1,0 +1,36 @@
+{
+  "id": "one_arm_dumbbell_row",
+  "name": "One-arm Dumbbell Row",
+  "equipment": [
+    "dumbbell",
+    "bench"
+  ],
+  "primary": [
+    "middle back"
+  ],
+  "secondary": [
+    "biceps",
+    "lats",
+    "shoulders"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Support one hand and the same-side knee on a bench, with the opposite foot on the floor.",
+    "Keep the back steady and let the dumbbell hang below the shoulder.",
+    "Pull the elbow toward the hip without twisting the torso.",
+    "Lower the weight with control; repeat on the other side."
+  ],
+  "cues": [
+    "Keep the neck in line with the trunk.",
+    "Let the shoulder blade glide as the arm moves."
+  ],
+  "mistakes": [
+    "Rotating the whole torso to lift the weight.",
+    "Shrugging the shoulder toward the ear."
+  ],
+  "breathing": "Exhale while rowing; inhale while lowering.",
+  "source": "free-exercise-db:One-Arm_Dumbbell_Row",
+  "source_equipment": "dumbbell",
+  "adaptation": "",
+  "reviewed": false
+}

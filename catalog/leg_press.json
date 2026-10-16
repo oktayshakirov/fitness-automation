@@ -1,0 +1,35 @@
+{
+  "id": "leg_press",
+  "name": "Leg Press",
+  "equipment": [
+    "leg_press"
+  ],
+  "primary": [
+    "quadriceps"
+  ],
+  "secondary": [
+    "calves",
+    "glutes",
+    "hamstrings"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Sit with pelvis and back supported and feet about shoulder width on the plate.",
+    "Release the safety stops while supporting the sled.",
+    "Bend hips and knees, stopping before the pelvis rolls off the pad.",
+    "Press the plate away without snapping the knees straight; re-engage safeties after the set."
+  ],
+  "cues": [
+    "Keep the whole foot against the plate.",
+    "Track knees in line with toes."
+  ],
+  "mistakes": [
+    "Lowering until the lower back lifts.",
+    "Locking the knees forcefully."
+  ],
+  "breathing": "Inhale as you lower; exhale as you press.",
+  "source": "free-exercise-db:Leg_Press",
+  "source_equipment": "machine",
+  "adaptation": "",
+  "reviewed": false
+}

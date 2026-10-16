@@ -1,0 +1,31 @@
+{
+  "id": "crunch",
+  "name": "Crunch",
+  "equipment": [
+    "mat"
+  ],
+  "primary": [
+    "abdominals"
+  ],
+  "secondary": [],
+  "level": "beginner",
+  "steps": [
+    "Lie on your back with knees bent and feet on the floor.",
+    "Rest hands lightly beside the head or across the chest.",
+    "Curl the ribs toward the pelvis until the shoulder blades lift.",
+    "Lower slowly without pulling on the neck."
+  ],
+  "cues": [
+    "Keep a small space between chin and chest.",
+    "Use a short, controlled curl."
+  ],
+  "mistakes": [
+    "Pulling the head forward with the hands.",
+    "Using momentum to sit all the way up."
+  ],
+  "breathing": "Exhale while curling up; inhale while lowering.",
+  "source": "free-exercise-db:Crunches",
+  "source_equipment": "body only",
+  "adaptation": "",
+  "reviewed": false
+}

@@ -1,0 +1,34 @@
+{
+  "id": "face_pull",
+  "name": "Rope Face Pull",
+  "equipment": [
+    "cable_tower",
+    "rope"
+  ],
+  "primary": [
+    "shoulders"
+  ],
+  "secondary": [
+    "middle back"
+  ],
+  "level": "intermediate",
+  "steps": [
+    "Set a rope attachment around face height and step back until the cable is taut.",
+    "Pull toward the forehead while separating the hands beside the face.",
+    "Keep elbows high enough to guide the pull without shrugging.",
+    "Return to extended arms with control."
+  ],
+  "cues": [
+    "Keep ribs down and neck relaxed.",
+    "Let the shoulder blades move."
+  ],
+  "mistakes": [
+    "Leaning back to finish the pull.",
+    "Pulling down toward the chest."
+  ],
+  "breathing": "Exhale on the pull; inhale on the return.",
+  "source": "free-exercise-db:Face_Pull",
+  "source_equipment": "cable",
+  "adaptation": "",
+  "reviewed": false
+}

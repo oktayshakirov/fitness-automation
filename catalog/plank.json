@@ -1,0 +1,31 @@
+{
+  "id": "plank",
+  "name": "Forearm Plank",
+  "equipment": [
+    "mat"
+  ],
+  "primary": [
+    "abdominals"
+  ],
+  "secondary": [],
+  "level": "beginner",
+  "steps": [
+    "Place forearms on the floor with elbows below the shoulders.",
+    "Step feet back and lift the hips until the body forms a straight line.",
+    "Brace the abdomen and lightly squeeze the glutes.",
+    "Hold while breathing steadily, then lower the knees."
+  ],
+  "cues": [
+    "Push the forearms into the floor.",
+    "Keep the ribs over the pelvis."
+  ],
+  "mistakes": [
+    "Sagging through the lower back.",
+    "Holding the breath or lifting the hips too high."
+  ],
+  "breathing": "Take small, steady breaths throughout the hold.",
+  "source": "free-exercise-db:Plank",
+  "source_equipment": "body only",
+  "adaptation": "",
+  "reviewed": false
+}

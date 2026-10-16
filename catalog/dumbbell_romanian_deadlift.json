@@ -1,0 +1,35 @@
+{
+  "id": "dumbbell_romanian_deadlift",
+  "name": "Dumbbell Romanian Deadlift",
+  "equipment": [
+    "dumbbell"
+  ],
+  "primary": [
+    "hamstrings"
+  ],
+  "secondary": [
+    "calves",
+    "glutes",
+    "lower back"
+  ],
+  "level": "intermediate",
+  "steps": [
+    "Stand with dumbbells in front of the thighs and knees slightly bent.",
+    "Push hips back, allowing the weights to travel close to the legs.",
+    "Stop when the hamstrings limit further hinging without rounding the back.",
+    "Drive the hips forward to return to standing."
+  ],
+  "cues": [
+    "Keep the knee bend small and fairly constant.",
+    "Keep neck and back aligned."
+  ],
+  "mistakes": [
+    "Turning the hinge into a squat.",
+    "Lowering farther by rounding the lower back."
+  ],
+  "breathing": "Inhale and brace before lowering; exhale as you stand.",
+  "source": "free-exercise-db:Romanian_Deadlift",
+  "source_equipment": "barbell",
+  "adaptation": "Dumbbells substituted for the source barbell; Romanian hinge retained.",
+  "reviewed": false
+}

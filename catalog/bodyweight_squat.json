@@ -1,0 +1,32 @@
+{
+  "id": "bodyweight_squat",
+  "name": "Bodyweight Squat",
+  "equipment": [],
+  "primary": [
+    "quadriceps"
+  ],
+  "secondary": [
+    "glutes",
+    "hamstrings"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Stand with feet about shoulder width and toes turned out slightly.",
+    "Bend hips and knees together, keeping the whole foot grounded.",
+    "Lower as far as you can control without rounding the lower back.",
+    "Push the floor away and stand tall."
+  ],
+  "cues": [
+    "Keep knees tracking in the direction of the toes.",
+    "Keep pressure through heel, big toe and little toe."
+  ],
+  "mistakes": [
+    "Letting knees collapse inward.",
+    "Lifting the heels or dropping into the bottom."
+  ],
+  "breathing": "Inhale as you lower; exhale as you stand.",
+  "source": "free-exercise-db:Bodyweight_Squat",
+  "source_equipment": "body only",
+  "adaptation": "",
+  "reviewed": false
+}

@@ -1,0 +1,36 @@
+{
+  "id": "seated_cable_row",
+  "name": "Seated Cable Row",
+  "equipment": [
+    "seated_row",
+    "v_bar"
+  ],
+  "primary": [
+    "middle back"
+  ],
+  "secondary": [
+    "biceps",
+    "lats",
+    "shoulders"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Sit facing the low cable with feet on the footrests and knees slightly bent.",
+    "Hold the handle with arms extended and trunk tall.",
+    "Pull the handle toward the lower ribs as the shoulder blades glide back.",
+    "Reach forward through the shoulders without rounding the lower back."
+  ],
+  "cues": [
+    "Keep the torso nearly still.",
+    "Pull elbows close past the ribs."
+  ],
+  "mistakes": [
+    "Rocking backward to move the stack.",
+    "Shrugging the shoulders."
+  ],
+  "breathing": "Exhale as you pull; inhale as the arms extend.",
+  "source": "free-exercise-db:Seated_Cable_Rows",
+  "source_equipment": "cable",
+  "adaptation": "",
+  "reviewed": false
+}

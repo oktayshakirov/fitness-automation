@@ -1,0 +1,36 @@
+{
+  "id": "goblet_squat",
+  "name": "Dumbbell Goblet Squat",
+  "equipment": [
+    "dumbbell"
+  ],
+  "primary": [
+    "quadriceps"
+  ],
+  "secondary": [
+    "calves",
+    "glutes",
+    "hamstrings",
+    "shoulders"
+  ],
+  "level": "beginner",
+  "steps": [
+    "Hold one dumbbell vertically against the upper chest with both hands under its upper head.",
+    "Stand with feet about shoulder width and toes slightly out.",
+    "Sit down between the hips while keeping the weight close.",
+    "Push through the whole foot to stand."
+  ],
+  "cues": [
+    "Keep knees tracking over toes.",
+    "Keep the dumbbell close to the chest."
+  ],
+  "mistakes": [
+    "Holding the weight away from the body.",
+    "Letting heels lift at the bottom."
+  ],
+  "breathing": "Inhale while lowering; exhale while standing.",
+  "source": "free-exercise-db:Goblet_Squat",
+  "source_equipment": "kettlebells",
+  "adaptation": "Dumbbell substituted for the source kettlebell; muscle data retained.",
+  "reviewed": false
+}
