@@ -1,0 +1,11 @@
+{
+  "id": "reverse_lunge",
+  "pattern": "split_stance",
+  "params": {"step": "reverse", "front": "L", "stride": 0.85, "width": 0.11, "arms": "relaxed"},
+  "props": [],
+  "tempo": {"hold_top": 6, "down": 30, "hold_bottom": 6, "up": 26, "hold_end": 4},
+  "camera": {"target": [0, 0.25, 0.85], "ortho": 2.3},
+  "views": [{"name": "side", "yaw": 90}, {"name": "threeq", "yaw": 35}, {"name": "front", "yaw": 0}],
+  "draft_muscles": {"primary": ["quadriceps", "glutes"], "secondary": ["hamstrings", "adductors", "calves"]},
+  "approved": false
+}
