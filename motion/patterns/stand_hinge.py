@@ -164,8 +164,9 @@ class Pattern:
                 hi = mid
         return (lo + hi) / 2
 
-    def pose_hinge(self, s):
-        """RDL / good morning: fixed soft knee, hips back, torso to `hinge` deg."""
+    def pose_hinge(self, s, arms=True):
+        """RDL / good morning: fixed soft knee, hips back, torso to `hinge` deg.
+        arms=False poses only legs, pelvis and spine (patterns built on the hinge)."""
         P, p, st = self.P, self.p, self.st
         tilt = 3 + (p["hinge"] - 3) * s
         knee = lerp(8.0, p["knee"], smooth(s / 0.3))          # unlock the knees first
@@ -190,6 +191,8 @@ class Pattern:
         hz = ankle.z + math.sqrt(max(0.0, leg * leg - dx * dx - dy * dy))
         place_pelvis(P, tilt, Vector((0, hy, hz)))
         st.legs()
+        if not arms:
+            return {}
         if p["load"] == "back_bar":
             return self.arms_back_bar()
         return self.arms_hang()
