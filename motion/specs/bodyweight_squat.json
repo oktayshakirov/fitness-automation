@@ -1,0 +1,13 @@
+{
+  "id": "bodyweight_squat",
+  "pattern": "stand_hinge",
+  "params": {"stance": 0.17, "toe_out": 15, "shin_lean": 32, "torso": 40, "arms": "counterbalance"},
+  "props": [],
+  "tempo": {"hold_top": 6, "down": 31, "hold_bottom": 7, "up": 24, "hold_end": 4},
+  "camera": {"target": [0, 0.05, 0.85], "ortho": 2.15},
+  "views": [{"name": "front", "yaw": 0}, {"name": "side", "yaw": 90}, {"name": "threeq", "yaw": 35}],
+  "sheet": [1, 20, 30, 40, 56],
+  "draft_muscles": {"primary": ["quadriceps", "glutes"],
+                    "secondary": ["adductors", "hamstrings", "calves", "lower back"]},
+  "approved": false
+}
