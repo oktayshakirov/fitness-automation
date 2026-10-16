@@ -73,10 +73,10 @@ props = props_mod.build(P, motion.get("props", []))
 
 for f in range(1, N + 1):
     P.reset()
-    pattern.pose(tempo.s(f))
+    contacts = pattern.pose(tempo.s(f)) or {}
     key_pose(rig, f)
     for pr in props:
-        pr.attach(f)
+        pr.attach(f, contacts)
 for pr in props:
     pr.finish(N)
 print("POSED", args.id, N, "frames")

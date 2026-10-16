@@ -1,0 +1,11 @@
+{
+  "id": "barbell_deadlift",
+  "pattern": "stand_hinge",
+  "params": {"mode": "pull", "stance": 0.13, "toe_out": 8, "torso": 62, "grip_w": 0.25, "grip": "over"},
+  "props": [{"kind": "barbell", "plates": [20]}],
+  "tempo": {"start": 8, "out": 24, "peak": 8, "back": 26, "end": 6},
+  "camera": {"target": [0, 0, 0.8], "ortho": 2.3},
+  "views": [{"name": "side", "yaw": 68}, {"name": "threeq", "yaw": 35}, {"name": "front", "yaw": 0, "ortho": 2.7}],
+  "draft_muscles": {"primary": ["lower back"], "secondary": ["glutes", "hamstrings", "quadriceps", "forearms", "traps", "middle back", "lats", "adductors"]},
+  "approved": false
+}
