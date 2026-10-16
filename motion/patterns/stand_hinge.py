@@ -62,6 +62,8 @@ class Pattern:
         P.reset()
         sp = P.rig.pose.bones["spine01"].matrix
         self.bar_local = sp.inverted() @ Vector((0, 0.074, 1.43))
+        # goblet dumbbell: vertical, lower head against the sternum
+        self.goblet_local = sp.inverted() @ Vector((0, -0.19, 1.255))
         self.arm_len = self.hang_length()
 
     # --- helpers ------------------------------------------------------------
@@ -128,11 +130,18 @@ class Pattern:
         if p["load"] == "back_bar":
             self.st.legs()
             return self.arms_back_bar()
+        if p["load"] == "goblet":
+            P.local("spine01", (1, 0, 0), -0.12 * tilt)
+            P.local("neck02", (1, 0, 0), -0.3 * tilt)
+            P.local("head", (1, 0, 0), -0.2 * tilt)
+            self.st.legs()
+            return self.arms_goblet()
         # neutral spine, chest up, eyes forward
         P.local("spine02", (1, 0, 0), -4 * s)
         P.local("spine01", (1, 0, 0), -5 * s)
-        P.local("neck02", (1, 0, 0), -12 * s)
-        P.local("head", (1, 0, 0), -14 * s)
+        k = p["torso"] / 40.0              # gaze stays level whatever the torso angle
+        P.local("neck02", (1, 0, 0), -12 * s * k)
+        P.local("head", (1, 0, 0), -14 * s * k)
         self.st.legs()
         if p["arms"] == "counterbalance":
             self.arms_counterbalance(s)
@@ -243,11 +252,34 @@ class Pattern:
         for side, sgn in (("L", 1), ("R", -1)):
             g = c + axis * sgn * p["grip_w"]
             arm = (g - P.head(f"upperarm01.{side}")).normalized()
-            P.scap_rhythm(side, arm, protraction=-14)
+            # retracted and slightly depressed: cancel the rhythm's shrug, then -3 deg
+            rh = max(0.0, P.humeral_elevation(arm) - 30.0) / 3.0
+            P.scap_rhythm(side, arm, protraction=-14, elevation=-0.2 * rh - 2)
             pole = body @ Vector((sgn * 0.3, 0.6, -1))
             reach(P, side, g, pole, knuckle_dir=axis * sgn,
                   palm=lambda fd: bar_palm(axis, fd, "over"))
         return {"bar": (c, axis)}
+
+    def arms_goblet(self):
+        """One dumbbell held vertically at the chest, both palms cupping the underside of
+        the top head, elbows down and close (inside the knees at the bottom)."""
+        P = self.P
+        sp = P.rig.pose.bones["spine01"].matrix
+        c = sp @ self.goblet_local
+        body = P.delta("spine01")
+        up = Vector((0, 0, 1))
+        axis = (0.6 * (body @ up) + 0.4 * up).normalized()     # between torso-up and vertical
+        to_chest = body @ Vector((0, 1, 0))
+        for side, sgn in (("L", 1), ("R", -1)):
+            lat = body @ Vector((sgn, 0, 0))
+            g = c + axis * 0.05 + lat * 0.042 - to_chest * 0.01
+            arm = (g - P.head(f"upperarm01.{side}")).normalized()
+            P.scap_rhythm(side, arm, protraction=4)
+            palm = (axis * 0.85 - lat * 0.5).normalized()
+            P.curl_fingers(side, deg=(25, 35, 25), thumb=(10, 20, 15))
+            reach(P, side, g, body @ Vector((sgn * 0.5, 0.3, -1)), knuckle_dir=to_chest, palm=palm, fist=False)
+            P.curl_fingers(side, deg=(25, 35, 25), thumb=(10, 20, 15))
+        return {"db": (c, axis)}
 
     def arms_counterbalance(self, s):
         """Arms from hanging to shoulder height, palms down, straight."""

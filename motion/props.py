@@ -13,6 +13,10 @@ class Dumbbells:
         self.P = P
         self.hands = spec.get("hands", ["L", "R"])
         self.bells = {}
+        if self.hands == ["both"]:          # one dumbbell placed by the pattern (goblet)
+            self.one = eq.dumbbell("db")
+            self.one.rotation_mode = "QUATERNION"
+            self.hands = []
         for side in self.hands:
             b = eq.dumbbell(f"db_{side}")
             b.rotation_mode = "QUATERNION"
@@ -21,6 +25,14 @@ class Dumbbells:
     def attach(self, f, contacts=None):
         P = self.P
         out = {}
+        if contacts and "db" in contacts and hasattr(self, "one"):
+            c, x = contacts["db"]
+            ref = Vector((0, 1, 0))
+            z = (ref - ref.project(x)).normalized()
+            self.one.location = c
+            self.one.rotation_quaternion = Matrix((x, z.cross(x), z)).transposed().to_quaternion()
+            self.one.keyframe_insert("location", frame=f)
+            self.one.keyframe_insert("rotation_quaternion", frame=f)
         for side in self.hands:
             g, w = grip_point(P, side)
             b = self.bells[side]

@@ -70,7 +70,7 @@ def contact_sheet(dirs, frames, out_png):
     n, m = len(dirs), len(frames)
     filt = ""
     for r in range(n):
-        filt += "".join(f"[{r * m + c}:v]" for c in range(m)) + f"hstack=inputs={m}[r{r}];"
+        filt += "".join(f"[{r * m + c}:v]" for c in range(m)) + (f"hstack=inputs={m}[r{r}];" if m > 1 else f"copy[r{r}];")
     filt += "".join(f"[r{r}]" for r in range(n)) + (f"vstack=inputs={n}[v]" if n > 1 else "copy[v]")
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", *args, "-filter_complex", filt,
                     "-map", "[v]", "-frames:v", "1", out_png], check=True)

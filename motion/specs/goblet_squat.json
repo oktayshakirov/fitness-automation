@@ -1,0 +1,11 @@
+{
+  "id": "goblet_squat",
+  "pattern": "stand_hinge",
+  "params": {"mode": "squat", "load": "goblet", "stance": 0.19, "toe_out": 20, "shin_lean": 36, "torso": 28},
+  "props": [{"kind": "dumbbell", "hands": ["both"]}],
+  "tempo": {"hold_top": 6, "down": 31, "hold_bottom": 7, "up": 24, "hold_end": 4},
+  "camera": {"target": [0, 0.05, 0.85], "ortho": 2.2},
+  "views": [{"name": "side", "yaw": 90}, {"name": "threeq", "yaw": 35}, {"name": "front", "yaw": 0}],
+  "draft_muscles": {"primary": ["quadriceps", "glutes"], "secondary": ["adductors", "hamstrings", "calves", "abdominals", "shoulders"]},
+  "approved": false
+}

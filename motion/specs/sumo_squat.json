@@ -1,0 +1,11 @@
+{
+  "id": "sumo_squat",
+  "pattern": "stand_hinge",
+  "params": {"mode": "squat", "stance": 0.33, "toe_out": 35, "shin_lean": 18, "torso": 18, "arms": "counterbalance"},
+  "props": [],
+  "tempo": {"hold_top": 6, "down": 31, "hold_bottom": 7, "up": 24, "hold_end": 4},
+  "camera": {"target": [0, 0.05, 0.85], "ortho": 2.2},
+  "views": [{"name": "front", "yaw": 0}, {"name": "side", "yaw": 90}, {"name": "threeq", "yaw": 35}],
+  "draft_muscles": {"primary": ["quadriceps", "glutes", "adductors"], "secondary": ["hamstrings", "calves"]},
+  "approved": false
+}
