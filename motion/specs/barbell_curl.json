@@ -1,0 +1,12 @@
+{
+  "id": "barbell_curl",
+  "pattern": "arm_isolation",
+  "params": {"tilt": 1, "hip_back": 0.0, "knee_reach": 0.985, "ua_dir": [0.06, -0.08, -1],
+             "grip_x": 0.21, "phi": [12, 136], "grip": "under"},
+  "props": [{"kind": "barbell", "plates": [10]}],
+  "tempo": {"hold_start": 6, "work": 24, "hold_peak": 6, "return": 30, "hold_end": 6},
+  "camera": {"target": [0, -0.05, 1.0], "ortho": 2.4},
+  "views": [{"name": "side", "yaw": 80}, {"name": "front", "yaw": 20}],
+  "draft_muscles": {"primary": ["biceps"], "secondary": ["forearms"]},
+  "approved": false
+}

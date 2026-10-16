@@ -1,0 +1,70 @@
+{
+  "id": "front_raise",
+  "pattern": "arm_isolation",
+  "params": {
+    "joint": "shoulder",
+    "tilt": -1,
+    "hip_back": -0.01,
+    "knee_reach": 0.978,
+    "plane": 78,
+    "elev": [
+      18,
+      88
+    ],
+    "elbow": 10,
+    "palm": "back"
+  },
+  "props": [
+    {
+      "kind": "dumbbell",
+      "hands": [
+        "L",
+        "R"
+      ]
+    }
+  ],
+  "tempo": {
+    "hold_start": 6,
+    "work": 24,
+    "hold_peak": 6,
+    "return": 30,
+    "hold_end": 6
+  },
+  "camera": {
+    "target": [
+      0,
+      -0.15,
+      1.05
+    ],
+    "ortho": 2.3
+  },
+  "views": [
+    {
+      "name": "side",
+      "yaw": 90
+    },
+    {
+      "name": "front",
+      "yaw": 0
+    },
+    {
+      "name": "threeq",
+      "yaw": 35
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "shoulders"
+    ],
+    "secondary": [
+      "chest",
+      "traps"
+    ]
+  },
+  "approved": false,
+  "qa": {
+    "load_kg": {
+      "db": 6
+    }
+  }
+}
