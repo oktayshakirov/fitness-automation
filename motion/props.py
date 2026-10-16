@@ -56,11 +56,49 @@ class CableBar:
     def __init__(self, P, spec):
         self.P = P
         self.tower = eq.CableTower(**spec.get("tower", {}))
+        self.handle = spec.get("handle", "bar")
+        self.ring = {}
+        if self.handle == "rope":
+            self.rope = self._rope()
+            return
         self.bar = eq.straight_bar()
         self.bar.rotation_mode = "QUATERNION"
-        self.ring = {}
+
+    def _rope(self):
+        """Two rope strands from a swivel ring to the hands (stand-in for eq.rope)."""
+        import bpy
+        strands = []
+        for side in ("L", "R"):
+            cd = bpy.data.curves.new(f"rope_{side}", "CURVE")
+            cd.dimensions = "3D"
+            cd.bevel_depth = 0.011
+            cd.bevel_resolution = 3
+            sp = cd.splines.new("POLY")
+            sp.points.add(2)
+            o = bpy.data.objects.new(f"rope_{side}", cd)
+            bpy.context.scene.collection.objects.link(o)
+            cd.materials.append(eq.mat("cable"))
+            strands.append(sp)
+        return strands
+
+    def attach_rope(self, f):
+        P = self.P
+        gL, _ = grip_point(P, "L")
+        gR, _ = grip_point(P, "R")
+        mid = (gL + gR) / 2
+        up = (self.tower.front_c - mid).normalized()
+        ring = mid + up * 0.16
+        for sp, g in zip(self.rope, (gL, gR)):
+            bend = ring + (g - ring) * 0.55 + up * 0.0
+            for pt, v in zip(sp.points, (ring, bend, g - up * 0.04)):
+                pt.co = (v.x, v.y, v.z, 1)
+                pt.keyframe_insert("co", frame=f)
+        self.ring[f] = ring
+        return {"L": gL, "R": gR}
 
     def attach(self, f, contacts=None):
+        if self.handle == "rope":
+            return self.attach_rope(f)
         gL, _ = grip_point(self.P, "L")
         gR, _ = grip_point(self.P, "R")
         c = (gL + gR) / 2

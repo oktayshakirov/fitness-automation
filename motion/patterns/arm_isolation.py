@@ -4,8 +4,8 @@ joint = "elbow" (curls, pushdowns): feet planted, elbows pinned at the sides (up
 fixed), only the forearm travels in the sagittal plane, wrists neutral. The planned
 elbow is passed as the IK pole so it can't drift at deep flexion.
   params: tilt (forward lean, deg), hip_back (m), knee_reach (leg extension 0..1),
-  ua_dir (upper-arm direction, x mirrored per side), grip_x (fixed wrist half-width or
-  null), phi ([start, end] elbow angle from the upper arm, deg),
+  ua_dir (upper-arm direction, x mirrored per side), grip_x (fixed wrist half-width, or
+  [start, end] for hands that spread apart like rope ends, or null), phi ([start, end] elbow angle from the upper arm, deg),
   grip ("over" | "under" | "neutral"), carry (carrying angle at full extension, deg).
 
 joint = "shoulder" (lateral / front raises): the elbow angle stays fixed and soft, the
@@ -63,7 +63,10 @@ class Pattern:
             f_dir = Matrix.Rotation(math.radians(-sgn * c), 3, "Y") @ f_dir
         wrist = elbow + f_dir * fa
         if p["grip_x"] is not None:
-            wrist.x = sgn * p["grip_x"]
+            gx = p["grip_x"]
+            if isinstance(gx, (list, tuple)):          # hands travel apart (rope ends)
+                gx = gx[0] + (gx[1] - gx[0]) * s
+            wrist.x = sgn * gx
             wrist = elbow + (wrist - elbow).normalized() * fa
         fd = (wrist - elbow).normalized()
         if p["grip"] == "neutral":
