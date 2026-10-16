@@ -1,0 +1,60 @@
+{
+  "id": "overhead_triceps_extension",
+  "pattern": "arm_isolation",
+  "params": {
+    "joint": "overhead",
+    "tilt": 0,
+    "knee_reach": 0.98,
+    "phi": [
+      8,
+      135
+    ]
+  },
+  "props": [
+    {
+      "kind": "dumbbell",
+      "hands": [
+        "both"
+      ]
+    }
+  ],
+  "tempo": {
+    "hold_top": 6,
+    "down": 28,
+    "hold_bottom": 4,
+    "up": 24,
+    "hold_end": 10
+  },
+  "camera": {
+    "target": [
+      0,
+      0.0,
+      1.2
+    ],
+    "ortho": 2.4
+  },
+  "views": [
+    {
+      "name": "side",
+      "yaw": 90
+    },
+    {
+      "name": "threeq",
+      "yaw": 35
+    },
+    {
+      "name": "back",
+      "yaw": 160
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "triceps"
+    ],
+    "secondary": []
+  },
+  "approved": false,
+  "qa": {
+    "wrist_max": 125
+  }
+}

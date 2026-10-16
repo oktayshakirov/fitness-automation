@@ -14,11 +14,15 @@ the scapulohumeral rhythm (no shrug beyond it).
   params: plane (deg: 0 = straight out to the side, 90 = straight forward; ~25 =
   scapular plane), elev ([start, end] humerus angle from hanging, deg), elbow (fixed
   bend, deg), palm ("in" = palms facing the thighs at the bottom -> down at the top,
-  "back" = palms facing back -> down)."""
+  "back" = palms facing back -> down).
+
+joint = "overhead" (overhead triceps extension, one dumbbell in both hands): upper arms
+fixed beside the head, elbows pointing forward; phi = [start, end] elbow bend, deg."""
 import math
 from mathutils import Vector, Matrix
 from core.solver import rot_x
 from ..stance import Stance, place_pelvis, arm_lengths
+from ..contact import reach
 
 
 class Pattern:
@@ -40,12 +44,16 @@ class Pattern:
         P.local("head", (1, 0, 0), -tilt * 0.4)
         self.st.legs()
         for side, sgn in (("L", 1), ("R", -1)):
+            if p["joint"] == "overhead":
+                continue
             if p["joint"] == "shoulder":
                 self.raise_arm(side, sgn, s)
             else:
                 self.elbow_arm(side, sgn, s)
             if p["fingers"] == "fist":
                 P.curl_fingers(side)
+        if p["joint"] == "overhead":
+            return self.overhead(s)
 
     def elbow_arm(self, side, sgn, s):
         P, p = self.P, self.p
@@ -77,6 +85,40 @@ class Pattern:
         pole = (elbow - sh) - (elbow - sh).project(wrist - sh)
         P.limb(f"upperarm01.{side}", f"lowerarm01.{side}", f"wrist.{side}", wrist,
                pole, palm=palm, side=side)
+
+    def overhead(self, s):
+        """Overhead extension with one dumbbell: both palms under the top plate, the bell
+        hanging vertically; upper arms fixed beside the head (elbows forward, narrow),
+        only the elbows bend, lowering the bell behind the head (s = 1)."""
+        P, p = self.P, self.p
+        body = P.delta("spine01")
+        up = Vector((0, 0, 1))
+        cups, elbows = [], {}
+        for side, sgn in (("L", 1), ("R", -1)):
+            sh = P.head(f"upperarm01.{side}")
+            ua, fa = arm_lengths(P, side)
+            hum = (body @ Vector((-sgn * 0.12, 0.05, 1))).normalized()    # beside the head, a touch back
+            P.scap_rhythm(side, hum)
+            sh = P.head(f"upperarm01.{side}")
+            elbow = sh + hum * ua
+            phi = p["phi"][0] + (p["phi"][1] - p["phi"][0]) * s
+            fdir = rot_x(-phi) @ hum                                    # folds back behind the head
+            cups.append(elbow + fdir * (fa + 0.035))
+            elbows[side] = elbow
+        c = (cups[0] + cups[1]) / 2
+        # palms under the top plate, the bell hangs vertically
+        palm_up = up.copy()
+        for side, sgn in (("L", 1), ("R", -1)):
+            g = c + Vector((sgn * 0.035, 0, -0.01))
+            sh, el = P.head(f"upperarm01.{side}"), elbows[side]
+            pole = (el - sh) - (el - sh).project(g - sh)      # the planned elbow: arms stay up
+            if pole.length < 1e-4:
+                pole = body @ Vector((0, -1, 0.3))
+            reach(P, side, g, pole, knuckle_dir=Vector((0, -1, 0)),
+                  palm=(palm_up + Vector((-sgn * 0.3, 0, 0))).normalized(), fist=False)
+            P.curl_fingers(side, deg=(30, 40, 30), thumb=(10, 20, 15))
+        # top plate in the palms, handle hanging below
+        return {"db": (c - palm_up * 0.0925, palm_up)}
 
     def raise_arm(self, side, sgn, s):
         P, p = self.P, self.p

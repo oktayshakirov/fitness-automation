@@ -232,7 +232,8 @@ for f in frames:
             for m in meshes:
                 for v in m.data.vertices:
                     w = m.matrix_world @ v.co
-                    if min((w - h).length for h in hands) < 0.11:
+                    # fingers wrap the handle (and cup a two-hand dumbbell's plate)
+                    if min((w - h).length for h in hands) < (0.15 if name == "db" else 0.11):
                         continue
                     loc, nrm, idx, dist = tree.find_nearest(w)
                     if loc is None or dist > 0.05 or dist <= pen_max:
