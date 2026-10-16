@@ -191,6 +191,7 @@ class Bench:
             self.root = maker("bench")
             return
         self.root = eq.empty("bench")
+        self.root.location.x = spec.get("x", 0.0)
         bpy.ops.mesh.primitive_cube_add(size=1, location=(0, (y0 + y1) / 2, z - 0.04),
                                         scale=(0.29, y1 - y0, 0.08))
         pad = bpy.context.active_object
