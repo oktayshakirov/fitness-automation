@@ -2,7 +2,7 @@
 phase, called after P.reset()) and optional `camera_target`."""
 import importlib
 
-NAMES = ("stand_hinge", "arm_isolation", "split_stance", "overhead_press", "row")
+NAMES = ("stand_hinge", "arm_isolation", "split_stance", "overhead_press", "row", "floor")
 
 
 def get(name):

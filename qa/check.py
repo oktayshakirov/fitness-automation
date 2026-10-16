@@ -183,8 +183,12 @@ for f in frames:
     bone_mats[f] = {pb.name: pb.matrix.copy() for pb in rig.pose.bones}
     co = body_verts()
     # floor + slide
-    zmin = min(co[i].z for i in skin)
-    floor_min = min(floor_min, zmin)
+    izmin = min(skin, key=lambda i: co[i].z)
+    zmin = co[izmin].z
+    if zmin < floor_min:
+        floor_min = zmin
+        g = max(body.data.vertices[izmin].groups, key=lambda g: g.weight if body.vertex_groups[g.group].name in rig.pose.bones else -1)
+        stats["floor_at"] = (f, body.vertex_groups[g.group].name)
     cur = {i: co[i] for i in sole}
     if sole_prev is not None:
         for i in sole:
@@ -246,26 +250,22 @@ for f in frames:
         flex = angle(knee - hip, ank - knee)
         jv(f"knee_flex.{side}", flex - 155)
         toe = P.head(f"toe3-1.{side}") - ank
-        toe.z = 0
         bend = (knee - hip) - (knee - hip).project(ank - hip)
-        # knees track the toes on a flat foot; on the ball of the foot (rear leg of a
-        # lunge) the knee points at the floor
-        rest_toe = P.rest_head(f"toe3-1.{side}") - P.rest_head(f"foot.{side}")
-        now_toe = P.head(f"toe3-1.{side}") - ank
-        heel_up = math.degrees(math.asin(max(-1, min(1, -now_toe.normalized().z)))) - \
-            math.degrees(math.asin(max(-1, min(1, -rest_toe.normalized().z))))
-        if flex > 25 and toe.length > 1e-6 and heel_up < 15:
-            b2 = bend.copy(); b2.z = 0
-            if b2.length > 1e-4:
-                jv(f"knee_track.{side}", angle(b2, toe) - 30)
-        # hyperextension: knee behind the hip-ankle line relative to the toes
-        if bend.length > 1e-4 and flex > 5 and toe.length > 1e-6 and bend.dot(toe) < 0:
+        # knees track the toes: the foot lies in the hip-knee-ankle plane, whatever the
+        # body's orientation (standing, lunging, lying)
+        n = (knee - hip).cross(ank - knee)
+        if flex > 25 and n.length > 1e-6 and toe.length > 1e-6:
+            dev = math.degrees(math.asin(min(1.0, abs(n.normalized().dot(toe.normalized())))))
+            jv(f"knee_track.{side}", dev - 30)
+        # hyperextension: the knee bends toward the back of the thigh's rest bend
+        front = P.delta(f"upperleg01.{side}") @ P.rest_bend(f"upperleg01.{side}", f"lowerleg01.{side}", f"foot.{side}")
+        if bend.length > 1e-4 and flex > 5 and bend.dot(front) < 0:
             jv(f"knee_hyper.{side}", flex - 5)
         sh, el, wr = P.head(f"upperarm01.{side}"), P.head(f"lowerarm01.{side}"), P.head(f"wrist.{side}")
         eflex = angle(el - sh, wr - el)
         jv(f"elbow_flex.{side}", eflex - 155)
         hand = P.head(f"finger3-1.{side}") - wr
-        jv(f"wrist.{side}", angle(wr - el, hand) - 75)
+        jv(f"wrist.{side}", angle(wr - el, hand) - qa_cfg.get("wrist_max", 75))
     chest = P.axis("spine01", 1)
     jv("head", angle(chest, P.axis("head", 1)) - 50)
     # balance

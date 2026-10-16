@@ -1,0 +1,57 @@
+{
+  "id": "push_up",
+  "pattern": "floor",
+  "params": {
+    "mode": "pushup",
+    "hands": 0.25,
+    "depth": 0.07
+  },
+  "props": [],
+  "tempo": {
+    "hold_start": 6,
+    "down": 26,
+    "hold_bottom": 4,
+    "up": 22,
+    "hold_end": 14
+  },
+  "camera": {
+    "target": [
+      0,
+      -0.22,
+      0.32
+    ],
+    "ortho": 2.3,
+    "res": [
+      1280,
+      720
+    ]
+  },
+  "views": [
+    {
+      "name": "side",
+      "yaw": 90
+    },
+    {
+      "name": "threeq",
+      "yaw": 40
+    },
+    {
+      "name": "front",
+      "yaw": 0
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "triceps",
+      "shoulders",
+      "abdominals"
+    ]
+  },
+  "approved": false,
+  "qa": {
+    "wrist_max": 105
+  }
+}

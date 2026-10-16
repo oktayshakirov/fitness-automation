@@ -1,0 +1,56 @@
+{
+  "id": "plank",
+  "pattern": "floor",
+  "params": {
+    "mode": "plank"
+  },
+  "props": [],
+  "tempo": {
+    "hold_start": 0,
+    "out": 36,
+    "peak": 0,
+    "back": 36,
+    "end": 0
+  },
+  "camera": {
+    "target": [
+      0,
+      -0.22,
+      0.32
+    ],
+    "ortho": 2.3,
+    "res": [
+      1280,
+      720
+    ]
+  },
+  "views": [
+    {
+      "name": "side",
+      "yaw": 90
+    },
+    {
+      "name": "threeq",
+      "yaw": 40
+    },
+    {
+      "name": "front",
+      "yaw": 0
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "abdominals"
+    ],
+    "secondary": [
+      "shoulders",
+      "glutes",
+      "quadriceps",
+      "lower back"
+    ]
+  },
+  "approved": false,
+  "qa": {
+    "wrist_max": 105
+  }
+}

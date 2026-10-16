@@ -100,7 +100,8 @@ cams = [camera(scene, v["name"], v.get("target", target), v["yaw"], ortho=v.get(
 
 sheet = [int(x) for x in args.frames.split(",")] if args.frames else motion.get("sheet") or tempo.key_frames()
 if not args.no_render:
-    dirs = render_views(scene, cams, args.id, 1, N, frames=sheet if args.quick else None)
+    res = tuple(cam_cfg.get("res", (720, 1280)))      # review size; dist/ size is Agent B's
+    dirs = render_views(scene, cams, args.id, 1, N, res=res, frames=sheet if args.quick else None)
     contact_sheet(dirs, sheet, OUT + f"{args.id}_sheet.png")
     if not args.quick:
         stitch_video(dirs, OUT + f"{args.id}.mp4")
