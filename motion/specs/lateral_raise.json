@@ -1,0 +1,12 @@
+{
+  "id": "lateral_raise",
+  "pattern": "arm_isolation",
+  "params": {"joint": "shoulder", "tilt": 6, "hip_back": 0.02, "knee_reach": 0.975,
+             "plane": 25, "elev": [14, 86], "elbow": 15, "palm": "in"},
+  "props": [{"kind": "dumbbell", "hands": ["L", "R"]}],
+  "tempo": {"hold_start": 6, "work": 24, "hold_peak": 6, "return": 30, "hold_end": 6},
+  "camera": {"target": [0, -0.05, 1.0], "ortho": 3.3},
+  "views": [{"name": "front", "yaw": 0}, {"name": "side", "yaw": 90}, {"name": "threeq", "yaw": 35}],
+  "draft_muscles": {"primary": ["shoulders"], "secondary": ["traps"]},
+  "approved": false
+}

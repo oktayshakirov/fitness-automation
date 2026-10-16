@@ -129,3 +129,42 @@ class Poser:
                 self.local(f"finger{i}-{j}.{side}", (1, 0, 0), sign * a)
         for j, a in enumerate(thumb, 1):
             self.local(f"finger1-{j}.{side}", (1, 0, 0), sign * a)
+
+    # --- shoulder girdle -------------------------------------------------
+    def delta(self, n):
+        """World rotation of bone n relative to its rest orientation."""
+        return self.rig.pose.bones[n].matrix.to_3x3() @ self.rest3(n).transposed()
+
+    def girdle(self, side, elevation=0.0, protraction=0.0, upward=0.0):
+        """Clavicle + scapula (shoulder01) in the torso's frame, degrees.
+        elevation lifts the clavicle's lateral end (shrug), protraction moves it forward
+        (negative = retraction, shoulder blades squeezed), upward rotates the scapula so
+        the shoulder joint rises further (arm overhead)."""
+        sgn = 1 if side == "L" else -1
+        d = self.delta("spine01")
+        r = (Matrix.Rotation(math.radians(elevation), 3, Vector((0, -sgn, 0))) @
+             Matrix.Rotation(math.radians(protraction), 3, Vector((0, 0, -sgn))))
+        self.set_world(f"clavicle.{side}", d @ r @ self.rest3(f"clavicle.{side}"))
+        u = Matrix.Rotation(math.radians(upward), 3, Vector((0, -sgn, 0)))
+        self.set_world(f"shoulder01.{side}", d @ r @ u @ self.rest3(f"shoulder01.{side}"))
+
+    def humeral_elevation(self, arm_dir):
+        """Angle (deg) between an upper-arm direction and the torso's down axis."""
+        down = self.delta("spine01") @ Vector((0, 0, -1))
+        return math.degrees(arm_dir.angle(down, 0.0))
+
+    def scap_rhythm(self, side, arm_dir, protraction=0.0, elevation=0.0):
+        """Scapulohumeral rhythm: above 30 deg of humeral elevation the scapula
+        rotates upward ~1 deg per 2 deg of the humerus; the clavicle elevates with it.
+        Extra protraction/elevation (presses, rows, shrugs) are added on top."""
+        g = max(0.0, self.humeral_elevation(arm_dir) - 30.0) / 3.0
+        self.girdle(side, elevation=elevation + 0.3 * g, protraction=protraction, upward=0.2 * g)
+        return g
+
+    def hand_orient(self, side, knuckle_dir, palm):
+        """Rotate the wrist so the knuckle line (index -> little finger) runs along
+        knuckle_dir and the palm faces palm (radial/ulnar deviation + flexion)."""
+        k = self.head(f"finger5-1.{side}") - self.head(f"finger2-1.{side}")
+        r = frame_align(k, self.palm_now(side), knuckle_dir, palm)
+        pb = self.rig.pose.bones[f"wrist.{side}"]
+        self.set_world(f"wrist.{side}", r @ pb.matrix.to_3x3())
