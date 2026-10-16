@@ -1,0 +1,64 @@
+{
+  "id": "leg_press",
+  "pattern": "seated",
+  "params": {
+    "mode": "leg_press"
+  },
+  "props": [
+    {
+      "kind": "machine",
+      "type": "leg_press",
+      "seat_z": 0.45,
+      "lean": -48
+    }
+  ],
+  "tempo": {
+    "hold_start": 6,
+    "down": 28,
+    "hold_bottom": 4,
+    "up": 24,
+    "hold_end": 10
+  },
+  "camera": {
+    "target": [
+      0,
+      -0.05,
+      0.85
+    ],
+    "ortho": 2.3,
+    "res": [
+      1280,
+      720
+    ]
+  },
+  "views": [
+    {
+      "name": "side",
+      "yaw": 90
+    },
+    {
+      "name": "threeq",
+      "yaw": 35
+    },
+    {
+      "name": "front",
+      "yaw": 0
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "quadriceps"
+    ],
+    "secondary": [
+      "glutes",
+      "hamstrings",
+      "calves"
+    ]
+  },
+  "qa": {
+    "skip": [
+      "balance"
+    ]
+  },
+  "approved": false
+}

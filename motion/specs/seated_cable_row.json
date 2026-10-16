@@ -1,0 +1,12 @@
+{
+  "id": "seated_cable_row",
+  "pattern": "seated",
+  "params": {"mode": "cable_row"},
+  "props": [{"kind": "machine", "type": "cable_row", "seat_z": 0.42}, {"kind": "cable_handle", "handle": "v_handle", "pulley": [0, -0.92, 0.30]}],
+  "tempo": {"hold_start": 6, "work": 22, "hold_peak": 6, "return": 30, "hold_end": 8},
+  "camera": {"target": [0, -0.4, 0.75], "ortho": 2.3},
+  "views": [{"name": "side", "yaw": 90}, {"name": "threeq", "yaw": 35}, {"name": "front", "yaw": 0}],
+  "draft_muscles": {"primary": ["middle back"], "secondary": ["lats", "biceps", "shoulders"]},
+  "qa": {"skip": ["balance"]},
+  "approved": false
+}
