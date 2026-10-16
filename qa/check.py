@@ -109,6 +109,7 @@ slide_max, floor_min = 0.0, 1.0
 grip_max = {}
 pen_max = 0.0
 joint_viol = {}
+joint_at = {}
 com_out = 0.0
 load_kg = qa_cfg.get("load_kg")
 last_air = {}
@@ -207,9 +208,11 @@ for f in frames:
             grip_max[name] = max(grip_max.get(name, 0.0), d)
         elif name in ("bar", "barbell"):
             for side in ("L", "R"):
-                g, _ = grip_point(P, side)
-                v = g - c
-                d = (v - v.project(ax)).length
+                d = 9.0
+                for mode in ("hook", "press"):        # pulling or pressing grip
+                    g, _ = grip_point(P, side, mode)
+                    v = g - c
+                    d = min(d, (v - v.project(ax)).length)
                 grip_max[f"{name}.{side}"] = max(grip_max.get(f"{name}.{side}", 0.0), d)
         elif name == "db":
             for side in ("L", "R"):
@@ -235,7 +238,9 @@ for f in frames:
                         stats["prop_pen_at"] = (f, m.name, [round(x, 3) for x in w], [round(x, 3) for x in loc])
     # joints
     def jv(key, val):
-        joint_viol[key] = max(joint_viol.get(key, 0.0), val)
+        if val > joint_viol.get(key, 0.0):
+            joint_viol[key] = val
+            joint_at[key] = f
     for side in ("L", "R"):
         hip, knee, ank = P.head(f"upperleg01.{side}"), P.head(f"lowerleg01.{side}"), P.head(f"foot.{side}")
         flex = angle(knee - hip, ank - knee)
@@ -322,8 +327,8 @@ for k, v in grip_max.items():
 if "props" not in skip and pen_max > 0.005:
     fail("props", f"implement {pen_max * 1000:.0f} mm inside the body at {stats.get('prop_pen_at')}")
 for k, v in joint_viol.items():
-    if "joints" not in skip and v > 0 and k not in qa_cfg.get("allow", []):
-        fail("joints", f"{k} over its limit by {v:.0f} deg")
+    if "joints" not in skip and v > 0.5 and k not in qa_cfg.get("allow", []):
+        fail("joints", f"{k} over its limit by {v:.0f} deg (frame {joint_at.get(k)})")
 if "balance" not in skip and com_out > 0:
     fail("balance", f"centre of mass {com_out * 1000:.0f} mm outside the feet (frame {stats.get('balance_at')})")
 

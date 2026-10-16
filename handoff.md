@@ -168,8 +168,18 @@ contract in plan.md wants 720×900.
      pad's length range in object space; `eq.box(name, h)` for step-ups;
      `eq.pullup_bar(name, z)`, `eq.dip_station(name)`, `eq.mat(name)`.
   Also: `rope_pushdown` and `cable_crossover` need two-ended handles on the tower.
+- **A → B, 2026-10-16: look notes from the motion renders.** (1) Primary shoulders on the
+  presses read mostly orange: the "shoulders" mask covers little of the front/side delt
+  while chest/traps (secondary) are large. (2) `core/render.py contact_sheet()` crashed on a
+  single frame (hstack needs 2 inputs): I patched it (`copy` when m == 1), please keep that.
 
 ## Progress log
+
+- 2026-10-16 (A, checkpoint): Phase 0 done (git, core/ split, build.py, squat/pushdown/curl
+  ported: pose dumps identical, renders pixel-identical). Girdle (scapula/clavicle) in the
+  solver, two-hand bar contact (contact.reach), qa/check.py gate. Patterns stand_hinge,
+  arm_isolation (curls, raises), split_stance, overhead_press. See the A entry below when
+  I stop for the full list.
 
 - 2026-10-15: feasibility passed (squat, pushdown, curl, 17-group muscle maps).
   Next: Phase 0 (A), B0 catalog (B).

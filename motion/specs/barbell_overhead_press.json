@@ -1,0 +1,11 @@
+{
+  "id": "barbell_overhead_press",
+  "pattern": "overhead_press",
+  "params": {"load": "bar", "grip_w": 0.26, "lean": 5},
+  "props": [{"kind": "barbell", "plates": [10]}],
+  "tempo": {"hold_start": 8, "work": 22, "hold_peak": 8, "return": 28, "hold_end": 6},
+  "camera": {"target": [0, -0.02, 1.15], "ortho": 2.6},
+  "views": [{"name": "side", "yaw": 80}, {"name": "threeq", "yaw": 35}, {"name": "front", "yaw": 0, "ortho": 2.9}],
+  "draft_muscles": {"primary": ["shoulders"], "secondary": ["triceps", "traps", "chest", "abdominals"]},
+  "approved": false
+}
