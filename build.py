@@ -34,7 +34,7 @@ from core.look import muscle_material
 from core.studio import studio, camera
 from core.render import new_scene, render_views, stitch_video, contact_sheet
 from motion.tempo import Tempo
-from motion import patterns, props as props_mod
+from motion import patterns, props as props_mod, micro
 
 ap = argparse.ArgumentParser(prog="build.py")
 ap.add_argument("id")
@@ -44,6 +44,7 @@ ap.add_argument("--frames", help="comma-separated frames for the sheet (and --qu
 ap.add_argument("--keep-frames", action="store_true")
 ap.add_argument("--no-render", action="store_true", help="pose + save the .blend only")
 ap.add_argument("--no-blend", action="store_true")
+ap.add_argument("--no-micro", action="store_true", help="no breathing / head settle / weight shift")
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else [])
 
 
@@ -71,7 +72,9 @@ P = Poser(rig)
 pattern = patterns.get(motion["pattern"])(P, motion.get("params", {}))
 props = props_mod.build(P, motion.get("props", []))
 
+micro_amp = float(motion.get("micro", 1.0)) if not args.no_micro else 0.0
 for f in range(1, N + 1):
+    micro.set_frame(P, f, N, micro_amp)
     P.reset()
     contacts = pattern.pose(tempo.s(f)) or {}
     key_pose(rig, f)
@@ -79,6 +82,7 @@ for f in range(1, N + 1):
         pr.attach(f, contacts)
 for pr in props:
     pr.finish(N)
+micro.set_frame(P, 1, N, 0.0)
 print("POSED", args.id, N, "frames")
 
 body.data.materials.clear()

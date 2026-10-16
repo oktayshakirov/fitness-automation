@@ -64,6 +64,8 @@ class Poser:
     def reset(self):
         for pb in self.rig.pose.bones:
             pb.matrix_basis = Matrix.Identity(4)
+        for n, q in getattr(self, "micro", {}).items():      # micro-motion base offsets
+            self.rig.pose.bones[n].rotation_quaternion = q
         update()
 
     def set_world(self, n, r3, loc=None):
@@ -78,9 +80,12 @@ class Poser:
         self.set_world(n, q3 @ self.rest3(n))
 
     def local(self, n, axis, deg):
-        """Rotation relative to the parent (bone-local axis)."""
+        """Rotation relative to the parent (bone-local axis), on top of any micro-motion
+        offset for that bone."""
         pb = self.rig.pose.bones[n]
-        pb.rotation_quaternion = Quaternion(axis, math.radians(deg))
+        q = Quaternion(axis, math.radians(deg))
+        m = getattr(self, "micro", {}).get(n)
+        pb.rotation_quaternion = m @ q if m is not None else q
         update()
 
     def rest_bend(self, upper, lower, end):

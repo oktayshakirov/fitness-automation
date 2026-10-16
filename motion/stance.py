@@ -42,6 +42,7 @@ def place_pelvis(P, tilt, hip_mid):
     """Hinge the pelvis forward by tilt degrees and move it so the hip-joint midpoint
     sits at hip_mid."""
     root_rest = P.rest_head("root")
+    hip_mid = hip_mid + getattr(P, "micro_shift", Vector())     # micro-motion weight shift
     P.set_world("root", rot_x(tilt) @ P.rest3("root"), root_rest)
     mid = (P.head("upperleg01.L") + P.head("upperleg01.R")) / 2
     P.set_world("root", rot_x(tilt) @ P.rest3("root"), root_rest + (hip_mid - mid))

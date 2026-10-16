@@ -57,7 +57,7 @@ class Pattern:
         tilt = p["lean"] * (1 - smooth(s * 1.2))
         bar_y = self.midfoot_y
         # shoulders behind the bar in the rack, under it at lockout
-        self.place_body(tilt, bar_y + lerp(0.12 if p["load"] == "bar" else 0.0, 0.0, smooth(s)))
+        self.place_body(tilt, bar_y + lerp(0.13 if p["load"] == "bar" else 0.0, 0.0, smooth(s)))
         sh = self.shoulders()
         # head back while the bar passes the face, through at lockout
         z_top = sh.z + 0.14 + p["top_reach"] * self.reach      # + girdle lift + hand
