@@ -112,17 +112,18 @@ class Pattern:
         """On the back, upper back on the floor, hips lifted phi deg."""
         P = self.P
         P.reset()
-        self.orient(-(90 + phi), lambda: self.lm["upper_back"], Vector((0, 0.0, 0.004)))
+        z0 = getattr(self, "base_z", 0.0) + 0.004          # floor, or a bench pad
+        self.orient(-(90 + phi), lambda: self.lm["upper_back"], Vector((0, getattr(self, "back_y", 0.0), z0)))
         # the contact moves up the back as the hips rise: rest on the lowest point
         low = min(self.lm[n].z for n in ("upper_back", "upper_back_hi", "scap.L", "scap.R"))
-        if low < 0.004:
+        if low < z0:
             m = P.rig.pose.bones["root"].matrix.copy()
-            P.set_world("root", m.to_3x3(), m.translation + Vector((0, 0, 0.004 - low)))
+            P.set_world("root", m.to_3x3(), m.translation + Vector((0, 0, z0 - low)))
 
     def solve_supine(self):
         P, p = self.P, self.p
         gl = lambda ph: (self.supine(ph), self.lm["glutes"].z)[1]
-        self.phi_floor = self.bisect(gl, -20.0, 30.0, 0.004)
+        self.phi_floor = self.bisect(gl, -20.0, 30.0, getattr(self, "base_z", 0.0) + 0.004)
         self.supine(self.phi_floor)
         hip = (P.head("upperleg01.L") + P.head("upperleg01.R")) / 2
         az = P.rest_head("foot.L").z

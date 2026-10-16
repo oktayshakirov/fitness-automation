@@ -179,8 +179,43 @@ class FixedBars:
         pass
 
 
+class Bench:
+    """Flat bench (stand-in until equipment.bench exists): pad top at z, running along Y
+    under a lying body whose upper back is at y = 0."""
+
+    def __init__(self, P, spec):
+        import bpy
+        z, y0, y1 = spec.get("z", 0.43), spec.get("y0", -0.78), spec.get("y1", 0.42)
+        maker = getattr(eq, "bench", None)
+        if maker:
+            self.root = maker("bench")
+            return
+        self.root = eq.empty("bench")
+        bpy.ops.mesh.primitive_cube_add(size=1, location=(0, (y0 + y1) / 2, z - 0.04),
+                                        scale=(0.29, y1 - y0, 0.08))
+        pad = bpy.context.active_object
+        pad.name = "bench_pad"
+        pad.data.materials.append(eq.mat("rubber"))
+        pad.parent = self.root
+        for y in (y0 + 0.12, y1 - 0.12):
+            bpy.ops.mesh.primitive_cube_add(size=1, location=(0, y, (z - 0.08) / 2), scale=(0.06, 0.06, z - 0.08))
+            leg = bpy.context.active_object
+            leg.data.materials.append(eq.mat("frame"))
+            leg.parent = self.root
+            bpy.ops.mesh.primitive_cube_add(size=1, location=(0, y, 0.02), scale=(0.42, 0.07, 0.04))
+            foot = bpy.context.active_object
+            foot.data.materials.append(eq.mat("frame"))
+            foot.parent = self.root
+
+    def attach(self, f, contacts=None):
+        return {}
+
+    def finish(self, n):
+        pass
+
+
 KINDS = {"dumbbell": Dumbbells, "cable_bar": CableBar, "barbell": Barbell,
-         "pullup_bar": FixedBars, "dip_bars": FixedBars}
+         "pullup_bar": FixedBars, "dip_bars": FixedBars, "bench": Bench}
 
 
 def build(P, specs):
