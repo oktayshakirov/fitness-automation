@@ -166,8 +166,13 @@ class Pattern:
 
     def pose_hinge(self, s, arms=True):
         """RDL / good morning: fixed soft knee, hips back, torso to `hinge` deg.
-        arms=False poses only legs, pelvis and spine (patterns built on the hinge)."""
+        arms=False poses only legs, pelvis and spine (patterns built on the hinge).
+        Kettlebell swing: the hips hinge late (the bell drops to the thighs first) and,
+        on the way up, snap to lockout before the bell floats up."""
         P, p, st = self.P, self.p, self.st
+        s_arms = s
+        if p["load"] == "kettlebell":
+            s = smooth((s - 0.35) / 0.65)
         tilt = 3 + (p["hinge"] - 3) * s
         knee = lerp(8.0, p["knee"], smooth(s / 0.3))          # unlock the knees first
         k = math.radians(180 - knee)
@@ -184,7 +189,9 @@ class Pattern:
             # front of it at the bottom
             u = (tilt - 3) / max(1.0, p["hinge"] - 3)
             self._u = u
-            want_y = self.midfoot_y - 0.02 + lerp(0.07, -0.03, smooth(u * 1.4))
+            # kettlebell: the bell swings behind the knees, so the shoulders go further forward
+            deep = -0.09 if p["load"] == "kettlebell" else -0.03
+            want_y = self.midfoot_y - 0.02 + lerp(0.07, deep, smooth(u * 1.4))
         off = self.torso_offset(tilt, anchor)
         hy = want_y - off.y
         dy = hy - ankle.y
@@ -193,6 +200,8 @@ class Pattern:
         st.legs()
         if not arms:
             return {}
+        if p["load"] == "kettlebell":
+            return self.arms_kettlebell(s_arms)
         if p["load"] == "back_bar":
             return self.arms_back_bar()
         return self.arms_hang()
@@ -291,6 +300,25 @@ class Pattern:
             reach(P, side, g, body @ Vector((sgn * 0.5, 0.3, -1)), knuckle_dir=to_chest, palm=palm, fist=False)
             P.curl_fingers(side, deg=(25, 35, 25), thumb=(10, 20, 15))
         return {"db": (c, axis)}
+
+    def arms_kettlebell(self, s):
+        """Two-hand kettlebell swing: straight arms swing like a pendulum from chest
+        height at lockout (s = 0) to between the legs, forearms against the inner
+        thighs, bell behind the knees (s = 1)."""
+        P, p = self.P, self.p
+        sh = self.shoulders()
+        a = math.radians(lerp(-80.0, p.get("hike", 28.0), s))   # world angle from straight down, + = back
+        d = Vector((0, math.sin(a), -math.cos(a)))
+        c = sh + d * (self.arm_len * 0.975)
+        body = P.delta("spine01")
+        for side, sgn in (("L", 1), ("R", -1)):
+            g = c + X * sgn * 0.045
+            arm = (g - P.head(f"upperarm01.{side}")).normalized()
+            P.scap_rhythm(side, arm, protraction=lerp(4, -4, s))
+            reach(P, side, g, body @ Vector((sgn * 0.3, 1, 0)), knuckle_dir=knuckles(sgn, "over"),
+                  palm=lambda fd: bar_palm(X, fd, "over"))
+        # the bell hangs off the handle along the arms (it swings with them)
+        return {"kb": (c, X.copy(), d)}
 
     def arms_counterbalance(self, s):
         """Arms from hanging to shoulder height, palms down, straight."""

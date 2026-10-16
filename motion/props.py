@@ -349,9 +349,52 @@ class CableHandle:
         pass
 
 
+class Kettlebell:
+    """Kettlebell held by its handle (stand-in until equipment.kettlebell exists): handle
+    along local X, the bell hangs along the arms' direction."""
+
+    def __init__(self, P, spec):
+        import bpy
+        maker = getattr(eq, "kettlebell", None)
+        if maker:
+            self.kb = maker("kettlebell", spec.get("kg", 16))
+        else:
+            self.kb = eq.empty("kettlebell")
+            r = 0.105
+            bpy.ops.mesh.primitive_uv_sphere_add(radius=r, location=(0, 0, -0.035 - r), segments=32, ring_count=16)
+            bell = bpy.context.active_object
+            bell.name = "kettlebell_bell"
+            bell.data.materials.append(eq.mat("dark"))
+            bpy.ops.object.shade_smooth()
+            bell.parent = self.kb
+            bpy.ops.mesh.primitive_torus_add(major_radius=0.07, minor_radius=0.011, location=(0, 0, -0.035),
+                                             rotation=(math.radians(90), 0, 0))
+            h = bpy.context.active_object
+            h.name = "kettlebell_handle"
+            h.scale = (1.0, 0.75, 1.0)
+            h.data.materials.append(eq.mat("dark"))
+            h.parent = self.kb
+        self.kb.rotation_mode = "QUATERNION"
+
+    def attach(self, f, contacts=None):
+        if not contacts or "kb" not in contacts:
+            return {}
+        c, x, d = contacts["kb"]
+        z = (-d - (-d).project(x)).normalized()           # local -Z (bell) along the arms
+        self.kb.location = c
+        self.kb.rotation_quaternion = Matrix((x, z.cross(x), z)).transposed().to_quaternion()
+        self.kb.keyframe_insert("location", frame=f)
+        self.kb.keyframe_insert("rotation_quaternion", frame=f)
+        return {}
+
+    def finish(self, n):
+        pass
+
+
 KINDS = {"dumbbell": Dumbbells, "cable_bar": CableBar, "barbell": Barbell,
          "pullup_bar": FixedBars, "dip_bars": FixedBars, "bench": Bench,
-         "machine": Machine, "cable_handle": CableHandle}
+         "machine": Machine, "cable_handle": CableHandle,
+         "kettlebell": Kettlebell}
 
 
 def build(P, specs):

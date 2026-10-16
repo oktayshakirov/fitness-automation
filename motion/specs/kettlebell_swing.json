@@ -1,0 +1,12 @@
+{
+  "id": "kettlebell_swing",
+  "pattern": "stand_hinge",
+  "params": {"mode": "hinge", "load": "kettlebell", "stance": 0.2, "toe_out": 12, "hinge": 62, "knee": 26, "hike": 28},
+  "props": [{"kind": "kettlebell", "kg": 16}],
+  "tempo": {"hold_start": 3, "out": 16, "peak": 2, "back": 16, "end": 3},
+  "camera": {"target": [0, 0.0, 0.9], "ortho": 2.3},
+  "views": [{"name": "side", "yaw": 90}, {"name": "threeq", "yaw": 35}, {"name": "front", "yaw": 0}],
+  "draft_muscles": {"primary": ["glutes", "hamstrings"], "secondary": ["lower back", "quadriceps", "shoulders", "abdominals", "forearms"]},
+  "qa": {"load_kg": {"kettlebell": 16}},
+  "approved": false
+}
