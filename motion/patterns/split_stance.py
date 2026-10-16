@@ -73,7 +73,7 @@ class Pattern:
     # --- feet ---------------------------------------------------------------
     def rear_ankle(self, flat_ankle, pitch):
         """Ankle position with the foot pivoting about the ball of the foot."""
-        ball = Vector((flat_ankle.x, flat_ankle.y - self.ball_off.y, self.ball_z))
+        ball = Vector((flat_ankle.x, flat_ankle.y - self.ball_off.y, self.ball_z + flat_ankle.z - self.ankle_z))
         return ball + rot_x(pitch) @ Vector((0, self.ball_off.y, self.ball_off.z))
 
     def foot_targets(self, s):
@@ -119,6 +119,7 @@ class Pattern:
             top = self.max_hip_z(Vector((0, hy, 0)), feet)
             hz = lerp(top, self.hip_bot.z, s)
         else:
+            # the body falls into the step (dynamic): hips travel with the stepping foot
             stand_y = self.ankle_y + 0.01
             hy = lerp(stand_y, self.hip_bot.y, smooth(s / 0.6))
             top = self.max_hip_z(Vector((0, hy, 0)), feet)

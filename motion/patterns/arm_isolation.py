@@ -6,7 +6,7 @@ elbow is passed as the IK pole so it can't drift at deep flexion.
   params: tilt (forward lean, deg), hip_back (m), knee_reach (leg extension 0..1),
   ua_dir (upper-arm direction, x mirrored per side), grip_x (fixed wrist half-width or
   null), phi ([start, end] elbow angle from the upper arm, deg),
-  grip ("over" | "under" | "neutral").
+  grip ("over" | "under" | "neutral"), carry (carrying angle at full extension, deg).
 
 joint = "shoulder" (lateral / front raises): the elbow angle stays fixed and soft, the
 whole arm rotates up in one plane to about shoulder height; the shoulder girdle follows
@@ -27,7 +27,7 @@ class Pattern:
         self.p = p = {"joint": "elbow", "tilt": 1.0, "hip_back": 0.0, "knee_reach": 0.985,
                       "ua_dir": [0.06, -0.06, -1], "grip_x": None, "phi": [6, 138], "grip": "under",
                       "stance": 0.13, "toe_out": 8.0, "fingers": "fist",
-                      "plane": 25.0, "elev": [12, 88], "elbow": 18.0, "palm": "in", **params}
+                      "plane": 25.0, "elev": [12, 88], "elbow": 18.0, "palm": "in", "carry": 0.0, **params}
         self.st = Stance(P, p["stance"], p["toe_out"])
         ankle = self.st.ankles["L"]
         self.hip_mid = Vector((0, ankle.y + p["hip_back"], self.st.hip_height(p["knee_reach"], p["hip_back"])))
@@ -57,6 +57,10 @@ class Pattern:
         d_ua = Vector((sgn * x, y, z)).normalized()
         elbow = sh + d_ua * ua
         f_dir = rot_x(-phi) @ d_ua          # forearm swings forward/up in the sagittal plane
+        if p["carry"]:
+            # carrying angle: the extended forearm angles out, fading as the elbow bends
+            c = p["carry"] * max(0.0, math.cos(math.radians(phi)))
+            f_dir = Matrix.Rotation(math.radians(-sgn * c), 3, "Y") @ f_dir
         wrist = elbow + f_dir * fa
         if p["grip_x"] is not None:
             wrist.x = sgn * p["grip_x"]

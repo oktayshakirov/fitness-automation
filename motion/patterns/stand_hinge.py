@@ -103,6 +103,10 @@ class Pattern:
         P.local("spine01", (1, 0, 0), -0.12 * tilt)
         P.local("neck02", (1, 0, 0), -0.22 * tilt)
         P.local("head", (1, 0, 0), -0.12 * tilt)
+        if self.p["load"] in ("hang_bar", "hang_db") or self.p["mode"] == "pull":
+            # lats on, shoulder blades set back; arms hang straight down
+            for side in ("L", "R"):
+                P.scap_rhythm(side, Vector((0, 0, -1)), protraction=-8)
 
     # --- pose -----------------------------------------------------------------
     def pose(self, s):
@@ -172,13 +176,14 @@ class Pattern:
         self.back_set(tilt)
         if p["load"] == "back_bar":
             anchor = lambda: P.rig.pose.bones["spine01"].matrix @ self.bar_local
-            want_y = self.midfoot_y
+            want_y = self.midfoot_y - 0.02        # bar a touch ahead: hips sit far back
         else:
             anchor = self.shoulders
             # shoulders over the bar: behind it while the bar rests on the thighs, just in
             # front of it at the bottom
             u = (tilt - 3) / max(1.0, p["hinge"] - 3)
-            want_y = self.bar_y() + lerp(0.07, -0.03, smooth(u * 1.4))
+            self._u = u
+            want_y = self.midfoot_y - 0.02 + lerp(0.07, -0.03, smooth(u * 1.4))
         off = self.torso_offset(tilt, anchor)
         hy = want_y - off.y
         dy = hy - ankle.y
@@ -190,6 +195,11 @@ class Pattern:
         return self.arms_hang()
 
     def bar_y(self):
+        if self.p["load"] == "hang_db":
+            # dumbbell heads are fat: in front of the thighs at the top, back over
+            # mid-foot as the hips hinge and the thighs lean away
+            u = getattr(self, "_u", 0.0)
+            return self.midfoot_y - lerp(0.11, 0.03, smooth(u * 1.3))
         return self.midfoot_y - 0.02
 
     def pose_pull(self, s):
@@ -233,8 +243,6 @@ class Pattern:
         body = P.delta("spine01")
         for side, sgn in (("L", 1), ("R", -1)):
             g = c + X * sgn * p["grip_w"]
-            arm = (g - P.head(f"upperarm01.{side}")).normalized()
-            P.scap_rhythm(side, arm, protraction=-8)        # lats on, shoulder blades set
             grip = p["grip"] if p["grip"] != "mixed" else ("over" if side == "R" else "under")
             pole = body @ Vector((sgn * 0.4, 1, 0))           # elbows point back and out
             reach(P, side, g, pole, knuckle_dir=X * sgn,
@@ -275,7 +283,7 @@ class Pattern:
             g = c + axis * 0.05 + lat * 0.042 - to_chest * 0.01
             arm = (g - P.head(f"upperarm01.{side}")).normalized()
             P.scap_rhythm(side, arm, protraction=4)
-            palm = (axis * 0.85 - lat * 0.5).normalized()
+            palm = (axis * 0.9 - lat * 0.4).normalized()
             P.curl_fingers(side, deg=(25, 35, 25), thumb=(10, 20, 15))
             reach(P, side, g, body @ Vector((sgn * 0.5, 0.3, -1)), knuckle_dir=to_chest, palm=palm, fist=False)
             P.curl_fingers(side, deg=(25, 35, 25), thumb=(10, 20, 15))

@@ -1,7 +1,7 @@
 {
   "id": "dumbbell_romanian_deadlift",
   "pattern": "stand_hinge",
-  "params": {"mode": "hinge", "load": "hang_db", "stance": 0.12, "toe_out": 6, "hinge": 72, "knee": 20, "grip_w": 0.17},
+  "params": {"mode": "hinge", "load": "hang_db", "stance": 0.12, "toe_out": 6, "hinge": 72, "knee": 20, "grip_w": 0.18},
   "props": [{"kind": "dumbbell", "hands": ["L", "R"]}],
   "tempo": {"hold_top": 6, "down": 30, "hold_bottom": 6, "up": 24, "hold_end": 6},
   "camera": {"target": [0, 0.05, 0.9], "ortho": 2.3},

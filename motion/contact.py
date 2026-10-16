@@ -1,3 +1,4 @@
+import os
 """Hand contact: where an implement sits in the closed hand."""
 
 
@@ -23,19 +24,19 @@ def bar_palm(bar_axis, forearm, grip):
     return n if grip == "over" else -n
 
 
-def reach(P, side, grip_target, pole, knuckle_dir=None, palm=None, elbow=None, iters=4, fist=True):
+def reach(P, side, grip_target, pole, knuckle_dir=None, palm=None, elbow=None, iters=12, fist=True):
     """Put the hand's grip point (see grip_point) on grip_target.
 
     pole: elbow bend hint (world vector); knuckle_dir: direction the handle runs through
     the fist (index -> little finger); palm: palm normal, or a callable
     palm(forearm_dir) -> vector, recomputed each pass. The wrist target is corrected
-    until the grip point lands on the handle (2-4 passes, < 1 mm)."""
+    until the grip point lands on the handle (usually 2-6 passes, < 0.5 mm)."""
     upper, lower, end = f"upperarm01.{side}", f"lowerarm01.{side}", f"wrist.{side}"
     if fist:
         P.curl_fingers(side)
     wrist = grip_target.copy()
     err = None
-    for _ in range(iters):
+    for it in range(iters):
         sh = P.head(upper)
         k_guess = elbow if elbow is not None else None
         fdir = (wrist - (k_guess if k_guess is not None else P.head(lower))).normalized()
@@ -49,5 +50,8 @@ def reach(P, side, grip_target, pole, knuckle_dir=None, palm=None, elbow=None, i
         err = grip_target - g
         if err.length < 0.0005:
             break
-        wrist = wrist + err
+        wrist = wrist + err * (1.0 if it == 0 else 0.6)     # damped: folded arms oscillate
+    if os.environ.get("FIT_DEBUG"):
+        d = (grip_target - P.head(upper)).length
+        print(f"REACH {side} err {err.length * 1000:.1f} mm, shoulder->target {d:.3f}")
     return err.length

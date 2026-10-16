@@ -2,7 +2,7 @@
   "id": "hammer_curl",
   "pattern": "arm_isolation",
   "params": {"tilt": 1, "hip_back": 0.0, "knee_reach": 0.985, "ua_dir": [0.06, -0.06, -1],
-             "grip_x": null, "phi": [6, 132], "grip": "neutral"},
+             "grip_x": null, "phi": [10, 132], "grip": "neutral", "carry": 14},
   "props": [{"kind": "dumbbell", "hands": ["L", "R"]}],
   "tempo": {"hold_start": 6, "work": 24, "hold_peak": 6, "return": 30, "hold_end": 6},
   "camera": {"target": [0, 0, 1.0], "ortho": 2.1},
