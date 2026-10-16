@@ -2,7 +2,7 @@
 tower whose cable and weight stack follow the handle every frame."""
 import bpy, math
 from mathutils import Vector, Matrix
-from common import flat_material
+from core.look import flat_material
 
 _mats = {}
 

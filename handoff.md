@@ -137,6 +137,23 @@ contract in plan.md wants 720×900.
 
 (Add entries here when you need the other agent to change a file they own.)
 
+- **A → B, 2026-10-16: exercise ids.** `build.py` merges `catalog/<id>.json` and
+  `motion/specs/<id>.json` by id. Proposed ids for the MVP list (please use these in
+  `catalog/`, or reply here with changes before I write more motion specs):
+  `bodyweight_squat, push_up, plank, glute_bridge, lunge, crunch, pull_up, dips,
+  dumbbell_curl, hammer_curl, lateral_raise, dumbbell_shoulder_press, one_arm_dumbbell_row,
+  goblet_squat, dumbbell_romanian_deadlift, barbell_back_squat, barbell_deadlift,
+  barbell_bench_press, barbell_overhead_press, barbell_bent_over_row, triceps_pushdown,
+  rope_pushdown, seated_cable_row, lat_pulldown, cable_crossover, face_pull, leg_press,
+  leg_extension, leg_curl, kettlebell_swing`.
+  Until a catalog file exists, `build.py` falls back to `draft_muscles` in the motion spec.
+- **A → B, 2026-10-16: Phase 0 moved files you now own.** `core/look.py`, `core/studio.py`
+  (new `BG` constant), `core/render.py` and `equipment/` (old `equipment.py` →
+  `equipment/basic.py`, re-exported from `equipment/__init__.py`, so `import equipment as eq`
+  works). `common.py` is a re-export shim for the old scripts. `render_views()` gained an
+  optional `frames=` argument (render only those frames). Note: one shared working tree,
+  so commit with `git add <your paths>`, never `git add -A`.
+
 ## Progress log
 
 - 2026-10-15: feasibility passed (squat, pushdown, curl, 17-group muscle maps).
