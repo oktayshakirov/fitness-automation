@@ -13,6 +13,7 @@ for i,eid in enumerate(ids):
         e=read(asset)
         try:
             current_asset(eid,e)
+            report.append({'id':eid,'status':'PASS','reused':True,'seconds':0})
             print(f'{i+1}/{len(ids)} {eid}: current, skipped',flush=True);continue
         except (OSError,ValueError,KeyError): pass
     cmd=[sys.executable,str(ROOT/'build.py'),eid]+(['--no-render'] if pose else ['--quick','--frames','1,30,54,72'] if quick else ['--delivery'])
@@ -28,5 +29,6 @@ for i,eid in enumerate(ids):
     entry={'id':eid,'status':status,'seconds':round(time.time()-started),'log':str(logs/(eid+'.log'))};report.append(entry)
     (logs/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     print(f'{i+1}/{len(ids)} {eid}: {status} ({entry["seconds"]}s)',flush=True)
+(logs/'report.json').write_text(json.dumps(report,indent=2)+'\n')
 if not quick and not pose:rebuild_manifest()
 sys.exit(1 if any(e['status']=='FAIL' for e in report) else 0)

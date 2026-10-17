@@ -5,11 +5,11 @@ Run from the repository root; `build.py` launches Blender with `.blender-profile
 ```sh
 python3 catalog/validate.py
 python3 build.py bodyweight_squat --delivery
-python3 core/batch.py
+python3 core/run_mvp.py
 python3 core/review_server.py 8765
 ```
 
-Open http://127.0.0.1:8765/review/index.html. The batch is serial and resumes from
+Open http://127.0.0.1:8765/review/index.html. `core/run_mvp.py` runs the batch, retries failed items once, then audits the complete bundle. Progress is recorded in `review/run_status.json` and shown on the review page; logs are in `review/mvp_batch.log`. The runner uses a process lock to prevent duplicate full runs. It can be launched detached for unattended rendering. The batch is serial and resumes from
 current asset fingerprints. A full build fits every camera to the animated body
 and equipment, saves the scene, runs QA, renders all declared views at 720×900,
 and encodes 30 fps H.264 and HEVC (`hvc1`) MP4 files. It produces first-frame WebP

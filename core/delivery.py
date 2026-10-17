@@ -119,6 +119,13 @@ def export_delivery(eid,dirs,views,qa_path=None):
         if staged.exists():shutil.rmtree(staged)
 
 def rebuild_manifest():
+    import fcntl
+    dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+    with (dist/'.manifest.lock').open('a') as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX)
+        return _rebuild_manifest()
+
+def _rebuild_manifest():
     from core.package_notices import package_notices
     package_notices()
     entries=[];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
