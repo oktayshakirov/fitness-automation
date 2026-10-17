@@ -2,7 +2,7 @@
 import subprocess,sys,json,time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
-from core.delivery import pipeline_digest,spec_digest,read,rebuild_manifest
+from core.delivery import pipeline_digest,spec_digest,read,rebuild_manifest,current_asset
 args=sys.argv[1:];quick='--quick' in args;pose='--pose-only' in args
 chosen=[s for s in args if not s.startswith('--')]
 ids=chosen or [p.stem for p in sorted((ROOT/'catalog').glob('*.json'))]
@@ -11,8 +11,10 @@ for i,eid in enumerate(ids):
     asset=ROOT/'dist'/eid/'asset.json'
     if not quick and not pose and asset.exists():
         e=read(asset)
-        if e.get('pipeline_sha256')==pipeline_digest() and e.get('spec_sha256')==spec_digest(eid):
+        try:
+            current_asset(eid,e)
             print(f'{i+1}/{len(ids)} {eid}: current, skipped',flush=True);continue
+        except (OSError,ValueError,KeyError): pass
     cmd=[sys.executable,str(ROOT/'build.py'),eid]+(['--no-render'] if pose else ['--quick','--frames','1,30,54,72'] if quick else ['--delivery'])
     started=time.time()
     with (logs/(eid+'.log')).open('w') as log:

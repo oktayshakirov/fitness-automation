@@ -31,6 +31,28 @@ def current_qa(eid,path=None):
     if q.get('blend_sha256')!=digest(ROOT/'review'/(eid+'.blend')):raise ValueError(eid+': QA blend is stale')
     return q
 
+
+def current_asset(eid, entry):
+    """Require matching QA and complete, unmodified delivered media."""
+    q = current_qa(eid)
+    if entry.get('spec_sha256') != spec_digest(eid):
+        raise ValueError(eid + ': delivery spec is stale')
+    if entry.get('pipeline_sha256') != q.get('pipeline_sha256'):
+        raise ValueError(eid + ': delivery pipeline is stale')
+    if entry.get('qa', {}).get('blend_sha256') != q.get('blend_sha256'):
+        raise ValueError(eid + ': delivery scene is stale')
+    base = ROOT / 'dist' / eid
+    paths = [p for view in entry['files'].values() for p in view.values()]
+    paths.append(entry['thumb'])
+    for relative in paths:
+        path = (ROOT / 'dist' / relative).resolve()
+        if not path.is_relative_to(base.resolve()) or not path.is_file():
+            raise ValueError(eid + ': delivery file missing or invalid')
+        metadata = entry.get('media', {}).get(path.name)
+        if metadata and (path.stat().st_size != metadata['bytes'] or digest(path) != metadata['sha256']):
+            raise ValueError(eid + ': delivery file changed')
+    return entry
+
 def run(args):subprocess.run(args,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
 def probe(path):return read_probe(path)
 def read_probe(path):
@@ -104,6 +126,8 @@ def rebuild_manifest():
         e=read(p);eid=e['id']
         if e.get('spec_sha256')!=spec_digest(eid) or e.get('pipeline_sha256')!=pipeline_digest():continue
         if e.get('qa',{}).get('pass') is not True:continue
+        try: current_asset(eid,e)
+        except (OSError,ValueError,KeyError): continue
         motion=read(ROOT/'motion/specs'/(eid+'.json'));cat=read(ROOT/'catalog'/(eid+'.json'))
         e['approved']=bool(motion.get('approved') and cat.get('reviewed'))
         entries.append(e)
