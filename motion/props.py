@@ -65,34 +65,17 @@ class CableBar:
         self.bar.rotation_mode = "QUATERNION"
 
     def _rope(self):
-        """Two rope strands from a swivel ring to the hands (stand-in for eq.rope)."""
-        import bpy
-        strands = []
-        for side in ("L", "R"):
-            cd = bpy.data.curves.new(f"rope_{side}", "CURVE")
-            cd.dimensions = "3D"
-            cd.bevel_depth = 0.011
-            cd.bevel_resolution = 3
-            sp = cd.splines.new("POLY")
-            sp.points.add(2)
-            o = bpy.data.objects.new(f"rope_{side}", cd)
-            bpy.context.scene.collection.objects.link(o)
-            cd.materials.append(eq.mat("cable"))
-            strands.append(sp)
-        return strands
+        return eq.rope("pushdown_rope")
 
     def attach_rope(self, f):
-        P = self.P
-        gL, _ = grip_point(P, "L")
-        gR, _ = grip_point(P, "R")
+        gL, _ = grip_point(self.P, "L")
+        gR, _ = grip_point(self.P, "R")
         mid = (gL + gR) / 2
         up = (self.tower.front_c - mid).normalized()
         ring = mid + up * 0.16
-        for sp, g in zip(self.rope, (gL, gR)):
-            bend = ring + (g - ring) * 0.55 + up * 0.0
-            for pt, v in zip(sp.points, (ring, bend, g - up * 0.04)):
-                pt.co = (v.x, v.y, v.z, 1)
-                pt.keyframe_insert("co", frame=f)
+        self.rope.location = ring
+        self.rope.keyframe_insert("location", frame=f)
+        eq.update_rope(self.rope, gL, gR, f)
         self.ring[f] = ring
         return {"L": gL, "R": gR}
 
@@ -188,16 +171,9 @@ class FixedBars:
             wall.location = (0, 0.6, 0)
             return [(root, c, Vector((1, 0, 0)))]
         hL, hR = contacts["dip"]
-        out = []
-        for side, h in (("L", hL), ("R", hR)):
-            root = eq.empty(f"dip_bar_{side}")
-            eq.cyl_x(f"dip_bar_{side}_tube", "steel", 0.02, 0.7, parent=root)
-            for dy in (0.3, -0.3):
-                post = eq.cyl_x(f"dip_post", "frame", 0.03, h.z, parent=root)
-                post.rotation_euler = (0, 0, 0)
-                post.location = (dy, 0, -h.z / 2)
-            out.append((root, h, Vector((0, 1, 0))))
-        return out
+        mid = (hL + hR) / 2
+        root = eq.dip_station("dip_station", height=mid.z, width=abs(hL.x-hR.x))
+        return [(root, Vector((mid.x, mid.y, 0)), Vector((1,0,0)))]
 
     def attach(self, f, contacts=None):
         if not contacts:
@@ -226,7 +202,8 @@ class Bench:
         z, y0, y1 = spec.get("z", 0.43), spec.get("y0", -0.78), spec.get("y1", 0.42)
         maker = getattr(eq, "bench", None)
         if maker:
-            self.root = maker("bench")
+            self.root = maker("bench", incline=spec.get("incline",0), seat_z=z, y0=y0, y1=y1)
+            self.root.location.x = spec.get("x", 0.0)
             return
         self.root = eq.empty("bench")
         self.root.location.x = spec.get("x", 0.0)
@@ -266,67 +243,15 @@ def _box(name, loc, scale, material, parent, rot=None):
 
 
 class Machine:
-    """Stand-in machine frame (until equipment/ has the real ones): seat, back pad, and
-    the part the pattern moves - a shin roller ("pad") or a sled plate ("plate").
-    spec: {"kind": "machine", "type": "leg_extension" | "leg_curl" | "leg_press" |
-    "pulldown" | "cable_row", "seat_z": .., "lean": ..}"""
-
+    """Real equipment/ machine driven by the motion pattern's contacts."""
     def __init__(self, P, spec):
-        self.P = P
-        t = spec.get("type", "leg_extension")
-        self.t = t
-        z = spec.get("seat_z", 0.48)
-        lean = math.radians(spec.get("lean", -10.0))
-        self.root = eq.empty("machine")
-        # back pad along the torso: hip joint ~8.5 cm over the seat, back surface
-        # ~12 cm behind the hip-shoulder line
-        hip = Vector((0, 0, z + 0.085))
-        up = Vector((0, -math.sin(lean), math.cos(lean)))
-        back = Vector((0, math.cos(lean), math.sin(lean)))
-        if t == "leg_press":
-            _box("seat", (0, 0.06, z - 0.04), (0.42, 0.36, 0.08), "rubber", self.root)
-            c = hip + up * 0.40 + back * 0.16
-            _box("back_pad", tuple(c), (0.42, 0.08, 0.80), "rubber", self.root, rot=(lean, 0, 0))
-            _box("base", (0, -0.3, 0.05), (0.8, 2.0, 0.1), "frame", self.root)
-        elif t == "cable_row":
-            _box("seat", (0, 0.05, z - 0.04), (0.32, 0.9, 0.08), "rubber", self.root)
-            _box("rail", (0, -0.35, z / 2), (0.12, 1.5, z - 0.08), "frame", self.root)
-            _box("footplate", (0, -0.80, 0.30), (0.5, 0.05, 0.30), "frame", self.root, rot=(math.radians(20), 0, 0))
-        else:
-            _box("seat", (0, -0.12, z - 0.04), (0.42, 0.44, 0.08), "rubber", self.root)
-            _box("seat_post", (0, -0.05, (z - 0.08) / 2), (0.1, 0.1, z - 0.08), "frame", self.root)
-            if t != "pulldown":
-                c = hip + up * 0.36 + back * 0.17
-                _box("back_pad", tuple(c), (0.40, 0.08, 0.62), "rubber", self.root, rot=(lean, 0, 0))
-            else:
-                _box("knee_pad", (0, -0.40, z + 0.20), (0.45, 0.10, 0.10), "rubber", self.root)
-        self.moving = None
-        if t in ("leg_extension", "leg_curl"):
-            self.moving = eq.cyl_x("shin_roller", "rubber", 0.05, 0.42)
-        elif t == "leg_press":
-            self.moving = eq.empty("sled")
-            _box("sled_plate", (0, 0, 0), (0.75, 0.04, 0.55), "frame", self.moving)
-
+        kw = {k:spec[k] for k in ("seat_z","lean") if k in spec}
+        self.impl = eq.Machine(spec.get("type", "leg_extension"), **kw)
+        self.root = self.impl.root
     def attach(self, f, contacts=None):
-        if not self.moving or not contacts:
-            return {}
-        if "pad" in contacts:
-            c, _ = contacts["pad"]
-            self.moving.location = c
-            self.moving.keyframe_insert("location", frame=f)
-        if "plate" in contacts:
-            c, d = contacts["plate"]
-            self.moving.rotation_mode = "QUATERNION"
-            # plate face perpendicular to the rail, centred just past the soles
-            y = -d
-            x = Vector((1, 0, 0))
-            self.moving.rotation_quaternion = Matrix((x, y, x.cross(y))).transposed().to_quaternion()
-            self.moving.location = c + d * 0.07
-            self.moving.keyframe_insert("location", frame=f)
-            self.moving.keyframe_insert("rotation_quaternion", frame=f)
+        self.impl.update(contacts or {},f)
         return {}
-
-    def finish(self, n):
+    def finish(self,n):
         pass
 
 
@@ -338,18 +263,8 @@ class CableHandle:
         import bpy
         self.pulley = Vector(spec.get("pulley", (0, -0.05, 2.45)))
         self.kind = spec.get("handle", "lat_bar")
-        if self.kind == "lat_bar":
-            self.obj = eq.empty("lat_bar")
-            eq.cyl_x("lat_bar_tube", "steel", 0.014, 1.15, parent=self.obj)
-            for sgn in (1, -1):
-                bend = eq.cyl_x("lat_bar_grip", "rubber", 0.017, 0.16, sgn * 0.4, self.obj)
-        else:
-            self.obj = eq.empty("v_handle")
-            for sgn in (1, -1):
-                h = eq.cyl_x("v_handle_grip", "rubber", 0.016, 0.13, 0, self.obj)
-                h.rotation_euler = (0, 0, 0)
-                h.location = (sgn * 0.045, 0, 0)
-            eq.cyl_x("v_handle_bridge", "steel", 0.012, 0.11, parent=self.obj)
+        self.obj = eq.lat_bar("lat_bar") if self.kind == "lat_bar" else eq.v_bar("v_handle")
+        self.grip_local = Vector((0,0,-.04 if self.kind == "lat_bar" else -.13))
         self.obj.rotation_mode = "QUATERNION"
         pulley = eq.cyl_x("pulley_wheel", "dark", 0.05, 0.03)
         pulley.location = self.pulley
@@ -374,11 +289,11 @@ class CableHandle:
         else:
             x = Vector((1, 0, 0))
             z = (z - z.project(x)).normalized()
-        self.obj.location = c
         self.obj.rotation_quaternion = Matrix((x, z.cross(x), z)).transposed().to_quaternion()
+        self.obj.location = c - self.obj.rotation_quaternion @ self.grip_local
         self.obj.keyframe_insert("location", frame=f)
         self.obj.keyframe_insert("rotation_quaternion", frame=f)
-        for p_, v in zip(self.spline.points, (c, self.pulley)):
+        for p_, v in zip(self.spline.points, (self.obj.location, self.pulley)):
             p_.co = (v.x, v.y, v.z, 1)
             p_.keyframe_insert("co", frame=f)
         return {}
@@ -429,10 +344,81 @@ class Kettlebell:
         pass
 
 
+class CableLines:
+    """Cables from fixed pulleys to the hands (stand-in for the dual cable station):
+    {"kind": "cable_lines", "pulleys": {"L": [x, y, z], "R": [...]}} gives each hand a
+    D-handle on its own cable; {"kind": "cable_lines", "pulley": [x, y, z], "rope": true}
+    gives a rope whose two ends are in the hands."""
+
+    def __init__(self, P, spec):
+        import bpy
+        self.rope = spec.get("rope", False)
+        self.pulleys = {k: Vector(v) for k, v in spec.get("pulleys", {}).items()}
+        if self.rope:
+            self.pulleys = {"C": Vector(spec["pulley"])}
+        self.lines, self.handles, self.towers, self.rings = {}, {}, {}, {}
+        for k,pul in self.pulleys.items():
+            mode = "mid" if self.rope else "high"
+            top = 2.12 if self.rope else pul.z + .07
+            tower = eq.CableTower(x=pul.x,y_stack=pul.y-.32,y_front=pul.y,top=top,pulley=mode,name="cable_"+k)
+            # Mid-pulley default is 1.35 m; translate the complete fixed station to
+            # preserve the declared cable outlet height (face pull uses 1.42 m).
+            dz = pul.z-tower.front_c.z
+            for ob in tower.objects:
+                if ob.name.find("pulley_front")>=0: ob.location.z += dz
+            tower.front_c.z = pul.z
+            self.towers[k]=tower; self.rings[k]={}
+        if self.rope:
+            self.rope_obj=eq.rope("face_rope")
+        else:
+            for side in ("L", "R"):
+                h=eq.d_handle("d_handle_"+side); h.rotation_mode="QUATERNION"
+                self.handles[side]=h
+
+    def _set(self, sp, a, b, f):
+        for p_, v in zip(sp.points, (a, b)):
+            p_.co = (v.x, v.y, v.z, 1)
+            p_.keyframe_insert("co", frame=f)
+
+    def attach(self, f, contacts=None):
+        if not contacts:
+            return {}
+        if self.rope:
+            gL, gR = contacts["handle.L"], contacts["handle.R"]
+            mid = (gL + gR) / 2
+            ring = mid + (self.pulleys["C"] - mid).normalized() * 0.14
+            self.rope_obj.location=ring
+            self.rope_obj.keyframe_insert("location",frame=f)
+            eq.update_rope(self.rope_obj,gL,gR,f)
+            self.rings["C"][f]=ring
+            return {}
+        for side in ("L", "R"):
+            g = contacts[f"handle.{side}"]
+            pul = self.pulleys[side]
+            d = (pul - g).normalized()
+            h = self.handles[side]
+            # handle across the fist; the cable leaves the handle toward the pulley
+            x = Vector((0, 0, 1))
+            x = (x - x.project(d)).normalized()
+            h.rotation_quaternion = Matrix((x, d.cross(x), d)).transposed().to_quaternion()
+            h.location = g - h.rotation_quaternion @ Vector((0,0,-.13))
+            h.keyframe_insert("location", frame=f)
+            h.keyframe_insert("rotation_quaternion", frame=f)
+            self.rings[side][f]=h.location.copy()
+        return {}
+
+    def finish(self, n):
+        for key,tower in self.towers.items():
+            rings=self.rings[key]
+            shortest=min(rings.values(),key=lambda p:tower.length(tower.path(p,0)))
+            tower.calibrate(shortest)
+            for f,p in rings.items(): tower.update(p,f)
+
+
 KINDS = {"dumbbell": Dumbbells, "cable_bar": CableBar, "barbell": Barbell,
          "pullup_bar": FixedBars, "dip_bars": FixedBars, "bench": Bench,
          "machine": Machine, "cable_handle": CableHandle,
-         "kettlebell": Kettlebell}
+         "kettlebell": Kettlebell, "cable_lines": CableLines}
 
 
 def build(P, specs):

@@ -1,0 +1,72 @@
+{
+  "id": "cable_crossover",
+  "pattern": "cable",
+  "params": {
+    "mode": "crossover",
+    "lean": 12,
+    "elbow": 20,
+    "stagger": 0.32
+  },
+  "props": [
+    {
+      "kind": "cable_lines",
+      "pulleys": {
+        "L": [
+          1.0,
+          0.25,
+          2.1
+        ],
+        "R": [
+          -1.0,
+          0.25,
+          2.1
+        ]
+      }
+    }
+  ],
+  "tempo": {
+    "hold_start": 6,
+    "work": 24,
+    "hold_peak": 6,
+    "return": 30,
+    "hold_end": 6
+  },
+  "camera": {
+    "target": [
+      0,
+      0.0,
+      1.15
+    ],
+    "ortho": 2.7
+  },
+  "views": [
+    {
+      "name": "front",
+      "yaw": 0
+    },
+    {
+      "name": "side",
+      "yaw": 90
+    },
+    {
+      "name": "threeq",
+      "yaw": 35
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "chest"
+    ],
+    "secondary": [
+      "shoulders"
+    ]
+  },
+  "qa": {
+    "skip": [
+      "balance"
+    ],
+    "wrist_max": 80,
+    "notes": "Cable-specific limit; needs human form review. Cable resistance is not modeled by static balance gate."
+  },
+  "approved": false
+}
