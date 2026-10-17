@@ -49,7 +49,7 @@ class Machine:
             self.contacts['handle_path']={'type':'slider','origin':[0,-.12,.3],'axis':[0,0,1],'range':[0,1.8]}
         else:
             base_y=-.35 if kind in ('seated_row','leg_press','hack_squat') else -.1
-            for x in (-.33,.33): cube(name+'_base',(x,base_y,.04),(.10,1.65,.08),parent=r)
+            for x in (-.33,.33): cube(name+'_base',(x,base_y,.04),(.10,1.85 if kind=='seated_row' else 1.65,.08),parent=r)
             for yy in (-.55,.45): beam(name+'_cross',(-.33,yy,.08),(.33,yy,.08),.065,r)
             if kind!='hack_squat':
                 depth=.9 if kind=='seated_row' else .44
@@ -98,8 +98,10 @@ class Machine:
                 self.contacts['handle_path']={'type':'slider','origin':list(origin),'axis':list(self.axis),'range':[0,1.15] if kind=='leg_press' else [.1,1.45]}
             elif kind in ('lat_pulldown','seated_row'):
                 if kind=='lat_pulldown':
-                    pad=cyl_x(name+'_knee_pad','rubber',.06,.49,parent=r); pad.location=(0,-.38,z+.20)
-                    self.contacts['thigh_pad']=[0,-.38,z+.20]
+                    pad=cyl_x(name+'_knee_pad','rubber',.06,.49,parent=r); pad.location=(0,-.38,z+.15)
+                    self.contacts['thigh_pad']=[0,-.38,z+.15]
+                    for x in (-.29,.29):
+                        tube(name+'_pad_support',[(x,.15,z+.03),(x,-.38,z+.03),(x,-.38,z+.15)],.018,'frame',r)
                     tower_y=.6; p=Vector(c['pulley'])
                     for x in (-.34,.34): beam(name+'_upright',(x,tower_y,.05),(x,tower_y,2.50),.06,r)
                     beam(name+'_boom',(0,tower_y,2.50),p,.07,r)
@@ -107,11 +109,17 @@ class Machine:
                     tower_y=-1.25; p=Vector(c['pulley'])
                     for x in (-.34,.34): beam(name+'_upright',(x,tower_y,.05),(x,tower_y,1.35),.06,r)
                     o=cube(name+'_footplate',(0,-.80,.30),(.55,.05,.35),'frame',r); o.rotation_euler.x=math.radians(20)
+                    beam(name+'_footplate_post',(0,-.80,.08),(0,-.80,.30),.07,r)
                     self.contacts['foot_plate']={'point':[0,-.78,.3],'normal':[0,1,.34],'size':[.55,.35]}
+                top_z=2.50 if kind=='lat_pulldown' else 1.35
+                beam(name+'_top_cross',(-.34,tower_y,top_z),(.34,tower_y,top_z),.06,r)
+                for x in (-.12,.12): beam(name+'_stack_guide',(x,tower_y,.08),(x,tower_y,top_z-.08),.012,r,'steel')
+                self.rear_pulley=Vector((0,tower_y,top_z-.05))
+                rear=cyl_x(name+'_rear_pulley','dark',.05,.03,parent=r);rear.location=self.rear_pulley
                 for i in range(12): cube(name+'_weight',(0,tower_y,.13+i*.033),(.36,.18,.03),'plate',r,bevel=.003)
                 self.moving=empty(name+'_stack_cap',(0,tower_y,.54)); self.moving.parent=r
                 cube(name+'_selected',(0,0,0),(.36,.18,.10),'accent',self.moving)
-                self.cable=tube(name+'_cable',[p,p+Vector((0,0,-.5))],.0035,'cable',r)
+                self.cable=tube(name+'_cable',[Vector((0,tower_y,.59)),self.rear_pulley,p,p+Vector((0,0,-.5))],.0035,'cable',r)
                 pulley=cyl_x(name+'_pulley','dark',.05,.03,parent=r); pulley.location=p
                 self.handle0=None
                 self.contacts['handle_path']={'type':'cable','pulley':list(p)}
@@ -149,7 +157,9 @@ class Machine:
             length=(h-p).length
             if self.handle0 is None: self.handle0=length
             self.moving.location.z=.54+max(0,length-self.handle0)
-            for pt,v in zip(self.cable.data.splines[0].points,(p,h)):
+            ring=h+(p-h).normalized()*(.04 if contacts['handle'][2]=='lat_bar' else .13)
+            cable_points=(self.moving.location+Vector((0,0,.05)),self.rear_pulley,p,ring)
+            for pt,v in zip(self.cable.data.splines[0].points,cable_points):
                 pt.co=(*v,1); pt.keyframe_insert('co',frame=frame)
         elif 'travel' in contacts:
             t=max(0,min(1,float(contacts['travel'])))

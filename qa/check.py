@@ -114,6 +114,7 @@ prop_loop_mm = 0.0
 prop_loop_deg = 0.0
 joint_viol = {}
 knee_range = {side: [180.0, 0.0] for side in ("L", "R")}
+elbow_range = {side: [180.0, 0.0] for side in ("L", "R")}
 joint_at = {}
 com_out = 0.0
 load_kg = qa_cfg.get("load_kg")
@@ -316,6 +317,8 @@ for f in frames:
             jv(f"knee_hyper.{side}", flex - 5)
         sh, el, wr = P.head(f"upperarm01.{side}"), P.head(f"lowerarm01.{side}"), P.head(f"wrist.{side}")
         eflex = angle(el - sh, wr - el)
+        elbow_range[side][0] = min(elbow_range[side][0], eflex)
+        elbow_range[side][1] = max(elbow_range[side][1], eflex)
         jv(f"elbow_flex.{side}", eflex - 155)
         hand = P.head(f"finger3-1.{side}") - wr
         jv(f"wrist.{side}", angle(wr - el, hand) - qa_cfg.get("wrist_max", 75))
@@ -389,14 +392,15 @@ for k, v in joint_viol.items():
 if "balance" not in skip and com_out > 0:
     fail("balance", f"centre of mass {com_out * 1000:.0f} mm outside the feet (frame {stats.get('balance_at')})")
 
-stats['knee_flexion_range'] = {side: [round(v, 1) for v in values] for side, values in knee_range.items()}
-if 'knee_flexion_range' in qa_cfg:
-    limits = qa_cfg['knee_flexion_range']
-    for side, values in knee_range.items():
-        for index, name in enumerate(('min', 'max')):
-            lo, hi = limits[name]
-            if not lo <= values[index] <= hi:
-                fail('range_of_motion', f'knee {side} {name} flexion {values[index]:.1f} deg outside {lo}..{hi}')
+for joint, ranges in [('knee', knee_range), ('elbow', elbow_range)]:
+    key = joint + '_flexion_range'
+    stats[key] = {side: [round(v, 1) for v in values] for side, values in ranges.items()}
+    if key in qa_cfg:
+        for side, values in ranges.items():
+            for index, name in enumerate(('min', 'max')):
+                lo, hi = qa_cfg[key][name]
+                if not lo <= values[index] <= hi:
+                    fail('range_of_motion', f'{joint} {side} {name} flexion {values[index]:.1f} deg outside {lo}..{hi}')
 
 from core.delivery import spec_digest, pipeline_digest, digest
 result = {"id": eid, "pass": not fails, "fails": fails, "stats": stats,

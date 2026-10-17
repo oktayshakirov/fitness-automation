@@ -108,7 +108,7 @@ class Pattern:
             ank = Vector((knee.x, knee.y + 0.05, self.az))
             self.leg(side, knee, ank, rot_z(sgn * 8))
         sh = self.shoulders()
-        top = Vector((0, sh.y - 0.06, sh.z + 0.96 * (self.ua + self.fa) * 0.93 + 0.06))
+        top = Vector((0, sh.y - 0.06, sh.z + 0.96 * (self.ua + self.fa) * 0.93 + 0.15))
         chest = sh + Vector((0, -0.17, -0.06))           # bar at the collarbones / upper chest
         c = top.lerp(chest, smooth(s))
         for side, sgn in (("L", 1), ("R", -1)):

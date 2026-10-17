@@ -1,13 +1,68 @@
 {
   "id": "triceps_pushdown",
   "pattern": "arm_isolation",
-  "params": {"tilt": 12, "hip_back": 0.035, "knee_reach": 0.965, "ua_dir": [0.03, -0.16, -1],
-             "grip_x": 0.115, "phi": [98, 4], "grip": "over"},
-  "props": [{"kind": "cable_bar"}],
-  "tempo": {"hold_start": 6, "work": 24, "hold_peak": 6, "return": 30, "hold_end": 6},
-  "camera": {"target": [0, -0.3, 1.1], "ortho": 2.6},
-  "views": [{"name": "side", "yaw": 90}, {"name": "rear", "yaw": 150}, {"name": "front", "yaw": 35}],
-  "sheet": [1, 15, 33, 50, 66],
-  "draft_muscles": {"primary": ["triceps"], "secondary": []},
+  "params": {
+    "tilt": 12,
+    "hip_back": 0.035,
+    "knee_reach": 0.965,
+    "ua_dir": [
+      0.03,
+      -0.16,
+      -1
+    ],
+    "grip_x": 0.115,
+    "phi": [
+      98,
+      4
+    ],
+    "grip": "over"
+  },
+  "props": [
+    {
+      "kind": "cable_bar"
+    }
+  ],
+  "tempo": {
+    "hold_start": 6,
+    "work": 24,
+    "hold_peak": 6,
+    "return": 30,
+    "hold_end": 6
+  },
+  "camera": {
+    "target": [
+      0,
+      -0.3,
+      1.1
+    ],
+    "ortho": 2.6
+  },
+  "views": [
+    {
+      "name": "side",
+      "yaw": 90
+    },
+    {
+      "name": "rear",
+      "yaw": 150
+    },
+    {
+      "name": "front",
+      "yaw": 60
+    }
+  ],
+  "sheet": [
+    1,
+    15,
+    33,
+    50,
+    66
+  ],
+  "draft_muscles": {
+    "primary": [
+      "triceps"
+    ],
+    "secondary": []
+  },
   "approved": false
 }

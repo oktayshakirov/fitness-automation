@@ -266,17 +266,19 @@ class CableHandle:
         self.obj = eq.lat_bar("lat_bar") if self.kind == "lat_bar" else eq.v_bar("v_handle")
         self.grip_local = Vector((0,0,-.04 if self.kind == "lat_bar" else -.13))
         self.obj.rotation_mode = "QUATERNION"
-        pulley = eq.cyl_x("pulley_wheel", "dark", 0.05, 0.03)
-        pulley.location = self.pulley
-        cd = bpy.data.curves.new("cable", "CURVE")
-        cd.dimensions = "3D"
-        cd.bevel_depth = 0.0035
-        sp = cd.splines.new("POLY")
-        sp.points.add(1)
-        self.spline = sp
-        cab = bpy.data.objects.new("cable", cd)
-        bpy.context.scene.collection.objects.link(cab)
-        cd.materials.append(eq.mat("cable"))
+        self.spline = None
+        if spec.get('standalone_cable', True):
+            pulley = eq.cyl_x("pulley_wheel", "dark", 0.05, 0.03)
+            pulley.location = self.pulley
+            cd = bpy.data.curves.new("cable", "CURVE")
+            cd.dimensions = "3D"
+            cd.bevel_depth = 0.0035
+            sp = cd.splines.new("POLY")
+            sp.points.add(1)
+            self.spline = sp
+            cab = bpy.data.objects.new("cable", cd)
+            bpy.context.scene.collection.objects.link(cab)
+            cd.materials.append(eq.mat("cable"))
 
     def attach(self, f, contacts=None):
         if not contacts or "handle" not in contacts:
@@ -293,9 +295,10 @@ class CableHandle:
         self.obj.location = c - self.obj.rotation_quaternion @ self.grip_local
         self.obj.keyframe_insert("location", frame=f)
         self.obj.keyframe_insert("rotation_quaternion", frame=f)
-        for p_, v in zip(self.spline.points, (self.obj.location, self.pulley)):
-            p_.co = (v.x, v.y, v.z, 1)
-            p_.keyframe_insert("co", frame=f)
+        if self.spline is not None:
+            for p_, v in zip(self.spline.points, (self.obj.location, self.pulley)):
+                p_.co = (v.x, v.y, v.z, 1)
+                p_.keyframe_insert("co", frame=f)
         return {}
 
     def finish(self, n):
