@@ -103,7 +103,8 @@ views = [v if isinstance(v, dict) else {"name": v, "yaw": {"front": 0, "side": 9
 if args.views:
     keep = args.views.split(",")
     views = [v for v in views if v["name"] in keep]
-cams = [camera(scene, v["name"], v.get("target", target), v["yaw"], ortho=v.get("ortho", cam_cfg.get("ortho", 2.2)))
+cams = [camera(scene, v["name"], v.get("target", target), v["yaw"], ortho=v.get("ortho", cam_cfg.get("ortho", 2.2)),
+               height=v.get("height", cam_cfg.get("height")))
         for v in views]
 
 if args.delivery:

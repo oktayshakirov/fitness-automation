@@ -70,27 +70,32 @@ class Machine:
                 self.roller=roller
                 axle=cyl_x(name+'_axle','steel',.025,.70,parent=self.pivot)
                 if kind=='leg_curl':
-                    pad=cyl_x(name+'_thigh_pad','rubber',.055,.48,parent=r); pad.location=(0,-.30,z+.19)
+                    pad=cyl_x(name+'_thigh_pad','rubber',.055,.48,parent=r); pad.location=(0,-.30,z+.15)
+                    self.contacts['thigh_pad']=[0,-.30,z+.15]
+                    for x in (-.29,.29):
+                        tube(name+'_pad_support',[(x,.15,z+.03),(x,-.30,z+.03),(x,-.30,z+.15)],.018,'frame',r)
                 self.contacts.update(knee_pivot=[0,c['knee_y'],z+.03],pad_radius=.055,handle_path={'type':'pivot','axis':[1,0,0],'origin':[0,c['knee_y'],z+.03],'radius':.38,'degrees':[0,90]})
             elif kind in ('leg_press','hack_squat'):
                 self.axis=Vector((0,-math.cos(math.radians(c['rail_deg'])),math.sin(math.radians(c['rail_deg']))))
-                origin=Vector((0,-.35,.25))
+                origin=hip+self.axis*.12 if kind=='leg_press' else Vector((0,-.35,.25))
                 for x in (-.5,.5):
-                    p=origin+Vector((x,0,0)); end=p+self.axis*1.65
+                    p=origin+Vector((x,0,0)); end=p+self.axis*(1.15 if kind=='leg_press' else 1.65)
                     beam(name+'_rail',p,end,.045,r,'steel'); beam(name+'_rear_post',(end.x,end.y,.05),end,.07,r)
                 self.moving=empty(name+'_sled'); self.moving.parent=r
                 if kind=='leg_press':
                     cube(name+'_foot_plate',(0,0,0),(.75,.04,.55),'frame',self.moving)
+                    beam(name+'_sled_cross',(-.5,0,0),(.5,0,0),.05,self.moving)
+                    for x in (-.5,.5): cube(name+'_slider',(x,0,0),(.09,.16,.09),'frame',self.moving)
                     for zz in (-.2,-.1,0,.1,.2): cube(name+'_tread',(0,.024,zz),(.68,.008,.014),'rubber',self.moving,bevel=.003)
-                    self.moving.location=(0,-.85,.85); self.moving.rotation_euler.x=math.pi/4
-                    self.contacts['foot_plate']={'point':[0,-.85,.85],'normal':list(-self.axis),'size':[.75,.55]}
+                    self.moving.location=hip+self.axis*.8; self.moving.rotation_euler.x=-math.pi/4
+                    self.contacts['foot_plate']={'point':list(self.moving.location),'normal':list(-self.axis),'size':[.75,.55]}
                 else:
                     cube(name+'_back_pad',(0,0,.4),(.45,.09,.85),'rubber',self.moving)
                     for x in (-.2,.2): cube(name+'_shoulder_pad',(x,-.12,.80),(.16,.30,.10),'rubber',self.moving)
                     self.moving.location=(0,-.5,.65); self.moving.rotation_euler.x=-math.pi/4
                     plate=cube(name+'_foot_plate',(0,-1.0,.14),(.85,.65,.08),'frame',r)
                     self.contacts['foot_plate']={'point':[0,-1,.18],'normal':[0,0,1],'size':[.85,.65]}
-                self.contacts['handle_path']={'type':'slider','origin':list(origin),'axis':list(self.axis),'range':[.1,1.45]}
+                self.contacts['handle_path']={'type':'slider','origin':list(origin),'axis':list(self.axis),'range':[0,1.15] if kind=='leg_press' else [.1,1.45]}
             elif kind in ('lat_pulldown','seated_row'):
                 if kind=='lat_pulldown':
                     pad=cyl_x(name+'_knee_pad','rubber',.06,.49,parent=r); pad.location=(0,-.38,z+.20)

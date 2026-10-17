@@ -191,8 +191,8 @@ class Pattern:
         sole = rot_x(-(180 - m["rail_deg"]))                 # soles flat on the sled plate
         hipc = (P.head("upperleg01.L") + P.head("upperleg01.R")) / 2
         L = self.la + self.lb
-        t = lerp(0.95, 0.62, smooth(s)) * L                 # almost straight -> deep (~95 deg knees)
-        plate = hipc + d * t + Vector((0, 0.0, -0.10))
+        t = lerp(0.985, 0.72, smooth(s)) * L                # ~160 deg -> ~92 deg included knee angle
+        plate = hipc + d * t                              # keep ankle travel on the rail line
         for side, sgn in (("L", 1), ("R", -1)):
             ank = plate + X * sgn * self.p["width"]
             h = P.head(f"upperleg01.{side}")

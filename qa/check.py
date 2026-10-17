@@ -113,6 +113,7 @@ prop_loop_start = {}
 prop_loop_mm = 0.0
 prop_loop_deg = 0.0
 joint_viol = {}
+knee_range = {side: [180.0, 0.0] for side in ("L", "R")}
 joint_at = {}
 com_out = 0.0
 load_kg = qa_cfg.get("load_kg")
@@ -298,6 +299,8 @@ for f in frames:
     for side in ("L", "R"):
         hip, knee, ank = P.head(f"upperleg01.{side}"), P.head(f"lowerleg01.{side}"), P.head(f"foot.{side}")
         flex = angle(knee - hip, ank - knee)
+        knee_range[side][0] = min(knee_range[side][0], flex)
+        knee_range[side][1] = max(knee_range[side][1], flex)
         jv(f"knee_flex.{side}", flex - 155)
         toe = P.head(f"toe3-1.{side}") - ank
         bend = (knee - hip) - (knee - hip).project(ank - hip)
@@ -385,6 +388,15 @@ for k, v in joint_viol.items():
         fail("joints", f"{k} over its limit by {v:.0f} deg (frame {joint_at.get(k)})")
 if "balance" not in skip and com_out > 0:
     fail("balance", f"centre of mass {com_out * 1000:.0f} mm outside the feet (frame {stats.get('balance_at')})")
+
+stats['knee_flexion_range'] = {side: [round(v, 1) for v in values] for side, values in knee_range.items()}
+if 'knee_flexion_range' in qa_cfg:
+    limits = qa_cfg['knee_flexion_range']
+    for side, values in knee_range.items():
+        for index, name in enumerate(('min', 'max')):
+            lo, hi = limits[name]
+            if not lo <= values[index] <= hi:
+                fail('range_of_motion', f'knee {side} {name} flexion {values[index]:.1f} deg outside {lo}..{hi}')
 
 from core.delivery import spec_digest, pipeline_digest, digest
 result = {"id": eid, "pass": not fails, "fails": fails, "stats": stats,
