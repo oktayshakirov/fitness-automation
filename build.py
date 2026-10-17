@@ -22,22 +22,23 @@ except ImportError:
 if bpy is None:
     import subprocess
     env = dict(os.environ, BLENDER_USER_RESOURCES=os.path.join(HERE, ".blender-profile"))
-    cmd = [BLENDER, "-b", "--python", os.path.abspath(__file__), "--", *sys.argv[1:]]
+    cmd = [BLENDER, "-b", "--python-exit-code", "1", "--python", os.path.abspath(__file__), "--", *sys.argv[1:]]
     sys.exit(subprocess.run(cmd, env=env).returncode)
 
 sys.path.insert(0, HERE)
-import argparse, shutil
+import argparse, shutil, subprocess
 from core import OUT
 from core.body import make_human, key_pose
 from core.solver import Poser
 from core.look import muscle_material
 from core.studio import studio, camera
-from core.render import new_scene, render_views, stitch_video, contact_sheet
+from core.render import new_scene, render_views, stitch_video, contact_sheet, fit_delivery_cameras, export_delivery
 from motion.tempo import Tempo
 from motion import patterns, props as props_mod, micro
 
 ap = argparse.ArgumentParser(prog="build.py")
 ap.add_argument("id")
+ap.add_argument("--delivery", action="store_true", help="QA-gated 720x900 app export; all views, one rep, both codecs")
 ap.add_argument("--quick", action="store_true", help="render only the contact-sheet frames")
 ap.add_argument("--views", help="comma-separated subset of the spec's views")
 ap.add_argument("--frames", help="comma-separated frames for the sheet (and --quick)")
@@ -46,6 +47,8 @@ ap.add_argument("--no-render", action="store_true", help="pose + save the .blend
 ap.add_argument("--no-blend", action="store_true")
 ap.add_argument("--no-micro", action="store_true", help="no breathing / head settle / weight shift")
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else [])
+if args.delivery and (args.no_render or args.quick or args.no_blend or args.views):
+    ap.error("--delivery requires a full render, saved blend and every declared view")
 
 
 def load_spec(eid):
@@ -88,6 +91,7 @@ print("POSED", args.id, N, "frames")
 body.data.materials.clear()
 body.data.materials.append(muscle_material(primary=tuple(catalog.get("primary", ())),
                                            secondary=tuple(catalog.get("secondary", ()))))
+delivery_objects=list(scene.objects)
 studio(scene)
 scene.frame_start, scene.frame_end = 1, N
 
@@ -102,16 +106,27 @@ if args.views:
 cams = [camera(scene, v["name"], v.get("target", target), v["yaw"], ortho=v.get("ortho", cam_cfg.get("ortho", 2.2)))
         for v in views]
 
+if args.delivery:
+    fit_delivery_cameras(scene,cams,delivery_objects,[1,1+N//4,1+N//2,1+3*N//4,N])
+
 sheet = [int(x) for x in args.frames.split(",")] if args.frames else motion.get("sheet") or tempo.key_frames()
+if args.delivery:
+    bpy.ops.wm.save_as_mainfile(filepath=OUT+f"{args.id}.blend")
+    subprocess.run(["/usr/bin/env","python3",HERE+"/qa/check.py",args.id],check=True)
+    from core.delivery import current_qa
+    current_qa(args.id)
+
 if not args.no_render:
     res = tuple(cam_cfg.get("res", (720, 1280)))      # review size; dist/ size is Agent B's
+    if args.delivery: res=(720,900)
     dirs = render_views(scene, cams, args.id, 1, N, res=res, frames=sheet if args.quick else None)
     contact_sheet(dirs, sheet, OUT + f"{args.id}_sheet.png")
     if not args.quick:
-        stitch_video(dirs, OUT + f"{args.id}.mp4")
+        stitch_video(dirs, OUT + f"{args.id}.mp4",loops=1 if args.delivery else 3)
+        if args.delivery: export_delivery(args.id,dirs,views)
     if not args.keep_frames:
         for d in dirs:
             shutil.rmtree(d, ignore_errors=True)
-if not args.no_blend:
+if not args.no_blend and not args.delivery:
     bpy.ops.wm.save_as_mainfile(filepath=OUT + f"{args.id}.blend")
 print("BUILT", args.id)

@@ -33,7 +33,7 @@ if bpy is None:
     env = dict(os.environ, BLENDER_USER_RESOURCES=os.path.join(HERE, ".blender-profile"))
     rc = 0
     for eid in sys.argv[1:]:
-        cmd = [BLENDER, "-b", os.path.join(HERE, "review", eid + ".blend"), "--python",
+        cmd = [BLENDER, "-b", os.path.join(HERE, "review", eid + ".blend"), "--python-exit-code", "1", "--python",
                os.path.abspath(__file__), "--", eid]
         r = subprocess.run(cmd, env=env, capture_output=True, text=True)
         out = [l for l in r.stdout.splitlines() if l.startswith(("QA", "  "))]
@@ -51,7 +51,7 @@ eid = sys.argv[sys.argv.index("--") + 1]
 spec = json.load(open(os.path.join(HERE, "motion/specs", eid + ".json")))
 qa_cfg = spec.get("qa", {})
 skip = set(qa_cfg.get("skip", []))
-if spec["pattern"] not in ("stand_hinge", "arm_isolation", "split_stance", "overhead_press", "row"):
+if spec["pattern"] not in ("stand_hinge", "arm_isolation", "split_stance", "overhead_press", "row", "cable"):
     skip.add("balance")
 
 scene = bpy.context.scene
@@ -108,6 +108,10 @@ sole_prev = None
 slide_max, floor_min = 0.0, 1.0
 grip_max = {}
 pen_max = 0.0
+self_pen_max = 0.0
+prop_loop_start = {}
+prop_loop_mm = 0.0
+prop_loop_deg = 0.0
 joint_viol = {}
 joint_at = {}
 com_out = 0.0
@@ -224,6 +228,51 @@ for f in frames:
                 v = g - c
                 d = (v - v.project(ax)).length
                 grip_max[f"db.{side}"] = max(grip_max.get(f"db.{side}", 0.0), d)
+    # Grip centres on the actual procedural attachments (root-local metadata).
+    for o in scene.objects:
+        if not o.get("contacts_json"): continue
+        meta=json.loads(o["contacts_json"]);name=o.name
+        targets=None
+        if name.startswith("d_handle_"):
+            targets={name[-1]:Vector(meta["grip"])}
+        elif name in ("lat_bar","v_handle"):
+            targets={"R":Vector(meta["grips"][0]),"L":Vector(meta["grips"][1])}
+        elif name=="dip_station":
+            targets={"R":Vector(meta["hands"][0]),"L":Vector(meta["hands"][1])}
+        elif name=="kettlebell":
+            targets={side:Vector((sgn*.065,0,0)) for side,sgn in (("L",1),("R",-1))}
+        if targets:
+            for side,local in targets.items():
+                g,_=grip_point(P,side,"press" if name=="dip_station" else "hook")
+                if name=="kettlebell":
+                    local=o.matrix_world.inverted()@g;local.x=max(-.075,min(.075,local.x));local.y=0;local.z=0
+                d=(g-o.matrix_world@local).length
+                key=name+'.'+side;grip_max[key]=max(grip_max.get(key,0),d)
+        if name in ("pushdown_rope","face_rope"):
+            ends=[c for c in o.children if c.type=='CURVE']
+            # Constructor creates R(-X) then L(+X); updater receives L then R.
+            for side,curve in zip(("L","R"),ends):
+                local=Vector(curve.data.splines[0].points[-1].co[:3]);g,_=grip_point(P,side)
+                d=(g-curve.matrix_world@local).length
+                key=name+'.'+side;grip_max[key]=max(grip_max.get(key,0),d)
+    # Verify moving equipment transforms close at the loop seam, too.
+    moving=[o for o in scene.objects if o.animation_data and o.type!='ARMATURE']
+    if f==1: prop_loop_start={o.name:o.matrix_world.copy() for o in moving}
+    if f==N:
+        for o in moving:
+            if o.name in prop_loop_start:
+                m=prop_loop_start[o.name]
+                prop_loop_mm=max(prop_loop_mm,(m.translation-o.matrix_world.translation).length*1000)
+                prop_loop_deg=max(prop_loop_deg,math.degrees(m.to_quaternion().rotation_difference(o.matrix_world.to_quaternion()).angle))
+    # Conservative hand/thigh spot check: a 45 mm inner thigh capsule catches
+    # deep crossings without treating normal skin contact as collision.
+    for side in ("L","R"):
+        g,_=grip_point(P,side)
+        for leg in ("L","R"):
+            a=P.head("upperleg01."+leg);b=P.head("lowerleg01."+leg);ab=b-a
+            t=max(.12,min(.9,(g-a).dot(ab)/ab.length_squared))
+            penetration=.045-(g-(a+ab*t)).length
+            self_pen_max=max(self_pen_max,penetration)
     # props inside the body (away from the hands)
     if "props" not in skip and props:
         tree = BVHTree.FromPolygons(co, skin_polys)
@@ -279,13 +328,13 @@ for f in frames:
             tot += m
         com = acc / tot
         if load_kg is None:
-            load_kg = {"barbell": 40.0, "bar": 0.0, "db": 12.0}
-        for name, o in props.items():
-            kg = load_kg.get(name, load_kg.get(name[:2], 8.0)) if isinstance(load_kg, dict) else load_kg / max(1, len(props))
-            if name == "bar":      # cable: load is the stack pulling forward-up, not on the feet
-                continue
-            com = (com * BODY_KG + o.matrix_world.translation * kg) / (BODY_KG + kg)
-            BODY_KG_eff = BODY_KG + kg
+            load_kg = {"bar": 0.0, "db": 12.0}
+        load_sum=0.0;weighted=com*BODY_KG
+        for name,o in props.items():
+            if not (name=="barbell" or name=="kettlebell" or name=="db" or name.startswith("db_")):continue
+            kg=load_kg.get(name,load_kg.get(name[:2],o.get("kg",8.0))) if isinstance(load_kg,dict) else load_kg/max(1,len(props))
+            weighted+=o.matrix_world.translation*kg;load_sum+=kg
+        com=weighted/(BODY_KG+load_sum)
         touching = [co[i] for i in sole if co[i].z < 0.015]
         feet = {s_: [p_ for p_ in touching if (p_.x > 0) == (s_ == "L")] for s_ in ("L", "R")}
         # a foot supports only with a real contact patch, not a toe tip on its way down
@@ -310,13 +359,17 @@ for f in frames:
 loop_t = max((bone_mats[1][n].translation - bone_mats[N][n].translation).length for n in bone_mats[1])
 loop_r = max(math.degrees(bone_mats[1][n].to_quaternion().rotation_difference(bone_mats[N][n].to_quaternion()).angle)
              for n in bone_mats[1])
-stats.update(loop_mm=round(loop_t * 1000, 2), loop_deg=round(loop_r, 2), slide_mm=round(slide_max * 1000, 1),
+stats.update(prop_loop_mm=round(prop_loop_mm,3),prop_loop_deg=round(prop_loop_deg,3),hand_thigh_pen_mm=round(self_pen_max*1000,1),loop_mm=round(loop_t * 1000, 2), loop_deg=round(loop_r, 2), slide_mm=round(slide_max * 1000, 1),
              floor_mm=round(floor_min * 1000, 1), prop_pen_mm=round(pen_max * 1000, 1),
              grip_mm={k: round(v * 1000, 1) for k, v in grip_max.items()},
              joints={k: round(v, 1) for k, v in joint_viol.items() if v > 0},
              balance_out_mm=round(com_out * 1000, 1) if "balance" not in skip else None)
 if "loop" not in skip and (loop_t > 0.001 or loop_r > 0.5):
     fail("loop", f"frame 1 vs {N}: {loop_t * 1000:.1f} mm / {loop_r:.2f} deg")
+if "loop" not in skip and (prop_loop_mm>1 or prop_loop_deg>.5):
+    fail("loop",f"equipment seam {prop_loop_mm:.1f} mm / {prop_loop_deg:.2f} deg")
+if self_pen_max>.005:
+    fail("self_intersection",f"hand crosses thigh inner capsule by {self_pen_max*1000:.1f} mm")
 if "slide" not in skip and slide_max > 0.005:
     fail("slide", f"planted foot moved {slide_max * 1000:.1f} mm (frame {stats.get('slide_at')})")
 if "floor" not in skip and floor_min < -0.01:
@@ -333,10 +386,16 @@ for k, v in joint_viol.items():
 if "balance" not in skip and com_out > 0:
     fail("balance", f"centre of mass {com_out * 1000:.0f} mm outside the feet (frame {stats.get('balance_at')})")
 
-result = {"id": eid, "pass": not fails, "fails": fails, "stats": stats}
+from core.delivery import spec_digest, pipeline_digest, digest
+result = {"id": eid, "pass": not fails, "fails": fails, "stats": stats,
+          "skipped": sorted(skip), "allowances": qa_cfg, "spec_sha256": spec_digest(eid) if os.path.exists(os.path.join(HERE,"catalog",eid+".json")) else None,
+          "pipeline_sha256": pipeline_digest(), "blend_sha256": digest(os.path.join(HERE,"review",eid+".blend"))}
 with open(os.path.join(HERE, "review", eid + "_qa.json"), "w") as fh:
     json.dump(result, fh, indent=1)
 print(f"QA {eid}: {'PASS' if not fails else 'FAIL'}")
 for x in fails:
     print("  -", x)
 print("  stats:", json.dumps(stats))
+
+if fails:
+    sys.exit(1)
