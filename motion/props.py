@@ -12,6 +12,7 @@ class Dumbbells:
     def __init__(self, P, spec):
         self.P = P
         self.hands = spec.get("hands", ["L", "R"])
+        self.grip_mode = spec.get("grip_mode", "hook")
         self.bells = {}
         if self.hands == ["both"]:          # one dumbbell placed by the pattern (goblet)
             self.one = eq.dumbbell("db")
@@ -20,6 +21,7 @@ class Dumbbells:
         for side in self.hands:
             b = eq.dumbbell(f"db_{side}")
             b.rotation_mode = "QUATERNION"
+            b["grip_mode"] = self.grip_mode
             self.bells[side] = b
 
     def attach(self, f, contacts=None):
@@ -34,7 +36,7 @@ class Dumbbells:
             self.one.keyframe_insert("location", frame=f)
             self.one.keyframe_insert("rotation_quaternion", frame=f)
         for side in self.hands:
-            g, w = grip_point(P, side)
+            g, w = grip_point(P, side, self.grip_mode)
             b = self.bells[side]
             # handle (local X) runs across the palm; the dumbbell is round about X
             x = w

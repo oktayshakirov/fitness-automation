@@ -1,11 +1,74 @@
 {
   "id": "dumbbell_shoulder_press",
   "pattern": "overhead_press",
-  "params": {"load": "db", "grip_w": 0.4, "lean": 0, "rack_z": 1.56},
-  "props": [{"kind": "dumbbell", "hands": ["L", "R"]}],
-  "tempo": {"hold_start": 6, "work": 22, "hold_peak": 6, "return": 30, "hold_end": 8},
-  "camera": {"target": [0, -0.02, 1.15], "ortho": 2.6},
-  "views": [{"name": "front", "yaw": 0}, {"name": "side", "yaw": 90}, {"name": "threeq", "yaw": 35}],
-  "draft_muscles": {"primary": ["shoulders"], "secondary": ["triceps", "traps", "chest"]},
-  "approved": false
+  "params": {
+    "load": "db",
+    "grip_w": 0.42,
+    "lean": 0,
+    "rack_z": 1.64,
+    "db_top_w": 0.23,
+    "top_reach": 1.08
+  },
+  "props": [
+    {
+      "kind": "dumbbell",
+      "hands": [
+        "L",
+        "R"
+      ]
+    }
+  ],
+  "tempo": {
+    "hold_start": 6,
+    "work": 22,
+    "hold_peak": 6,
+    "return": 30,
+    "hold_end": 8
+  },
+  "camera": {
+    "target": [
+      0,
+      -0.02,
+      1.15
+    ],
+    "ortho": 2.6
+  },
+  "views": [
+    {
+      "name": "front",
+      "yaw": 0
+    },
+    {
+      "name": "side",
+      "yaw": 90
+    },
+    {
+      "name": "threeq",
+      "yaw": 35
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "shoulders"
+    ],
+    "secondary": [
+      "triceps",
+      "traps",
+      "chest"
+    ]
+  },
+  "approved": false,
+  "qa": {
+    "elbow_flexion_range": {
+      "min": [
+        0,
+        25
+      ],
+      "max": [
+        80,
+        130
+      ]
+    }
+  },
+  "shoulder_smooth": true
 }

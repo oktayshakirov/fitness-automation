@@ -1,9 +1,9 @@
-# Handoff: fitness-automation (state on 2026-10-17)
+# Handoff: fitness-automation (state on 2026-10-18)
 
 Read this first, then `plan.md` (goals, agent split, phases), then
 `research/FINDINGS.md` (licences, sources, test results).
 
-## Current checkpoint (2026-10-17)
+## Current checkpoint (2026-10-18)
 
 The user asked this session to take over **both Agent A and Agent B** after Agent A
 ran out of credits. The ownership split below is historical; there is no concurrent
@@ -18,8 +18,10 @@ Agent A now. Phase 0 is committed and all 30 MVP motion/catalog pairs exist.
 - Motion: the nine main pattern families plus cable crossover/face pull, shoulder
   girdle, shared-bar contact and micro-motion. Existing non-MVP specs are drafts;
   they are not part of the 30-item delivery/approval claim.
-- Look: softened highlights, brighter light background and shallow mask-derived
-  relief. The broken tangent normal map is unused. See `assets/maps/README.md`.
+- Look: continuous nearest-surface muscle highlights and brighter background.
+  Both tangent normal and mask-derived relief are now disabled by default following
+  user review. Original ray maps are retained; shipping maps are regenerated from
+  `assets/maps/repaired/`. See `assets/maps/README.md`.
 - Body selector: front/back SVG paths traced from baked ID passes with WebP
   underlays. All 17 groups occur across the views; retain a list selector for tiny
   regions and groups without MVP matches. See `bodymap/README.md` and LICENSE.md.
@@ -272,3 +274,39 @@ contract in plan.md wants 720×900.
   variations in plan.md are not all implemented (for example side plank, bird dog,
   seated chest press and pec deck); machine availability does not imply a verified
   animation for those variants. Phase 4 app/TikTok work is still out of scope.
+
+
+- **2026-10-18 (user visual corrections):** the previous unattended run completed
+  all 30 deliveries (176 videos, 88 posters, 30 thumbs), with zero approvals. The
+  user reported six broken-looking motions plus general gaps in muscle highlights.
+  Corrected push-up/row support-hand forearm roll: use the planned elbow and
+  knuckle line instead of a palm vector parallel to the forearm; clamp unreachable
+  wrist targets. Bridge now keeps the head on the floor using a properly bracketed
+  neck solve, arms have fixed floor targets, and upper-back clearance compensates
+  for the actual skinned surface. Enabled volume-preserving armature deformation.
+
+  Leg extension/curl now stop before the thigh/shin line reverses the IK bend
+  plane (about 8 degrees knee flexion at extension); feet rotate with the shins
+  with the correct sign. The press has a forward elbow path, increased scapular
+  upward rotation, terminal reach measured from the posed shoulder, and a local
+  shoulder-only smoothing correction for the MPFB overhead skin folds. Row now
+  reaches near-straight at the bottom, and its wrapped grip places the handle
+  inside the curled fingers instead of below them. Press/row minimum elbow
+  flexion improved from about 60 degrees to roughly 8 degrees. Added knee/arm ROM
+  gates and a push-up wrist-rotation gate; preserved the original collision limits.
+
+  Reprojected existing licensed Z-Anatomy groups by nearest surface rather than
+  occluded rays, with region exclusions and smoothing on skin connectivity.
+  Rebuilt and inspected front/back bodymap IDs/SVGs; all 17 regions remain present.
+  Removed the extra surface relief from default renders. No external assets added.
+
+  Verification: rendered and viewed extremes for all six corrections, plus a
+  close-up row grip and shoulder-correction stills. Six motion QA passes, 30 catalog
+  validation and eight delivery-gate tests passed before the final exports.
+  The shoulder's final delivery is also gated after its silhouette correction.
+  Shared material/body changes require all 30 outputs to be regenerated. The
+  unattended runner now supports `--first <ids...>` to publish flagged exercises
+  first, then the remainder. Check `review/run_status.json` and the final delivery
+  audit for completion of this new generation; older success logs are not proof.
+  Keep all new versions draft until the user reviews them. Do not consume the
+  chat with live batch polling; user prefers local unattended work and later review.

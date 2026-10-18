@@ -53,3 +53,8 @@ replacement for inspecting seat/pad contact, form and muscle coverage.
 `--quick` produces contact-sheet frames for iteration; `--no-render` produces a
 posed scene. Neither exports app media. Rebuild with `--delivery` for publication.
 The legacy review format remains available for older scripts.
+
+
+To rebuild user-reported fixes first while still refreshing the whole MVP:
+`python3 core/run_mvp.py --first glute_bridge push_up leg_curl leg_extension one_arm_dumbbell_row dumbbell_shoulder_press`.
+The remaining catalog IDs are appended automatically and current outputs are reused.

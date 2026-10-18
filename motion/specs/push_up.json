@@ -52,6 +52,7 @@
   },
   "approved": false,
   "qa": {
-    "wrist_max": 105
+    "wrist_max": 105,
+    "wrist_rotation_max": 120
   }
 }

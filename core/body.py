@@ -7,7 +7,7 @@ def update():
     bpy.context.view_layer.update()
 
 
-def make_human(gender=1.0, muscle=0.8, weight=0.45):
+def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False):
     """MPFB body + default 163-bone rig at the origin, facing -Y, feet on z=0.
     Rig object at identity, so armature space = world space."""
     from bl_ext.user_default.mpfb.services.humanservice import HumanService
@@ -18,6 +18,27 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45):
     macro["weight"] = weight
     body = HumanService.create_human(macro_detail_dict=macro)
     rig = HumanService.add_builtin_rig(body, "default")
+    # Dual-quaternion skinning preserves elbow/shoulder volume during axial twist.
+    for modifier in body.modifiers:
+        if modifier.type == "ARMATURE":
+            modifier.use_deform_preserve_volume = True
+    if shoulder_smooth:
+        # Confine a silhouette correction to the shoulder/upper arm. The default
+        # MPFB weights form sharp folds at overhead elevation; hands stay untouched.
+        group = body.vertex_groups.new(name="shoulder_corrective")
+        indices = {body.vertex_groups[n + "." + side].index
+                   for side in ("L", "R")
+                   for n in ("shoulder01", "upperarm01", "upperarm02")}
+        for v in body.data.vertices:
+            weight = min(1.0, sum(g.weight for g in v.groups if g.group in indices))
+            if weight:
+                group.add([v.index], weight, "REPLACE")
+        correction = body.modifiers.new("Shoulder silhouette", "CORRECTIVE_SMOOTH")
+        correction.use_only_smooth = True
+        correction.factor = .8
+        correction.iterations = 20
+        correction.smooth_type = "LENGTH_WEIGHTED"
+        correction.vertex_group = group.name
     for pb in rig.pose.bones:
         pb.rotation_mode = "QUATERNION"
     update()

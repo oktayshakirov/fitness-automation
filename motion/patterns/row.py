@@ -129,7 +129,7 @@ class OneArmBench(Floor):
         self.hand_flat(sup, sg, self.hand_pad, Vector((sg, 1, 0)))
         # working arm: hang -> bell at the hip
         sh = P.head(f"upperarm01.{wk}")
-        hang = Vector((sh.x - sg * 0.02, sh.y, sh.z - (0.975 * (self.ua + self.fa) + 0.075)))
+        hang = Vector((sh.x - sg * 0.02, sh.y, sh.z - (0.995 * (self.ua + self.fa) + 0.115)))
         hipj = P.head(f"upperleg01.{wk}")
         top = Vector((hipj.x - sg * 0.17, hipj.y - 0.16, hipj.z - 0.1))
         g = hang.lerp(top, smooth(s))
@@ -137,10 +137,13 @@ class OneArmBench(Floor):
         arm = (g - sh).normalized()
         rh = max(0.0, P.humeral_elevation(arm) - 30.0) / 3.0
         P.scap_rhythm(wk, arm, protraction=lerp(10, -18, smooth(s)), elevation=-0.3 * rh)
+        # The reaching shoulder moves down; derive the extended hand target after
+        # girdle placement so the starting elbow does not stay flexed by 60 degrees.
+        g.z -= (1 - smooth(s)) * 0.028
         wsg = -sg
         # neutral grip: palm faces the body, thumb toward the head
         reach(P, wk, g, Vector((wsg * 0.15, 0.3, 1.0)), knuckle_dir=Vector((0, 1, 0)),
-              palm=lambda fd: Vector((-wsg, 0, 0)))
+              palm=lambda fd: Vector((-wsg, 0, 0)), mode="wrapped")
         return {}
 
 

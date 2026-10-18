@@ -74,7 +74,12 @@ class Pattern:
         P = self.P
         arm = (g - P.head(f"upperarm01.{side}")).normalized()
         # upward rotation follows the arm; a small active shrug at lockout
-        P.scap_rhythm(side, arm, protraction=2, elevation=4 * smooth((s - 0.75) / 0.25))
+        if self.p["load"] == "db":
+            upward = max(0.0, P.humeral_elevation(arm) - 30.0) / 3.0
+            P.girdle(side, elevation=.3 * upward + 4 * smooth((s - .75) / .25),
+                     protraction=2, upward=upward)
+        else:
+            P.scap_rhythm(side, arm, protraction=2, elevation=4 * smooth((s - 0.75) / 0.25))
 
     def arms_bar(self, c, s):
         P, p = self.P, self.p
@@ -97,7 +102,11 @@ class Pattern:
             x = lerp(p["grip_w"], p["db_top_w"], smooth(s))
             g = Vector((sgn * x, self.midfoot_y - lerp(0.03, 0.0, s), z))
             self.girdle(side, g, s)
-            pole = body @ Vector((sgn, 0.1, -0.6))
+            # The scapula raises the shoulder joint. Derive the terminal reach
+            # from that posed joint instead of the pre-girdle shoulder height.
+            terminal_z = P.head(f"upperarm01.{side}").z + .985 * self.reach + .115
+            g.z = lerp(g.z, terminal_z, smooth(s))
+            pole = body @ Vector((sgn, -0.8, -0.6))
             reach(P, side, g, pole, knuckle_dir=X * sgn,
                   palm=lambda fd: bar_palm(X, fd, "over"))
         return {}

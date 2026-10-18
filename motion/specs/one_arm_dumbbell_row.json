@@ -1,12 +1,85 @@
 {
   "id": "one_arm_dumbbell_row",
   "pattern": "row",
-  "params": {"style": "one_arm_bench", "work": "R"},
-  "props": [{"kind": "bench", "y0": -0.75, "y1": 0.45, "x": 0.1}, {"kind": "dumbbell", "hands": ["R"]}],
-  "tempo": {"hold_start": 6, "work": 20, "hold_peak": 8, "return": 28, "hold_end": 10},
-  "camera": {"target": [0, -0.2, 0.7], "ortho": 2.2, "res": [1280, 720]},
-  "views": [{"name": "side", "yaw": -90}, {"name": "threeq", "yaw": -40}, {"name": "back", "yaw": 180}],
-  "draft_muscles": {"primary": ["middle back"], "secondary": ["lats", "biceps", "shoulders"]},
-  "qa": {"skip": ["balance"], "wrist_max": 100},
+  "params": {
+    "style": "one_arm_bench",
+    "work": "R"
+  },
+  "props": [
+    {
+      "kind": "bench",
+      "y0": -0.75,
+      "y1": 0.45,
+      "x": 0.1
+    },
+    {
+      "kind": "dumbbell",
+      "hands": [
+        "R"
+      ],
+      "grip_mode": "wrapped"
+    }
+  ],
+  "tempo": {
+    "hold_start": 6,
+    "work": 20,
+    "hold_peak": 8,
+    "return": 28,
+    "hold_end": 10
+  },
+  "camera": {
+    "target": [
+      0,
+      -0.2,
+      0.7
+    ],
+    "ortho": 2.2,
+    "res": [
+      1280,
+      720
+    ]
+  },
+  "views": [
+    {
+      "name": "side",
+      "yaw": -90
+    },
+    {
+      "name": "threeq",
+      "yaw": -40
+    },
+    {
+      "name": "back",
+      "yaw": 180
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "middle back"
+    ],
+    "secondary": [
+      "lats",
+      "biceps",
+      "shoulders"
+    ]
+  },
+  "qa": {
+    "skip": [
+      "balance"
+    ],
+    "wrist_max": 100,
+    "elbow_flexion_range": {
+      "R": {
+        "min": [
+          0,
+          25
+        ],
+        "max": [
+          75,
+          115
+        ]
+      }
+    }
+  },
   "approved": false
 }

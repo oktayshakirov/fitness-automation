@@ -70,7 +70,7 @@ tempo = Tempo(motion["tempo"])
 N = tempo.n
 
 scene = new_scene()
-body, rig = make_human()
+body, rig = make_human(shoulder_smooth=motion.get("shoulder_smooth", False))
 P = Poser(rig)
 pattern = patterns.get(motion["pattern"])(P, motion.get("params", {}))
 props = props_mod.build(P, motion.get("props", []))

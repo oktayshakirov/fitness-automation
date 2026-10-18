@@ -91,7 +91,7 @@ class Pattern:
             knee = h + th * self.la
             a = math.radians(shin_deg)
             ank = knee + (Vector((0, 0, -1)) * math.cos(a) + FWD * math.sin(a)) * self.lb
-            rot = rot_z(sgn * self.p["toe_out"]) if feet_flat else rot_x(shin_deg * 0.6)
+            rot = rot_z(sgn * self.p["toe_out"]) if feet_flat else rot_x(-shin_deg)
             self.leg(side, knee, ank, rot)
 
     def pose(self, s):
@@ -160,14 +160,14 @@ class Pattern:
     def pose_leg_extension(self, s):
         P, m = self.P, self.m
         self.sit(m["lean"])
-        self.legs_seated(lerp(8, 86, smooth(s)), feet_flat=False)
+        self.legs_seated(lerp(8, 76, smooth(s)), feet_flat=False)
         self.side_grips()
         return {"pad": self.pad_contact()}
 
     def pose_leg_curl(self, s):
         P, m = self.P, self.m
         self.sit(m["lean"])
-        self.legs_seated(lerp(84, -5, smooth(s)), feet_flat=False)
+        self.legs_seated(lerp(76, -5, smooth(s)), feet_flat=False)
         self.side_grips()
         return {"pad": self.pad_contact(back=True)}
 

@@ -13,6 +13,9 @@ def grip_point(P, side, mode="hook"):
     k3 = P.head(f"finger3-1.{side}")
     n = P.palm_now(side)
     f = (k3 - w).normalized()
+    if mode == "wrapped":
+        # Centre inside the curled fingers, rather than below the knuckles.
+        return (k2 + k5) / 2 + n * 0.020 - f * 0.006, (k5 - k2).normalized()
     if mode == "press":
         return w + ((k2 + k5) / 2 - w) * 0.45 + n * 0.03, (k5 - k2).normalized()
     return (k2 + k5) / 2 + n * 0.024 + f * 0.012, (k5 - k2).normalized()

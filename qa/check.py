@@ -213,7 +213,7 @@ for f in frames:
         c, ax = mw.translation, (mw.to_3x3() @ Vector((1, 0, 0))).normalized()
         if name.startswith("db_"):
             side = name[-1]
-            g, _ = grip_point(P, side)
+            g, _ = grip_point(P, side, o.get("grip_mode", "hook"))
             d = (g - c).length
             grip_max[name] = max(grip_max.get(name, 0.0), d)
         elif name in ("bar", "barbell", "pullup_bar") or name.startswith("dip_bar_"):
@@ -320,6 +320,10 @@ for f in frames:
         elbow_range[side][0] = min(elbow_range[side][0], eflex)
         elbow_range[side][1] = max(elbow_range[side][1], eflex)
         jv(f"elbow_flex.{side}", eflex - 155)
+        if "wrist_rotation_max" in qa_cfg:
+            q = rig.pose.bones[f"wrist.{side}"].rotation_quaternion
+            rotation = math.degrees(2 * math.acos(min(1.0, abs(q.w))))
+            jv(f"wrist_rotation.{side}", rotation - qa_cfg["wrist_rotation_max"])
         hand = P.head(f"finger3-1.{side}") - wr
         jv(f"wrist.{side}", angle(wr - el, hand) - qa_cfg.get("wrist_max", 75))
     chest = P.axis("spine01", 1)
@@ -398,7 +402,9 @@ for joint, ranges in [('knee', knee_range), ('elbow', elbow_range)]:
     if key in qa_cfg:
         for side, values in ranges.items():
             for index, name in enumerate(('min', 'max')):
-                lo, hi = qa_cfg[key][name]
+                bounds = qa_cfg[key].get(side, qa_cfg[key])
+                if name not in bounds: continue
+                lo, hi = bounds[name]
                 if not lo <= values[index] <= hi:
                     fail('range_of_motion', f'{joint} {side} {name} flexion {values[index]:.1f} deg outside {lo}..{hi}')
 

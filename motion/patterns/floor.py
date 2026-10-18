@@ -16,7 +16,7 @@ bottom, m), lift (bridge hip angle at the top, deg), curl (crunch trunk flexion,
 feet (bridge/crunch heel distance from the glutes, m)."""
 import math
 from mathutils import Vector, Matrix
-from core.solver import rot_x, rot_z
+from core.solver import rot_x, rot_z, two_bone
 from ..landmarks import Landmarks
 from ..stance import arm_lengths
 from ..contact import grip_point
@@ -112,7 +112,7 @@ class Pattern:
         """On the back, upper back on the floor, hips lifted phi deg."""
         P = self.P
         P.reset()
-        z0 = getattr(self, "base_z", 0.0) + 0.004          # floor, or a bench pad
+        z0 = getattr(self, "base_z", 0.0) + (0.017 if self.p["mode"] == "bridge" else 0.004)          # floor, or a bench pad
         self.orient(-(90 + phi), lambda: self.lm["upper_back"], Vector((0, getattr(self, "back_y", 0.0), z0)))
         # the contact moves up the back as the hips rise: rest on the lowest point
         low = min(self.lm[n].z for n in ("upper_back", "upper_back_hi", "scap.L", "scap.R"))
@@ -173,9 +173,14 @@ class Pattern:
         P = self.P
         X = Vector((1, 0, 0))
         wrist = target.copy()
+        ua, fa = arm_lengths(P)
         for it in range(10):
+            sh = P.head(f"upperarm01.{side}")
+            if (wrist - sh).length > .998 * (ua + fa):
+                wrist = sh + (wrist - sh).normalized() * .998 * (ua + fa)
+            elbow = two_bone(sh, wrist, ua, fa, pole)
             P.limb(f"upperarm01.{side}", f"lowerarm01.{side}", f"wrist.{side}", wrist, pole,
-                   palm=DOWN, side=side)
+                   palm=X.cross(wrist - elbow), side=side)
             P.hand_orient(side, X * sgn, DOWN)
             err = target - palm_point(P, side)
             if err.length < 0.0008:
@@ -224,10 +229,9 @@ class Pattern:
 
     def arms_floor(self):
         P = self.P
-        hip = (P.head("upperleg01.L") + P.head("upperleg01.R")) / 2
         for side, sgn in (("L", 1), ("R", -1)):
             P.scap_rhythm(side, Vector((0, -1, 0)))
-            tgt = Vector((sgn * 0.27, hip.y + 0.12, 0.004))
+            tgt = Vector((sgn * 0.27, -0.48, 0.004))
             ua, fa = arm_lengths(P)
             sh = P.head(f"upperarm01.{side}")
             d = tgt - sh
@@ -244,7 +248,7 @@ class Pattern:
             P.local("neck01", (1, 0, 0), 0.6 * a)
             P.local("neck02", (1, 0, 0), 0.4 * a)
             return self.lm["head_back"].z
-        a = self.bisect(head_z, -10.0, 60.0, 0.006, n=20)
+        a = self.bisect(head_z, -35.0, 50.0, 0.006, n=20)
         head_z(a)
         self.legs_bent()
         self.arms_floor()
