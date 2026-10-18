@@ -8,7 +8,9 @@ ROOT=Path(__file__).resolve().parents[1];maps=ROOT/'assets/maps'
 soft=maps/'soft';soft.mkdir(exist_ok=True)
 height=Image.new('L',(2048,2048),0)
 for i in range(6):
- im=Image.open(maps/f'mask_{i}.png').convert('RGB')
+ source=maps/'repaired'/f'mask_{i}.png'
+ if not source.exists():source=maps/f'mask_{i}.png'
+ im=Image.open(source).convert('RGB')
  im.filter(ImageFilter.GaussianBlur(1.2)).save(soft/f'mask_{i}.png')
  for j,c in enumerate(im.split()):
   # Only body groups: no face, scalp, skeletal rays or neck relief.

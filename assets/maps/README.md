@@ -1,35 +1,29 @@
-# Muscle maps and relief
+# Muscle masks
 
-The six RGB masks contain the 17 muscle groups in `core/look.py:GROUPS` order.
-Source fitting and baking are described in `research/FINDINGS.md` and
-`build_muscle_maps.py`. Source anatomy attribution is in `LICENSE.md`.
+The six RGB atlases contain the 17 groups in `core/look.py:GROUPS` order.
+The original selected-to-active ray bakes remain at `mask_0..5.png` for comparison.
+Their fitted Z-Anatomy sources and attribution are described in `LICENSE.md` and
+`build_muscle_maps.py`.
 
-The old tangent-space `muscle_normal.png` had a mirrored left/right seam and
-excessive face relief. It is intentionally ignored by git and never sampled by
-the current shader. The shipping detail uses a shallow height bump derived from
-the masks (`muscle_detail_height.png`), excluding the face/neck. This keeps the
-neutral mannequin readable without the faulty tangent bake.
+Shipping masks are now projected from the nearest fitted muscle surface onto the
+MPFB skin, then smoothed along connected skin vertices. This avoids holes caused
+by bones/other source objects blocking bake rays, and does not blur across separate
+UV islands. Face, hands, feet and anterior shin remain neutral. Source-distance
+limits and regional bounds prevent arbitrary distant muscles filling empty skin.
+These are group-level surface highlights, not an exposed-muscle anatomical model.
 
-`python3 core/prepare_maps.py` creates the softened masks under `soft/` and the
-height map. It requires Pillow. The shader prefers softened masks and falls back
-to the original masks if they are absent. The current shader uses a 1.5 mm bump
-distance at 0.24 strength. These settings are visual relief, not anatomical depth.
-
-The deltoid channel was rebaked from the fitted muscular source to improve its
-coverage. To reproduce that bake, start with the unmodified fitted scene:
+Reproduce from the original fitted scene:
 
 ```sh
-BLENDER_USER_RESOURCES="$PWD/.blender-profile" /Applications/Blender.app/Contents/MacOS/Blender -b review/muscle_fit.blend --python core/rebake_shoulders.py
-python3 - <<'PY'
-from PIL import Image
-p = 'assets/maps/mask_3.png'
-r, g, b = Image.open(p).convert('RGB').split()
-shoulder = Image.open('review/shoulder_projection.png').convert('RGB').getchannel('R')
-Image.merge('RGB', (r, g, shoulder)).save(p)
-PY
+BLENDER_USER_RESOURCES="$PWD/.blender-profile" /Applications/Blender.app/Contents/MacOS/Blender -b review/muscle_fit.blend --python-exit-code 1 --python core/repair_muscle_maps.py
 python3 core/prepare_maps.py
 ```
 
-The rebake extends only the distal deltoid fit, then projects all source groups
-with the others acting as occluders. Do not rerun it on an already modified source
-scene. Re-render exercise extremes and the body selector after changing masks.
+`repaired/` contains the new atlases and vertex coverage counts; `soft/` is the
+shader input. Re-render `bodymap/render.py`, run `bodymap/trace.py`, and rebuild
+exercise deliveries after changing these maps. All derivatives retain CC BY-SA
+attribution. No external assets were added for this repair.
+
+Both the old tangent normal and mask-derived bump detail are disabled by default.
+The generated height map is retained only for opt-in experimentation; its broken
+surface outlines must not be used as anatomical detail in delivery renders.

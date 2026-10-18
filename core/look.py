@@ -24,7 +24,7 @@ def load_masks():
     return imgs
 
 
-def muscle_material(primary=(), secondary=(), name="body", use_normal=True,
+def muscle_material(primary=(), secondary=(), name="body", use_normal=False,
                     base=(0.32, 0.36, 0.42), hot=(0.72, 0.025, 0.018), warm=(0.95, 0.26, 0.025)):
     m = bpy.data.materials.new(name)
     m.use_nodes = True
