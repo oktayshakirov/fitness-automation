@@ -1,0 +1,16 @@
+{
+  "source": "connected Z-Anatomy muscle surfaces",
+  "parts_on_skin": 119,
+  "skin_vertices": 13380,
+  "relief_vertices": 3230,
+  "height_min": 0.0,
+  "height_max": 0.9881226863925523,
+  "ramp_width_m": 0.035,
+  "excluded": [
+    "face",
+    "neck",
+    "hands",
+    "feet",
+    "anterior shin"
+  ]
+}

@@ -83,3 +83,6 @@ for pack in range(6):
  bpy.ops.object.bake(type='EMIT');img.filepath_raw=str(out/f'mask_{pack}.png');img.file_format='PNG';img.save()
  print('REPAIRED',pack,flush=True)
 (out/'coverage.json').write_text(json.dumps({g:sum(k==j for k in labels.values()) for j,g in enumerate(GROUPS)},indent=2)+'\n')
+
+from core.surface_detail import bake_surface_detail
+bake_surface_detail(body, points, skin, labels, adj, trees, GROUPS, ROOT/'assets/maps')

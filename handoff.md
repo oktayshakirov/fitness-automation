@@ -18,10 +18,9 @@ Agent A now. Phase 0 is committed and all 30 MVP motion/catalog pairs exist.
 - Motion: the nine main pattern families plus cable crossover/face pull, shoulder
   girdle, shared-bar contact and micro-motion. Existing non-MVP specs are drafts;
   they are not part of the 30-item delivery/approval claim.
-- Look: continuous nearest-surface muscle highlights and brighter background.
-  Both tangent normal and mask-derived relief are now disabled by default following
-  user review. Original ray maps are retained; shipping maps are regenerated from
-  `assets/maps/repaired/`. See `assets/maps/README.md`.
+- Look: normalized continuous muscle highlights and a new skin-space scalar relief
+  derived from connected anatomy components. Legacy tangent normals and raised-mask
+  relief remain unused. See `assets/maps/README.md` and the latest progress entry.
 - Body selector: front/back SVG paths traced from baked ID passes with WebP
   underlays. All 17 groups occur across the views; retain a list selector for tiny
   regions and groups without MVP matches. See `bodymap/README.md` and LICENSE.md.
@@ -310,3 +309,28 @@ contract in plan.md wants 720×900.
   audit for completion of this new generation; older success logs are not proof.
   Keep all new versions draft until the user reviews them. Do not consume the
   chat with live batch polling; user prefers local unattended work and later review.
+
+
+- **2026-10-18 (surface-layer follow-up):** user requested further repair of the
+  extra muscle surface layer. Confirmed the prior 30-item rebuild completed and
+  passed delivery audit. Inspected current renders: independent MAX-mask/grey
+  mixing created faded seams where active groups met. Replaced it with normalized
+  surface weights, summed active coverage and primary/secondary blending inside
+  that coverage. Boundaries are cleaner without enlarging masks into unrelated UVs.
+
+  Added `core/surface_detail.py`: connected Z-Anatomy components projected onto
+  the skin, tiny fragments removed, geodesic distance to component borders forms
+  rounded bellies, surface smoothing before a 16-bit scalar bake. New default
+  `surface_detail_height.png` uses restrained bump and ±6% belly shading, without
+  adding a second mesh. Old tangent normals and raised-mask height remain unused.
+  No new assets/licences; existing anatomy attribution retained. Rebuilt bodymap
+  underlays with the new material; all 17 selection groups preserved.
+
+  Verified identical-pose before/after stills for push-up, shoulder press, leg
+  extension and one-arm row, plus front/back neutral detail. Rendered boundary
+  tests pass for adjacent primary and mixed primary/secondary muscles. Scalar
+  seam test passes across 1,122 duplicated UV vertices (max height delta 0.009616).
+  `review/surface_revision/index.html` is a ready comparison page. Final full
+  exports run unattended via `core/run_mvp.py`; inspect status/audit for completion
+  of this generation. Nothing is manually approved. Keep later work targeted to
+  user feedback and avoid live polling during batch rendering.
