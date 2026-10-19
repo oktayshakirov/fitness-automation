@@ -29,7 +29,7 @@ class Machine:
         c=dict(DEFAULTS[kind],**kw)
         if seat_z is not None: c['seat_z']=seat_z
         if lean is not None: c['lean']=lean
-        z=c['seat_z']; a=math.radians(c['lean']); self.moving=None; self.arms=[]
+        z=c['seat_z']; a=math.radians(c['lean']); self.moving=None; self.arms=[]; self.press_guides=[]
         up=Vector((0,-math.sin(a),math.cos(a))); back=Vector((0,math.cos(a),math.sin(a)))
         hip=Vector((0,0,z+.085)); bp=hip+up*.36+back*.10
         self.contacts={**c,'units':'metres','space':'root-local','facing':[0,-1,0],
@@ -80,7 +80,9 @@ class Machine:
                 origin=hip+self.axis*.12 if kind=='leg_press' else Vector((0,-.35,.25))
                 for x in (-.5,.5):
                     p=origin+Vector((x,0,0)); end=p+self.axis*(1.15 if kind=='leg_press' else 1.65)
-                    beam(name+'_rail',p,end,.045,r,'steel'); beam(name+'_rear_post',(end.x,end.y,.05),end,.07,r)
+                    rail=beam(name+'_rail',p,end,.045,r,'steel')
+                    if kind=='leg_press':self.press_guides.append((rail,end.copy(),(end-p).length,rail.scale.z))
+                    beam(name+'_rear_post',(end.x,end.y,.05),end,.07,r)
                 self.moving=empty(name+'_sled'); self.moving.parent=r
                 if kind=='leg_press':
                     cube(name+'_foot_plate',(0,0,0),(.75,.04,.55),'frame',self.moving)
@@ -152,6 +154,15 @@ class Machine:
             x=Vector((1,0,0)); y=-d
             self.moving.location=c+d*.07
             self.moving.rotation_euler=Matrix((x,y,x.cross(y))).transposed().to_euler()
+            # Telescoping guides terminate inside the sled collars. Exposed steel
+            # belongs on the far side of the footplate, never in the leg space.
+            for rail,end,rest_length,rest_scale in self.press_guides:
+                start=self.moving.location.copy(); start.x=end.x
+                rail.location=(start+end)/2
+                rail.rotation_euler=(end-start).to_track_quat('Z','Y').to_euler()
+                rail.scale.z=rest_scale*(end-start).length/rest_length
+                for path in ('location','rotation_euler','scale'):
+                    rail.keyframe_insert(path,frame=frame)
         elif 'handle' in contacts and self.kind in ('lat_pulldown','seated_row'):
             h=inv@Vector(contacts['handle'][0]); p=Vector(self.contacts['pulley'])
             length=(h-p).length

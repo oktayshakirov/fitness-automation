@@ -363,3 +363,20 @@ contract in plan.md wants 720×900.
   zero approvals. No full rebuild and no new assets. Git pull attempted; main
   has no remote/upstream configured. Next: user review of the refreshed machine
   clips; change motion further only if a specific remaining defect is identified.
+
+
+- **2026-10-19 (leg press guide correction):** user supplied a screenshot and
+  reference showing the unwanted rail continuing from the footplate into the
+  person's leg space. Changed only the procedural leg-press guides: their near
+  ends now follow the sled collars and their far ends stay at the support posts,
+  keeping the exposed guides on the far side of the plate throughout the rep.
+  Motion, foot contact, seat and platform remain unchanged. The reference image
+  was used for understanding only; no external asset was imported.
+
+  Inspected side/three-quarter renders at frames 1 and 36. Checked both guide
+  meshes against the moving plate plane over all 72 frames (nearest projection
+  -0.000134 m, within rounding tolerance). Full leg-press delivery/QA is regenerated
+  in all three views, both codecs. Shared equipment source hashing invalidates
+  the other 29 exports; the unattended runner refreshes those next. Check
+  `review/run_status.json` for completion, not the earlier successful audit.
+  All versions remain drafts. Git pull attempted; no upstream is configured.
