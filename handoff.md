@@ -398,3 +398,17 @@ contract in plan.md wants 720×900.
   User-approved back-squat catalog/motion files were already modified on entry
   and are preserved, unstaged. No additional approvals made. Pull/rebase attempted
   but blocked by those unstaged edits; no stash/reset was used.
+
+
+- **2026-10-19 (dumbbell curl twist):** user requested less biceps rotation.
+  The 14-degree carrying angle faded with elbow flexion and rotated the IK bend
+  plane, producing about 49.78 degrees upper-arm orientation change despite the
+  pinned elbow. Reduced only `dumbbell_curl`'s `carry` parameter to 3 degrees.
+  Measured the saved upper-arm orientations across all 72 frames: maximum change
+  is now 13.69 degrees on both sides. Full 10–138 degree curl range is preserved.
+  Inspected front/side stills at frames 1, 15 and 33; full delivery uses the usual
+  motion/contact/loop QA. No shared source change, so other current exports remain
+  valid. Stopped the background batch while it was rendering the old curl to
+  prevent an overwrite; resume it after the targeted export, skipping completed
+  current assets. Preserve the user's unstaged back-squat approval files.
+  Pull/rebase attempted and blocked by those existing unstaged edits.
