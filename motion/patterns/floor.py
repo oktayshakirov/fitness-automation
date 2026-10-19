@@ -16,7 +16,7 @@ bottom, m), lift (bridge hip angle at the top, deg), curl (crunch trunk flexion,
 feet (bridge/crunch heel distance from the glutes, m)."""
 import math
 from mathutils import Vector, Matrix
-from core.solver import rot_x, rot_z, two_bone
+from core.solver import rot_x, rot_z, two_bone, update
 from ..landmarks import Landmarks
 from ..stance import arm_lengths
 from ..contact import grip_point
@@ -37,7 +37,7 @@ def palm_point(P, side):
     """Centre of the palm's skin, for a hand flat on the floor."""
     w = P.head(f"wrist.{side}")
     k = (P.head(f"finger2-1.{side}") + P.head(f"finger5-1.{side}")) / 2
-    return w + (k - w) * 0.55 + P.palm_now(side) * 0.018
+    return w + (k - w) * 0.55 + P.palm_now(side) * 0.024
 
 
 class Pattern:
@@ -96,7 +96,7 @@ class Pattern:
         if p["mode"] == "plank":
             want = ua * 0.97 + 0.058            # elbow on the floor under the shoulder
         else:
-            want = 0.985 * (ua + fa) + 0.07     # straight arm to the palm
+            want = 0.98 * (ua + fa) + 0.024     # flat palm adds thickness, not hand length
         sh_z = lambda th: (self.prone(th), self.shoulders().z)[1]
         self.theta_top = self.bisect(sh_z, 2.0, 45.0, want)
         self.prone(self.theta_top)
@@ -143,7 +143,7 @@ class Pattern:
                 P.set_world(n, P.rest3(n))
 
     def flatten_fingers(self, side, floor=0.0):
-        """Fingers and thumb lie flat: no segment points below the floor plane."""
+        """Settle finger pads onto the support plane with a slight natural slope."""
         P = self.P
         for f in range(1, 6):
             for j in (1, 2, 3):
@@ -151,8 +151,12 @@ class Pattern:
                 if n not in P.rig.pose.bones:
                     continue
                 d = P.tail(n) - P.head(n)
-                flat = Vector((d.x, d.y, max(d.z, 0.0)))
-                if flat.length < 1e-6 or d.z >= 0:
+                remaining = sum(P.rig.pose.bones[f"finger{f}-{k}.{side}"].length
+                                for k in range(j, 4)) * .9
+                # Bone centres stay above the surface; skin pads meet it at the tips.
+                dz = (floor + .006 - P.head(n).z) * d.length / max(remaining, 1e-6)
+                flat = Vector((d.x, d.y, dz))
+                if flat.length < 1e-6:
                     continue
                 r = d.rotation_difference(flat).to_matrix()
                 P.set_world(n, r @ P.rig.pose.bones[n].matrix.to_3x3())
@@ -182,12 +186,15 @@ class Pattern:
             P.limb(f"upperarm01.{side}", f"lowerarm01.{side}", f"wrist.{side}", wrist, pole,
                    palm=X.cross(wrist - elbow), side=side)
             P.hand_orient(side, X * sgn, DOWN)
+            # Compact the hand as a unit, including finger joints; arm lengths stay fixed.
+            P.rig.pose.bones[f"wrist.{side}"].scale = (0.9, 0.9, 0.9)
+            update()
             err = target - palm_point(P, side)
             if err.length < 0.0008:
                 break
             wrist = wrist + err * (1.0 if it == 0 else 0.6)
         P.curl_fingers(side, deg=(4, 6, 4), thumb=(0, 5, 5))
-        self.flatten_fingers(side)
+        self.flatten_fingers(side, floor=target.z - .004)
 
     def pose_pushup(self, s):
         P, p = self.P, self.p
@@ -215,9 +222,12 @@ class Pattern:
             elbow = Vector((sgn * (abs(sh.x) - 0.01), sh.y, 0.058))
             wrist = elbow + Vector((-sgn * 0.04, -fa * 0.995, -0.008))
             P.limb(f"upperarm01.{side}", f"lowerarm01.{side}", f"wrist.{side}", wrist,
-                   Vector((0, 0.2, -1)), palm=Vector((-sgn * 0.6, 0, -0.8)).normalized(), side=side)
-            P.curl_fingers(side, deg=(6, 8, 6), thumb=(5, 5, 5))
-            self.flatten_fingers(side)
+                   Vector((0, 0.2, -1)), palm=Vector((-sgn, 0, 0)), side=side)
+            # Neutral wrists and relaxed fists, supported on the little-finger side.
+            P.hand_orient(side, Vector((0, 0, -1)), Vector((-sgn, 0, 0)))
+            P.rig.pose.bones[f"wrist.{side}"].scale = (0.9, 0.9, 0.9)
+            update()
+            P.curl_fingers(side, deg=(55, 65, 40), thumb=(15, 30, 25))
         return {}
 
     def legs_bent(self):

@@ -107,6 +107,7 @@ bone_mats = {}
 sole_prev = None
 slide_max, floor_min = 0.0, 1.0
 grip_max = {}
+palm_height_error = {}
 pen_max = 0.0
 self_pen_max = 0.0
 prop_loop_start = {}
@@ -188,6 +189,9 @@ for f in frames:
     scene.frame_set(f)
     bone_mats[f] = {pb.name: pb.matrix.copy() for pb in rig.pose.bones}
     co = body_verts()
+    for side, height in qa_cfg.get("support_palm_height", {}).items():
+        from motion.patterns.floor import palm_point
+        palm_height_error[side] = max(palm_height_error.get(side, 0), abs(palm_point(P, side).z - height))
     # floor + slide
     izmin = min(skin, key=lambda i: co[i].z)
     zmin = co[izmin].z
@@ -366,6 +370,23 @@ for f in frames:
             stats["balance_at"] = f
 
 # --- verdicts ---------------------------------------------------------------
+if palm_height_error:
+    stats["support_palm_error_mm"] = {s: round(v * 1000, 2) for s, v in palm_height_error.items()}
+    if max(palm_height_error.values()) > .008:
+        fail("support_contact", "support palm more than 8 mm from its plane")
+# Isolation exercises can require the humerus to stay fixed relative to the chest.
+if "upperarm_rotation_max" in qa_cfg:
+    drift = {}
+    for side in ("L", "R"):
+        def relative(frame):
+            mats = bone_mats[frame]
+            return (mats["spine01"].inverted() @ mats[f"upperarm01.{side}"]).to_quaternion()
+        ref = relative(1)
+        drift[side] = max(math.degrees(ref.rotation_difference(relative(f)).angle) for f in frames)
+    stats["upperarm_rotation_deg"] = {s: round(v, 2) for s, v in drift.items()}
+    if max(drift.values()) > qa_cfg["upperarm_rotation_max"]:
+        fail("upperarm_rotation", f"upper arms turn {max(drift.values()):.1f} deg relative to chest")
+
 loop_t = max((bone_mats[1][n].translation - bone_mats[N][n].translation).length for n in bone_mats[1])
 loop_r = max(math.degrees(bone_mats[1][n].to_quaternion().rotation_difference(bone_mats[N][n].to_quaternion()).angle)
              for n in bone_mats[1])

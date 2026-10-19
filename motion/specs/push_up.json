@@ -53,6 +53,10 @@
   "approved": false,
   "qa": {
     "wrist_max": 105,
-    "wrist_rotation_max": 120
+    "wrist_rotation_max": 120,
+    "support_palm_height": {
+      "L": 0.004,
+      "R": 0.004
+    }
   }
 }

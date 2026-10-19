@@ -77,6 +77,7 @@ def key_pose(rig, f):
     for pb in rig.pose.bones:
         pb.keyframe_insert("rotation_quaternion", frame=f)
         pb.keyframe_insert("location", frame=f)
+        pb.keyframe_insert("scale", frame=f)
 
 
 def _shape_press_proportions(body, rig):

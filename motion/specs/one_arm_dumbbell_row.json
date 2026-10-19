@@ -79,6 +79,9 @@
           115
         ]
       }
+    },
+    "support_palm_height": {
+      "L": 0.434
     }
   },
   "approved": false

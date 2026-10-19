@@ -111,7 +111,7 @@ class Pattern:
             # from that posed joint instead of the pre-girdle shoulder height.
             terminal_z = P.head(f"upperarm01.{side}").z + .985 * self.reach + .115
             g.z = lerp(g.z, terminal_z, smooth(s))
-            pole = body @ Vector((sgn, -0.8, -0.6))
+            pole = body @ Vector((sgn, 0.8, -0.6))
             reach(P, side, g, pole, knuckle_dir=X * sgn,
                   palm=lambda fd: bar_palm(X, fd, "over"))
         return {}

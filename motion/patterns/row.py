@@ -98,8 +98,10 @@ class OneArmBench(Floor):
         self.hand_pad = Vector((sg * (p["bench_x"] + 0.04), -0.62, bz + 0.004))
         self.foot = Vector((-sg * 0.30, self.hip_y - 0.05, P.rest_head("foot.L").z))
         # torso pitch: the support arm is straight down to the pad
-        f = lambda t: (self.place(t), (self.P.head(f"upperarm01.{sup}") - self.hand_pad).length)[1]
-        self.tilt = self.bisect(f, 50.0, 100.0, 0.985 * (ua + fa) + 0.07)
+        # Flat hands extend along the pad, not another 7 cm down the arm.
+        wrist_contact = self.hand_pad + Vector((0, .04, .024))
+        f = lambda t: (self.place(t), (self.P.head(f"upperarm01.{sup}") - wrist_contact).length)[1]
+        self.tilt = self.bisect(f, 50.0, 100.0, 0.985 * (ua + fa))
 
     def solve_supine(self):
         pass

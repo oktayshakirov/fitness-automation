@@ -2,15 +2,15 @@
   "id": "triceps_pushdown",
   "pattern": "arm_isolation",
   "params": {
-    "tilt": 12,
-    "hip_back": 0.035,
+    "tilt": 8,
+    "hip_back": 0.025,
     "knee_reach": 0.965,
     "ua_dir": [
-      0.03,
+      0,
       -0.16,
       -1
     ],
-    "grip_x": 0.115,
+    "grip_x": null,
     "phi": [
       98,
       4
@@ -64,5 +64,8 @@
     ],
     "secondary": []
   },
-  "approved": false
+  "approved": false,
+  "qa": {
+    "upperarm_rotation_max": 4
+  }
 }

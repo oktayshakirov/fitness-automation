@@ -46,7 +46,7 @@ class Pattern:
         self.root_rest = P.rest_head("root")
         self.hands = {s: Vector((sg * p["grip_w"], 0.0, p["bar_z"])) for s, sg in (("L", 1), ("R", -1))}
         # straight-arm reach from the shoulder joint to the grip point
-        self.arm = 0.985 * (ua + fa) + (0.075 if mode != "dip" else 0.05)
+        self.arm = 0.985 * (ua + fa) + (0.110 if mode == "pullup" else 0.075 if mode != "dip" else 0.05)
 
     def shoulders(self):
         P = self.P
@@ -120,7 +120,7 @@ class Pattern:
         P.local("neck02", (1, 0, 0), lerp(0, -6, smooth(s)))       # eyes to the bar
         self.legs_hanging(hip_flex=lerp(6, 14, s), knee=lerp(10, 25, s))
         for side, sgn in (("L", 1), ("R", -1)):
-            pole = Vector((sgn, -0.35, -0.4))
+            pole = Vector((sgn, 0.45, -0.4))
             self.grip(side, sgn, pole)
         return {"bar": ((self.hands["L"] + self.hands["R"]) / 2, X.copy())}
 
