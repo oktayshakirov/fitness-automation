@@ -405,7 +405,9 @@ contract in plan.md wants 720×900.
   plane, producing about 49.78 degrees upper-arm orientation change despite the
   pinned elbow. Reduced only `dumbbell_curl`'s `carry` parameter to 3 degrees.
   Measured the saved upper-arm orientations across all 72 frames: maximum change
-  is now 13.69 degrees on both sides. Full 10–138 degree curl range is preserved.
+  is now 11.64 degrees on both sides. Also widened the fixed upper-arm direction
+  slightly (x component 0.06 to 0.14) so the dumbbells clear the thighs: final
+  collision penetration and grip error are both 0 mm. Full curl range is preserved.
   Inspected front/side stills at frames 1, 15 and 33; full delivery uses the usual
   motion/contact/loop QA. No shared source change, so other current exports remain
   valid. Stopped the background batch while it was rendering the old curl to
