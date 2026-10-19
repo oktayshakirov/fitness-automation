@@ -13,6 +13,13 @@ for i,eid in enumerate(ids):
         e=read(asset)
         try:
             current_asset(eid,e)
+            # A process may exit after publishing valid media but before cleanup.
+            # Only discard generated frames after verifying the complete export.
+            for view in e['views']:
+                folder=ROOT/'review'/f'{eid}_{view}'
+                for frame in folder.glob('[0-9][0-9][0-9][0-9].png'):
+                    frame.unlink()
+                if folder.is_dir() and not any(folder.iterdir()):folder.rmdir()
             report.append({'id':eid,'status':'PASS','reused':True,'seconds':0})
             print(f'{i+1}/{len(ids)} {eid}: current, skipped',flush=True);continue
         except (OSError,ValueError,KeyError): pass

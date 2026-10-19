@@ -334,3 +334,32 @@ contract in plan.md wants 720×900.
   exports run unattended via `core/run_mvp.py`; inspect status/audit for completion
   of this generation. Nothing is manually approved. Keep later work targeted to
   user feedback and avoid live polling during batch rendering.
+
+
+- **2026-10-19 (seated feet follow-up):** resumed the user's report that leg curl
+  and leg extension still showed backwards feet. Loaded the latest saved scenes,
+  rendered equipment-hidden ankle/toe close-ups at both endpoints, and inspected
+  frames decoded from the actual delivered MP4s. Current files show toes forward
+  while bent and lifting with the shin while extended; no additional pose change
+  was justified. The previous correction had already reached the latest exports.
+
+  Review videos/posters previously reused unversioned URLs. Added content-hash
+  query strings, and scene-hash versions on contact sheets, so refreshed cards
+  request the current files. Reloaded the browser and verified both machine video
+  URLs carry their actual current hashes. Cache reuse is a possible explanation
+  for the earlier discrepancy, not a proven diagnosis of what the user saw.
+
+  Added `python3 qa/check_seated_feet.py --render`: checks the signed toe direction
+  relative to the shin and ankle continuity for both sides across all 72 frames.
+  Both exercises pass (max anterior deviation 18.604 degrees; no ankle-relative
+  jumps). Diagnostic images and a focused review page are under
+  `review/feet_revision/`. Existing knee-plane QA alone cannot reject backwards
+  toes because its plane-distance calculation is unsigned.
+
+  The previous unattended batch had published all outputs but failed its final
+  audit on leftover pull-up frame PNGs. Resume now removes only generated frame
+  PNGs after verifying the corresponding complete export. Ran the resume/audit:
+  all 30 existing outputs reused; 176 videos, 88 posters, 30 thumbs validated;
+  zero approvals. No full rebuild and no new assets. Git pull attempted; main
+  has no remote/upstream configured. Next: user review of the refreshed machine
+  clips; change motion further only if a specific remaining defect is identified.
