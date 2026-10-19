@@ -128,8 +128,8 @@ def pullup_bar(name='pullup_bar',z=2.2):
     r=empty(name)
     tube(name+'_bar',[(-.68,0,0),(.68,0,0)],.016,parent=r)
     for x in (-.58,.58):
-        beam(name+'_bracket',(x,0,0),(x,.50,0),.045,r)
-        cube(name+'_wall_mount',(x,.52,-.08),(.10,.04,.30),parent=r)
+        beam(name+'_bracket',(x,0,0),(x,-.50,0),.045,r)
+        cube(name+'_wall_mount',(x,-.52,-.08),(.10,.04,.30),parent=r)
     return metadata(r,{'grip_axis':[1,0,0],'grip_z':z,'root_at_bar':True})
 
 

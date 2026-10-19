@@ -458,3 +458,39 @@ contract in plan.md wants 720×900.
   to refresh; check run_status.json for actual completion. No reference assets
   imported and no approvals changed. Existing squat approval edits remain unstaged;
   pull/rebase was attempted and blocked by them.
+
+- **2026-10-20 (shoulders, hands and machine direction):** resumed the interrupted
+  shoulder diagnosis and addressed the user's six additional flagged exercises.
+  Corrected the shoulder press and pull-up elbow bend planes to avoid inward
+  humeral twist at overhead positions. Pull-up now reaches a nearly straight-arm
+  hang (7–144 degrees elbow flexion). Preserved the existing press proportions.
+  Straight-bar pushdown uses aligned elbow/wrist paths instead of forcing a narrow
+  wrist width; torso lean is 8 degrees and humeral rotation relative to the chest
+  is only 1 degree across the loop. Added an opt-in QA rotation limit (4 degrees).
+
+  Repaired push-up and bench-row support placement: a flat palm contributes skin
+  thickness to vertical reach, not hand length. Hands are 90% size with finger joints
+  scaled together, and bone scale is now keyed for saved-scene playback. Finger pads
+  settle toward the actual floor/bench plane; forearm plank uses relaxed fists and
+  neutral wrists. Added opt-in support-palm height gates for row and push-up; both
+  report 0 mm error (rounded). Inspected hand closeups in review/hand_revision/.
+
+  Lat-pulldown stack/tower is now in front of the seated figure, with extended base,
+  connected thigh-pad support, and selected weight plates moving together. Rear
+  views show the body without the stack obscuring it. Pull-up wall brackets are now
+  on the facing side. Equipment remains procedural; no external assets imported.
+
+  Rendered and inspected endpoint sheets for all seven exercises and a glute-bridge
+  regression. Final 72-frame QA passes all eight, including contact, joint, floor,
+  loop and implement checks. Push-up/plank floor minima are -3.5/-2.8 mm, inside the
+  existing tolerance. Row implement penetration remains 3.4 mm, inside its existing
+  5 mm limit. Diagnostic pose overrides must clear rig.animation_data first, or
+  rendering re-evaluates the saved action and silently replaces manual bone poses.
+
+  Started the unattended run_mvp.py export/audit batch with the seven fixes first;
+  full video refresh is still running, not yet declared complete. Check
+  review/run_status.json and review/batch/report.json for actual progress. Shared
+  source hashes invalidate older deliveries, so the runner refreshes the rest too.
+  Generated frame directories are removed after encoding. User squat approval edits
+  remain unstaged. Pull/rebase attempted before commits and refused due to existing
+  unstaged work; the repository still has no remote. No approvals changed.

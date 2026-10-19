@@ -48,8 +48,8 @@ class Machine:
             self.moving=barbell(name+'_bar',plates=[]); self.moving.parent=r; self.moving.location=(0,-.12,1.3)
             self.contacts['handle_path']={'type':'slider','origin':[0,-.12,.3],'axis':[0,0,1],'range':[0,1.8]}
         else:
-            base_y=-.35 if kind in ('seated_row','leg_press','hack_squat') else -.1
-            for x in (-.33,.33): cube(name+'_base',(x,base_y,.04),(.10,1.85 if kind=='seated_row' else 1.65,.08),parent=r)
+            base_y=-.35 if kind in ('lat_pulldown','seated_row','leg_press','hack_squat') else -.1
+            for x in (-.33,.33): cube(name+'_base',(x,base_y,.04),(.10,1.85 if kind in ('lat_pulldown','seated_row') else 1.65,.08),parent=r)
             for yy in (-.55,.45): beam(name+'_cross',(-.33,yy,.08),(.33,yy,.08),.065,r)
             if kind!='hack_squat':
                 depth=.9 if kind=='seated_row' else .44
@@ -104,9 +104,11 @@ class Machine:
                     self.contacts['thigh_pad']=[0,-.38,z+.15]
                     for x in (-.29,.29):
                         tube(name+'_pad_support',[(x,.15,z+.03),(x,-.38,z+.03),(x,-.38,z+.15)],.018,'frame',r)
-                    tower_y=.6; p=Vector(c['pulley'])
+                    tower_y=-1.10; p=Vector(c['pulley'])
                     for x in (-.34,.34): beam(name+'_upright',(x,tower_y,.05),(x,tower_y,2.50),.06,r)
                     beam(name+'_boom',(0,tower_y,2.50),p,.07,r)
+                    beam(name+'_tower_base',(-.34,tower_y,.08),(.34,tower_y,.08),.065,r)
+                    beam(name+'_pad_stem',(0,tower_y,z+.15),(0,-.38,z+.15),.045,r)
                 else:
                     tower_y=-1.25; p=Vector(c['pulley'])
                     for x in (-.34,.34): beam(name+'_upright',(x,tower_y,.05),(x,tower_y,1.35),.06,r)
@@ -118,9 +120,11 @@ class Machine:
                 for x in (-.12,.12): beam(name+'_stack_guide',(x,tower_y,.08),(x,tower_y,top_z-.08),.012,r,'steel')
                 self.rear_pulley=Vector((0,tower_y,top_z-.05))
                 rear=cyl_x(name+'_rear_pulley','dark',.05,.03,parent=r);rear.location=self.rear_pulley
-                for i in range(12): cube(name+'_weight',(0,tower_y,.13+i*.033),(.36,.18,.03),'plate',r,bevel=.003)
+                for i in range(8): cube(name+'_weight',(0,tower_y,.13+i*.033),(.36,.18,.03),'plate',r,bevel=.003)
                 self.moving=empty(name+'_stack_cap',(0,tower_y,.54)); self.moving.parent=r
-                cube(name+'_selected',(0,0,0),(.36,.18,.10),'accent',self.moving)
+                cube(name+'_selected',(0,0,0),(.36,.18,.10),'plate',self.moving)
+                for i in range(4): cube(name+'_lifted_weight',(0,0,-.146+i*.033),(.36,.18,.03),'plate',self.moving,bevel=.003)
+                cube(name+'_selector',(0,-.098,0),(.10,.016,.02),'accent',self.moving)
                 self.cable=tube(name+'_cable',[Vector((0,tower_y,.59)),self.rear_pulley,p,p+Vector((0,0,-.5))],.0035,'cable',r)
                 pulley=cyl_x(name+'_pulley','dark',.05,.03,parent=r); pulley.location=p
                 self.handle0=None

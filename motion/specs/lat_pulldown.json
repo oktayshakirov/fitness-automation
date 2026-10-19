@@ -31,10 +31,10 @@
   "camera": {
     "target": [
       0,
-      -0.1,
+      -0.35,
       1.2
     ],
-    "ortho": 2.7
+    "ortho": 3.0
   },
   "views": [
     {
@@ -43,11 +43,11 @@
     },
     {
       "name": "threeq",
-      "yaw": 35
+      "yaw": 145
     },
     {
-      "name": "front",
-      "yaw": 0
+      "name": "back",
+      "yaw": 180
     }
   ],
   "draft_muscles": {
