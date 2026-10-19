@@ -74,5 +74,6 @@
     }
   },
   "shoulder_smooth": true,
-  "micro": 0.5
+  "micro": 0.5,
+  "press_proportions": true
 }

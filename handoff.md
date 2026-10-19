@@ -438,3 +438,23 @@ contract in plan.md wants 720×900.
   invalidate prior outputs, so check run_status.json for completion. Preserve the
   user's unstaged squat approval edits. Pull/rebase was attempted and refused due
   to those edits; no stash/reset and no new approval.
+
+
+- **2026-10-19 (shoulder press proportions follow-up):** the user clarified
+  that the overhead silhouette still looked too skinny and supplied a front-view
+  screenshot plus illustrated/photo references. Added an opt-in
+  `press_proportions` body shape key for this exercise: radial upper-arm/deltoid
+  volume with smooth joint/torso falloffs, a milder forearm taper, and broader
+  waist/obliques. It is applied additively over evaluated MPFB macro shapes before
+  skinning; mesh topology, UVs, skeleton and hand positions are preserved. The
+  waist breadth gain peaks at 16%; arm gains vary smoothly with bone weights and
+  segment position. This is a geometry change, not another smoothing-only pass.
+
+  Compared lowered/overhead front and three-quarter stills using identical cameras.
+  `review/press_proportions/index.html` shows previous versus updated proportions.
+  Full motion QA passes with 0 mm grip error and 0 mm implement penetration.
+  Three-view delivery rebuilt; resume unattended refresh after verification,
+  prioritizing the recent corrections. Shared builder hashes require other exports
+  to refresh; check run_status.json for actual completion. No reference assets
+  imported and no approvals changed. Existing squat approval edits remain unstaged;
+  pull/rebase was attempted and blocked by them.
