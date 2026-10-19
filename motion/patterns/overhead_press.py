@@ -65,6 +65,10 @@ class Pattern:
         face = smooth((z - 1.40) / 0.12) * (1 - smooth((z - 1.62) / 0.12))
         P.local("neck02", (1, 0, 0), -9 * face + 5 * smooth((s - 0.8) / 0.2))
         P.local("head", (1, 0, 0), -6 * face)
+        if p["load"] == "db":
+            # Separate bells need no barbell-style head-through manoeuvre.
+            P.local("neck02", (1, 0, 0), 0)
+            P.local("head", (1, 0, 0), 0)
         self.st.legs()
         if p["load"] == "bar":
             return self.arms_bar(Vector((0, bar_y, z)), s)
@@ -76,8 +80,9 @@ class Pattern:
         # upward rotation follows the arm; a small active shrug at lockout
         if self.p["load"] == "db":
             upward = max(0.0, P.humeral_elevation(arm) - 30.0) / 3.0
-            P.girdle(side, elevation=.3 * upward + 4 * smooth((s - .75) / .25),
-                     protraction=2, upward=upward)
+            P.girdle(side, elevation=self.p.get("clavicle_lift", .3) * upward +
+                     self.p.get("top_shrug", 4) * smooth((s - .75) / .25),
+                     protraction=2, upward=self.p.get("scapula_rotation", 1.0) * upward)
         else:
             P.scap_rhythm(side, arm, protraction=2, elevation=4 * smooth((s - 0.75) / 0.25))
 

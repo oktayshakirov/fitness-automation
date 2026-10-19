@@ -414,3 +414,27 @@ contract in plan.md wants 720×900.
   prevent an overwrite; resume it after the targeted export, skipping completed
   current assets. Preserve the user's unstaged back-squat approval files.
   Pull/rebase attempted and blocked by those existing unstaged edits.
+
+
+- **2026-10-19 (shoulder press body shape):** user reported thin arms and an
+  overextended-looking back at lockout. Compared the existing pose with lighter
+  smoothing, corrective smoothing, and localized torso weight correction. For
+  the shoulder-press-only `shoulder_smooth` option, reduced smoothing from 20
+  passes/factor .8 to 5/.5 to retain arm volume. Blended shoulder/upper-arm weights
+  on the central ribcage into spine01 with smooth spatial falloffs, preserving
+  total weights and lateral deltoid/upper trapezius attachments. This keeps central
+  chest/back skin from being lifted with the humerus. No mesh assets added.
+
+  Reduced this exercise's scapula rotation and clavicle elevation via spec
+  parameters (rotation factor .35, lift .15, top shrug 2 degrees). Dumbbell presses
+  keep the neck neutral instead of using the barbell head-through motion; micro
+  amplitude .5. Inspected front/side/three-quarter endpoints. Full QA passes:
+  elbow flexion about 16–116 degrees, zero grip error and implement penetration.
+  A 72-frame posture check reports max torso tilt .5001 degrees and max arm-bone
+  length error .0011 mm. Diagnostics are in `review/press_revision/`.
+
+  Stopped the old render group before shared-code edits. After the corrected
+  shoulder-press delivery, resume the remaining exports unattended; shared hashes
+  invalidate prior outputs, so check run_status.json for completion. Preserve the
+  user's unstaged squat approval edits. Pull/rebase was attempted and refused due
+  to those edits; no stash/reset and no new approval.

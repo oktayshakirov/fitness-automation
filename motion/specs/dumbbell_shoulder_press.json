@@ -7,7 +7,10 @@
     "lean": 0,
     "rack_z": 1.64,
     "db_top_w": 0.23,
-    "top_reach": 1.08
+    "top_reach": 1.08,
+    "clavicle_lift": 0.15,
+    "top_shrug": 2,
+    "scapula_rotation": 0.35
   },
   "props": [
     {
@@ -70,5 +73,6 @@
       ]
     }
   },
-  "shoulder_smooth": true
+  "shoulder_smooth": true,
+  "micro": 0.5
 }
