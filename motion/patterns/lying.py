@@ -6,7 +6,7 @@ the lower back, shoulder blades pulled back and down for the whole set, feet fla
 the floor a little wider than the bench, knees bent about 90 deg.
 
 mode = "press": bar (or dumbbells) from straight arms over the shoulders down to the
-  lower chest, forearms vertical, elbows ~50-70 deg from the torso; pressed back up in
+  chest, forearms vertical, elbows ~50-70 deg from the torso; pressed back up in
   a slight arc toward the shoulders.
 mode = "fly": dumbbells start over the chest, palms facing; arms open in a wide arc
   with the elbows softly bent and fixed until the upper arms are level with the
@@ -77,7 +77,10 @@ class Pattern(Floor):
         sh = self.shoulders()
         top = Vector((0, sh.y - 0.01, sh.z + 0.94 * (self.ua + self.fa) + 0.03))
         chest = self.lm["chest"]
-        bot = Vector((0, chest.y - 0.07, chest.z + 0.03))          # lower chest, bar resting
+        # +Y is toward the head. Keep the bottom position on the chest rather
+        # than subtracting a fixed offset toward the abdomen for every press.
+        bot = Vector((0, chest.y + p.get("chest_offset_y", -0.07),
+                      chest.z + p.get("chest_clearance", 0.03)))
         # slight J-curve: the bar drifts toward the feet as it comes down
         c = Vector((0, lerp(top.y, bot.y, smooth(s) ** 0.7), lerp(top.z, bot.z, smooth(s))))
         out = {}

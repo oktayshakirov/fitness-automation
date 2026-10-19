@@ -1,7 +1,7 @@
 {
   "id": "barbell_bench_press",
   "pattern": "lying",
-  "params": {"mode": "press", "load": "bar", "grip_w": 0.29},
+  "params": {"mode": "press", "load": "bar", "grip_w": 0.29, "chest_offset_y": 0.04, "chest_clearance": 0.055},
   "props": [{"kind": "bench"}, {"kind": "barbell", "plates": [20]}],
   "tempo": {"hold_start": 8, "down": 26, "hold_bottom": 4, "up": 22, "hold_end": 12},
   "camera": {"target": [0, -0.25, 0.62], "ortho": 2.5, "res": [1280, 720]},

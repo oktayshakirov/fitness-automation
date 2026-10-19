@@ -380,3 +380,21 @@ contract in plan.md wants 720×900.
   the other 29 exports; the unattended runner refreshes those next. Check
   `review/run_status.json` for completion, not the earlier successful audit.
   All versions remain drafts. Git pull attempted; no upstream is configured.
+
+
+- **2026-10-19 (bench press chest position):** user reported the bottom bar
+  position too low along the torso. The old target subtracted 7 cm from the chest
+  landmark toward the feet. Added per-exercise `chest_offset_y` and
+  `chest_clearance` controls to the lying press; bench press uses +4 cm toward
+  the head and 5.5 cm clearance instead of 3 cm. Net change at the bottom:
+  11 cm headward and 2.5 cm upward. Other lying exercise defaults are preserved.
+
+  Inspected side/three-quarter endpoints. Full bench-press delivery is rebuilt
+  with the existing all-frame contact/collision/joint/loop QA. Stopped the old
+  background render group before editing shared motion code; resume with bench
+  press first after the targeted export. Shared pipeline hashing requires the
+  remaining exports to refresh; check run_status.json for actual completion.
+  Reference illustration used only to understand the request; no asset imported.
+  User-approved back-squat catalog/motion files were already modified on entry
+  and are preserved, unstaged. No additional approvals made. Pull/rebase attempted
+  but blocked by those unstaged edits; no stash/reset was used.
