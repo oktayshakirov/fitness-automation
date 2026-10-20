@@ -82,3 +82,16 @@ Built: `common.py` (body, pose solver, muscle material, studio), `build_muscle_m
 Open items: muscle-detail normal map (tangent split), scapula/shoulder motion for
 presses/rows/pull-ups, finger contact QA, bench/seat/hanging contact patterns,
 micro-motion (weight shift, breathing) so loops read less mechanical.
+
+## Pulldown form reference (2026-10-20)
+
+Checked the wider-grip revision against primary coaching sources:
+- ACE, Seated Lat Pulldown: https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/
+- NASM, The Biomechanics of the Lat Pulldown: https://www.nasm.org/resource-center/blog/training/the-biomechanics-of-the-lat-pulldown-muscles-grip-and-form
+
+Both describe a controlled pull toward the upper chest with a modest backward lean,
+a braced torso, and no additional backward swing during the pull. The animation uses
+an 18-degree stable lean and 92 cm hand spacing (previously 80 cm). These numbers are
+our animation settings, not prescriptions quoted from the sources. The top target
+accounts for lateral reach so the wider hands remain on the bar. Sources consulted
+for technique only; no images, video, or mesh assets incorporated.

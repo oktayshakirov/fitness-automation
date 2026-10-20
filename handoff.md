@@ -494,3 +494,28 @@ contract in plan.md wants 720×900.
   Generated frame directories are removed after encoding. User squat approval edits
   remain unstaged. Pull/rebase attempted before commits and refused due to existing
   unstaged work; the repository still has no remote. No approvals changed.
+
+- **2026-10-20 evening (press appearance and wider pulldown):** user rejected the
+  bulky overhead shoulders and requested three-quarter presentation, reduced biceps,
+  and closer arms. Compared removed added proportions, closer hand spacing, stronger
+  girdle elevation, and linear versus dual-quaternion skinning. Large shoulder/armpit
+  bulges were predominantly DQ blending. Added per-spec `preserve_volume` (default
+  true); disabled only for dumbbell shoulder press. Removed its added proportions,
+  narrowed top half-width .23 -> .16 m, set clavicle lift .6/scapular factor 1.0.
+  Primary view is threeq at 40 degrees; side/front remain. Inspected bottom/mid/top
+  renders and diagnostic comparisons in review/press_oct20/. Full QA passes: elbow
+  14–116 degrees, 0 mm grip/prop error. Motion/body commit b9a94e0.
+
+  Pulldown spacing increased .80 -> .92 m with matching procedural bar width. Top
+  height now compensates for lateral reach, maintaining implement contact. Stable
+  torso lean increased 12 -> 18 degrees. ACE/NASM recommend holding a modest lean
+  without rocking farther back on each pull; links and interpretation are recorded
+  in research/FINDINGS.md. Full QA passes with .5 mm grip error, elbow about 14–107
+  degrees, no prop penetration. Inspected side/rear-three-quarter endpoint renders.
+  No external assets imported. Pulldown commit b28d7a1.
+
+  Prior 30-item batch completed and passed its audit. Started a new unattended
+  run_mvp.py batch prioritizing these two; check review/run_status.json for actual
+  completion. Remaining clips refresh because the shared builder hash changed.
+  Preserve the user's two unstaged squat approval files. Pull/rebase attempted and
+  blocked by unstaged changes; no upstream configured. No approvals changed.
