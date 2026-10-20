@@ -6,11 +6,11 @@
     "grip_w": 0.42,
     "lean": 0,
     "rack_z": 1.64,
-    "db_top_w": 0.23,
+    "db_top_w": 0.16,
     "top_reach": 1.08,
-    "clavicle_lift": 0.15,
+    "clavicle_lift": 0.6,
     "top_shrug": 2,
-    "scapula_rotation": 0.35
+    "scapula_rotation": 1.0
   },
   "props": [
     {
@@ -38,16 +38,16 @@
   },
   "views": [
     {
-      "name": "front",
-      "yaw": 0
+      "name": "threeq",
+      "yaw": 40
     },
     {
       "name": "side",
       "yaw": 90
     },
     {
-      "name": "threeq",
-      "yaw": 35
+      "name": "front",
+      "yaw": 0
     }
   ],
   "draft_muscles": {
@@ -75,5 +75,6 @@
   },
   "shoulder_smooth": true,
   "micro": 0.5,
-  "press_proportions": true
+  "press_proportions": false,
+  "preserve_volume": false
 }

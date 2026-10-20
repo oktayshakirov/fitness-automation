@@ -9,7 +9,7 @@ def update():
     bpy.context.view_layer.update()
 
 
-def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press_proportions=False):
+def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press_proportions=False, preserve_volume=True):
     """MPFB body + default 163-bone rig at the origin, facing -Y, feet on z=0.
     Rig object at identity, so armature space = world space."""
     from bl_ext.user_default.mpfb.services.humanservice import HumanService
@@ -20,10 +20,11 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
     macro["weight"] = weight
     body = HumanService.create_human(macro_detail_dict=macro)
     rig = HumanService.add_builtin_rig(body, "default")
-    # Dual-quaternion skinning preserves elbow/shoulder volume during axial twist.
+    # Dual-quaternion skinning preserves volume during axial twist. The overhead
+    # press opts out: blended shoulder rotations otherwise produce large armpit bulges.
     for modifier in body.modifiers:
         if modifier.type == "ARMATURE":
-            modifier.use_deform_preserve_volume = True
+            modifier.use_deform_preserve_volume = preserve_volume
     if shoulder_smooth:
         # Confine a silhouette correction to the shoulder/upper arm. The default
         # MPFB weights form sharp folds at overhead elevation; hands stay untouched.
