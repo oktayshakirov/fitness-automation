@@ -524,3 +524,17 @@ contract in plan.md wants 720×900.
   passed `current_asset` validation (press 82s, pulldown 80s). Inspected decoded
   final-video frames as well as the earlier contact sheets. Their updated videos
   are ready on the review page; the remaining 28-item hash refresh continues.
+
+- **2026-10-20 (relaxed shoulder-press rack):** user liked the revised press but
+  requested lower shoulders with the bells down. Added `rack_girdle_scale` (default
+  1, this spec .2), smoothly restoring full girdle elevation/upward rotation at the
+  overhead endpoint. No changes to the accepted top pose, body proportions, camera,
+  or other exercise specs. Inspected bottom/mid/top renders and decoded final-video
+  bottom frame. Full 72-frame QA passes: elbow about 14–112 degrees, zero grip error,
+  prop penetration and loop seam. Full shoulder-press delivery is current and
+  validated, ready on the review page.
+
+  Stopped the previous render process group before editing shared motion code and
+  resumed the unattended runner with shoulder press first (PID 25119). Remaining
+  library refresh continues; see run_status.json. User squat approvals remain
+  unstaged. Pull/rebase attempted before commit; no stash/reset or approval edits.

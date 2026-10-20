@@ -80,6 +80,9 @@ class Pattern:
         # upward rotation follows the arm; a small active shrug at lockout
         if self.p["load"] == "db":
             upward = max(0.0, P.humeral_elevation(arm) - 30.0) / 3.0
+            # Relax the shoulder girdle in the rack, then restore full upward
+            # rotation as the bells rise. The overhead pose is unchanged.
+            upward *= lerp(self.p.get("rack_girdle_scale", 1.0), 1.0, smooth(s))
             P.girdle(side, elevation=self.p.get("clavicle_lift", .3) * upward +
                      self.p.get("top_shrug", 4) * smooth((s - .75) / .25),
                      protraction=2, upward=self.p.get("scapula_rotation", 1.0) * upward)

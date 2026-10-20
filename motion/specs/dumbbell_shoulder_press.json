@@ -10,7 +10,8 @@
     "top_reach": 1.08,
     "clavicle_lift": 0.6,
     "top_shrug": 2,
-    "scapula_rotation": 1.0
+    "scapula_rotation": 1.0,
+    "rack_girdle_scale": 0.2
   },
   "props": [
     {
