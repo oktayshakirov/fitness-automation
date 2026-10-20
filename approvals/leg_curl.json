@@ -1,0 +1,11 @@
+{
+  "id": "leg_curl",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.278656+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "bd352817b424b7a24134d3282555b60e566843072608dfe43056dfdca164e33e",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "9a4753dae55c0a8d42dc76639493b74d9e0223c43317629aab3d7cc00162487c"
+  }
+}

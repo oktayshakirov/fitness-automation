@@ -29,5 +29,5 @@
   "source": "free-exercise-db:Dumbbell_Shoulder_Press",
   "source_equipment": "dumbbell",
   "adaptation": "Standing variation of the source seated press; muscle data retained; no bench required.",
-  "reviewed": false
+  "reviewed": true
 }

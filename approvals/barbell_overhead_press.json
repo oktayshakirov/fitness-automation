@@ -1,0 +1,11 @@
+{
+  "id": "barbell_overhead_press",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.263015+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "749b1620255c18ec9d7849a0f665766fa9f3bed400a24e88adf36808b4b4ebd4",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "f4681de38bb47573da2729259ddb898e79dc9d5065e5bdbfdd292a69e8ad7648"
+  }
+}

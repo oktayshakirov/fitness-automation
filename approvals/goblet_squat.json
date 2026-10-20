@@ -1,0 +1,11 @@
+{
+  "id": "goblet_squat",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.273391+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "b7ff37e1463df3bc9a8f6b4a0cd21959d6390dcab81abfb3bc44f9a4ed5ccb5c",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "77091fc70d771ef9d1401532ea54b5258c6801bd0351d89f52f3dc04b6fae2a9"
+  }
+}

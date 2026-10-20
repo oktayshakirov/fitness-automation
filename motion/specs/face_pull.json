@@ -60,5 +60,5 @@
     "wrist_max": 80,
     "notes": "Cable-specific limit; needs human form review. Cable resistance is not modeled by static balance gate."
   },
-  "approved": false
+  "approved": true
 }

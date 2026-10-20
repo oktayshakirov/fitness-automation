@@ -1,0 +1,11 @@
+{
+  "id": "barbell_back_squat",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.257595+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "53db5e80b348beef3c39c449394eff2f591904dba4ec75443eb1585bcc443692",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "e13cc50806ca4cb84115f1c8cac54cea4e519c506ba7e17a17050826d12ff98c"
+  }
+}

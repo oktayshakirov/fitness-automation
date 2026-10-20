@@ -1,0 +1,11 @@
+{
+  "id": "barbell_bent_over_row",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.260575+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "00c9e16723e8d705188ab2a872f4b06f48e342488bb0b5cbe97f8d0f4163f789",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "7911908c83204cc2b211c46281bbb0952975d82b5c260dac816dfe46a3d7031f"
+  }
+}

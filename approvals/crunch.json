@@ -1,0 +1,11 @@
+{
+  "id": "crunch",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.266007+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "be15298f8be11152e8997c8dd6d984fb25bfdb7be507f8542701c03ea239ffec",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "091ed7f976a989e0f4f4e28493e72e0b8f21f2f7ec3bfcb7750102aa4193df20"
+  }
+}

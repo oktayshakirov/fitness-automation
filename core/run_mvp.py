@@ -19,7 +19,7 @@ def main():
         try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         except BlockingIOError:raise SystemExit('An MVP runner is already active')
         try:
-            status('running','Preparing the 30-exercise batch')
+            status('running',f'Preparing the {len(ordered)}-exercise batch')
             with (REVIEW/'mvp_batch.log').open('w') as log:
                 for attempt in (1,2):
                     p=subprocess.Popen([sys.executable,'core/batch.py',*ordered],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)

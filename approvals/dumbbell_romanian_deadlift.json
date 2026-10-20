@@ -1,0 +1,11 @@
+{
+  "id": "dumbbell_romanian_deadlift",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.268993+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "620a0cab39a9e63dd16e252115c3d59173a8a14ae5a6eeaf06c13ad0a642a285",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "6eeea5f0512df3b797a9baa369822fb569777f07996f4be209d9c5175b23b1ec"
+  }
+}

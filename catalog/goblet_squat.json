@@ -32,5 +32,5 @@
   "source": "free-exercise-db:Goblet_Squat",
   "source_equipment": "kettlebells",
   "adaptation": "Dumbbell substituted for the source kettlebell; muscle data retained.",
-  "reviewed": false
+  "reviewed": true
 }

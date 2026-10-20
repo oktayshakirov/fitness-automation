@@ -61,7 +61,7 @@
       "chest"
     ]
   },
-  "approved": false,
+  "approved": true,
   "qa": {
     "elbow_flexion_range": {
       "min": [

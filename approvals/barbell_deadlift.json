@@ -1,0 +1,11 @@
+{
+  "id": "barbell_deadlift",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.261743+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "ff353d40b4ac3fd4aba68b77f6b24e0098d5cb007b98f2cd508f6d977237a9cf",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "50b1dfbb4b530c54d65d5633a65846cbaa8c154522783503c3c3c1735ae96e25"
+  }
+}

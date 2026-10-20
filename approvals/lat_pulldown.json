@@ -1,0 +1,11 @@
+{
+  "id": "lat_pulldown",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.276368+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "afe02d572cdaff7085b5dc567e84ddeab4bc3381db6cf1337bf1e23e5b7ccf5e",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "e39fe1dc56b0955a88f962d71bb6726f971128fbddf46219c932900250b1f29d"
+  }
+}

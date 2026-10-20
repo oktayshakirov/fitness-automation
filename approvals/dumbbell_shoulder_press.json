@@ -1,0 +1,11 @@
+{
+  "id": "dumbbell_shoulder_press",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.270116+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "60f3149d89f7ccb591514dbb4dd61f63e3bfaf902fad1d73c07068429b4b6fc2",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "e9a6ac94eca0f011321ad204c0115934c9112cf2a39b42b15a5b329ec898d285"
+  }
+}

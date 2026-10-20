@@ -1,0 +1,11 @@
+{
+  "id": "rope_pushdown",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.287582+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "dd276ca1092eab9f0cf3be518140aad96236296085df2f8e2c4aa03892b881a4",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "91585919fffe2442a889dce727a437ea61d9b8f99647faa3b7cf8e10a6271042"
+  }
+}

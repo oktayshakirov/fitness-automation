@@ -50,7 +50,7 @@
       "abdominals"
     ]
   },
-  "approved": false,
+  "approved": true,
   "qa": {
     "wrist_max": 105,
     "wrist_rotation_max": 120,

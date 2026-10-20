@@ -31,5 +31,5 @@
   "source": "free-exercise-db:Romanian_Deadlift",
   "source_equipment": "barbell",
   "adaptation": "Dumbbells substituted for the source barbell; Romanian hinge retained.",
-  "reviewed": false
+  "reviewed": true
 }

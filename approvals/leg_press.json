@@ -1,0 +1,11 @@
+{
+  "id": "leg_press",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.280726+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "2425665196a016600e90a52dacb4bbfa49d8c4f67fee878979de83c80e89d4b0",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "6d70108659cf00168254e3b5c4be5262ad65613556abb652a6116d6e8fdc5bc5"
+  }
+}

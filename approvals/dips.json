@@ -1,0 +1,11 @@
+{
+  "id": "dips",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.267108+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "fe915c74d4dc780944b1890cc68fe0083e4924b5a8a72224c694694df2dbc6d0",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "60c2f4242384986fe58f545d748339f6c0a6a3ccac87c2b06c2ad7a5a48664b2"
+  }
+}

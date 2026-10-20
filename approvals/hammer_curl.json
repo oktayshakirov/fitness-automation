@@ -1,0 +1,11 @@
+{
+  "id": "hammer_curl",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.274423+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "c9f80194264cb7e9cfcf9d49d6da4b5e99246ee429ff9dd87d805635e8f48891",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "18f7191afbd88d8b10b83264fb5281ce6f4d13e645db1e183417f8a700e321fa"
+  }
+}

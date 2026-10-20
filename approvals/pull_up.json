@@ -1,0 +1,11 @@
+{
+  "id": "pull_up",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.285082+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "427f6303d92577a2e3171992b8820b3a3f6221022cfcead1918a69699e77db1d",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "7db0019c6223b54a3e513d920ee76583639bfa7c302686558d094f4251534db1"
+  }
+}

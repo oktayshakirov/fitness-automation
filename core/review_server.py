@@ -6,6 +6,7 @@ from pathlib import Path
 import json,sys,secrets,re,datetime,urllib.parse,threading
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from core.delivery import current_asset,read,rebuild_manifest,spec_digest
+from core.approvals import is_approved,record_review
 TOKEN=secrets.token_urlsafe(32);LOCK=threading.Lock()
 
 def state():
@@ -20,7 +21,7 @@ def state():
                 current_asset(eid,media)
                 ready=True;reason='Ready for human review'
             except (OSError,ValueError,KeyError) as e:reason=str(e)
-        items.append(dict(catalog=cat,motion=motion,qa=q,media=media,ready=ready,reason=reason))
+        items.append(dict(catalog=cat,motion=motion,qa=q,media=media,ready=ready,reason=reason,approved=ready and is_approved(eid,media,ROOT)))
     return {'items':items,'token':TOKEN}
 
 class Handler(SimpleHTTPRequestHandler):
@@ -51,11 +52,7 @@ class Handler(SimpleHTTPRequestHandler):
             with LOCK:
                 item=next(i for i in state()['items'] if i['catalog']['id']==eid)
                 if approved and (not item['ready'] or d.get('reviewed') is not True):raise ValueError('Review the current loop and instructions before approving')
-                for folder,flag in [('motion/specs','approved'),('catalog','reviewed')]:
-                    p=ROOT/folder/(eid+'.json');value=read(p);value[flag]=approved
-                    tmp=p.with_suffix('.json.tmp');tmp.write_text(json.dumps(value,indent=2)+'\n');tmp.replace(p)
-                with (ROOT/'review/approvals.jsonl').open('a') as f:
-                    f.write(json.dumps({'id':eid,'approved':approved,'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'spec_sha256':spec_digest(eid)})+'\n')
+                record_review(eid,approved,item['media'],"Human review in local approval page",ROOT)
                 rebuild_manifest()
             return self.send_json({'ok':True,'approved':approved})
         except (ValueError,KeyError,OSError,StopIteration) as e:return self.send_json({'error':str(e)},400)

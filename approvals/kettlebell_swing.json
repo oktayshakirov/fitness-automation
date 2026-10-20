@@ -1,0 +1,11 @@
+{
+  "id": "kettlebell_swing",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.275405+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "e3c673eace592538196a9f9ca9b5073bb68a1aa7ccd674fd058fb0546d569a11",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "55b1b183d171fa808f5f3459c9b176e217ded188667b08dccc865ee6c049f708"
+  }
+}

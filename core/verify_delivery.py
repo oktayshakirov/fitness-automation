@@ -5,11 +5,12 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from core.delivery import read, digest, current_qa, spec_digest, pipeline_digest, probe
+from core.approvals import is_approved
 
 def verify():
     ids = {p.stem for p in (ROOT / 'catalog').glob('*.json')}
     entries = read(ROOT / 'dist/manifest.json')
-    assert len(entries) == len(ids) == 30, 'Manifest must contain every MVP exercise exactly once'
+    assert ids and len(entries) == len(ids), 'Manifest must contain every catalog exercise exactly once'
     assert {e['id'] for e in entries} == ids
     signature = pipeline_digest()
     videos = posters = 0
@@ -20,7 +21,7 @@ def verify():
         q = current_qa(eid)
         assert e['spec_sha256'] == spec_digest(eid) and e['pipeline_sha256'] == signature, eid
         assert e['qa']['blend_sha256'] == q['blend_sha256'], eid
-        assert e['approved'] == bool(cat['reviewed'] and motion['approved']), eid
+        assert e['approved'] == is_approved(eid,e,ROOT), eid
         views = [v['name'] if isinstance(v, dict) else v for v in motion['views']]
         assert e['views'] == views and set(e['files']) == set(views), eid
         count = sum(motion['tempo'].values())

@@ -1,0 +1,11 @@
+{
+  "id": "one_arm_dumbbell_row",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.283046+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "3c52d1125a04e87b777f9053b1ecc1714e01252d628a49cf178d2af43f3453c0",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "4300f1b16927071d6cf6cb3398e423e6b9040219189d21702834a31a53aef94a"
+  }
+}

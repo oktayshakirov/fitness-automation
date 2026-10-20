@@ -1,0 +1,11 @@
+{
+  "id": "bodyweight_squat",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.263885+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "32fd322b028ddbdc2fa507b6087e1d976b222723360a01e725af168a50a7a1a5",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "f50204faf2cc40e08d9adfb9f4145994fc24c10674863f0ed043b82870075cbd"
+  }
+}

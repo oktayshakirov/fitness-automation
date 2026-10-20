@@ -29,8 +29,19 @@ short-form video content.
 
 ## Requirements
 
-Blender 4.x with the MPFB2 add-on. The large third-party assets are not committed; see
+Validated locally with Blender 5.2.1 and MPFB2 2.0.18 in `.blender-profile`.
+`build.py` sets `BLENDER_USER_RESOURCES` automatically. The large third-party assets are not committed; see
 `research/FINDINGS.md` for where to download them.
+
+## Maintain the library
+
+See [the exercise workflow](docs/EXERCISE_WORKFLOW.md) for revisions, adding new
+exercises, targeted previews/exports, version-bound approval and release checks.
+
+```sh
+python3 exercises.py status
+python3 exercises.py --help
+```
 
 ## Author
 

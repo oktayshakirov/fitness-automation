@@ -1,0 +1,11 @@
+{
+  "id": "barbell_bench_press",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.259267+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "956880e9f2b2801282c286010a7fb152a5101a1b4a99e0892f5ba620dc848b8f",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "e2bf9655547b195fb7dd91932cf42d15f250b62c39bdd14411c7d41b8b52a855"
+  }
+}

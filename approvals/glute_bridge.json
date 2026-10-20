@@ -1,0 +1,11 @@
+{
+  "id": "glute_bridge",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.272304+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "fd2797c14095f627b28243deab1e96e81dedbad18792315c5e2a4e8572aa6edd",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "e19f5248e04a67c1ace992a3c1c7a71c49bd83182e859aaf235eab51b7393daa"
+  }
+}

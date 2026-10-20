@@ -105,6 +105,8 @@ def export_delivery(eid,dirs,views,qa_path=None):
         entry={k:cat[k] for k in ('id','name','primary','secondary','equipment')}
         entry.update(views=names,files=files,thumb=f'{eid}/thumb.webp',duration=count/30,approved=bool(motion.get('approved') and cat.get('reviewed')),
                      qa=q,media=metadata,spec_sha256=spec_digest(eid),pipeline_sha256=pipeline_digest())
+        from core.approvals import is_approved
+        entry['approved']=is_approved(eid,entry,ROOT)
         (staged/'asset.json').write_text(json.dumps(entry,indent=2)+'\n')
         destination=ROOT/'dist'/eid;destination.parent.mkdir(exist_ok=True)
         # Replace this exercise only after all outputs pass validation.
@@ -136,7 +138,8 @@ def _rebuild_manifest():
         try: current_asset(eid,e)
         except (OSError,ValueError,KeyError): continue
         motion=read(ROOT/'motion/specs'/(eid+'.json'));cat=read(ROOT/'catalog'/(eid+'.json'))
-        e['approved']=bool(motion.get('approved') and cat.get('reviewed'))
+        from core.approvals import is_approved
+        e['approved']=is_approved(eid,e,ROOT)
         entries.append(e)
     tmp=dist/'manifest.json.tmp';tmp.write_text(json.dumps(entries,indent=2)+'\n');tmp.replace(dist/'manifest.json')
     return entries

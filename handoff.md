@@ -538,3 +538,29 @@ contract in plan.md wants 720×900.
   resumed the unattended runner with shoulder press first (PID 25119). Remaining
   library refresh continues; see run_status.json. User squat approvals remain
   unstaged. Pull/rebase attempted before commit; no stash/reset or approval edits.
+
+- **2026-10-20 (approved baseline and maintenance flow):** user explicitly approved
+  all current exercises and requested an easy revision/addition flow, commit/push,
+  and next-step planning. All 30 completed exports pass the delivery audit; the
+  user's approval is recorded in both JSON flags plus tracked approvals/<id>.json
+  and approvals/history.jsonl with version fingerprints and provenance. Approval
+  now follows spec, pipeline and delivered-media hashes, so subsequent changes do
+  not silently inherit approval. Review UI and manifest consume this effective
+  approval status. Reloaded the server: 30 ready / 30 approved.
+
+  Added exercises.py commands for new drafts from a template, revise with notes,
+  validation, status, selected previews/renders, explicit approval, and audit.
+  New drafts cannot overwrite existing IDs and must replace TODO instructions/source
+  data before rendering through the CLI. Removed the fixed 30-item audit/runner
+  assumption; the catalog defines library membership. Documented the repeatable
+  process in docs/EXERCISE_WORKFLOW.md and proposed next work in docs/NEXT_STEPS.md.
+  No animation/rendering changes or unnecessary full re-render in this task.
+
+  Validation: 12 workflow/export/HTTP tests pass; all 30 JSON pairs validate; complete
+  audit passes 176 videos, 88 posters, 30 thumbnails and 30 approvals. Main was clean
+  and synced at the start; origin is now configured at
+  https://github.com/oktayshakirov/fitness-automation.git (earlier no-remote notes are
+  historical). Commit source/workflow and approval records, then push main. Generated
+  dist/review media remain ignored; preserve a separate versioned release bundle
+  before app integration. Next recommendation: media release backup, then Expo muscle
+  browser/player using local assets, followed by device review and CDN decisions.

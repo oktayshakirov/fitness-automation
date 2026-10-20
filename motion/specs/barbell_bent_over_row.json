@@ -1,11 +1,64 @@
 {
   "id": "barbell_bent_over_row",
   "pattern": "row",
-  "params": {"load": "bar", "hinge": 55, "knee": 22, "grip_w": 0.25, "grip": "over", "stance": 0.13, "toe_out": 8},
-  "props": [{"kind": "barbell", "plates": [10]}],
-  "tempo": {"hold_start": 6, "work": 20, "hold_peak": 8, "return": 30, "hold_end": 8},
-  "camera": {"target": [0, 0.05, 0.9], "ortho": 2.4},
-  "views": [{"name": "side", "yaw": 75}, {"name": "threeq", "yaw": 35}, {"name": "back", "yaw": 150}],
-  "draft_muscles": {"primary": ["middle back"], "secondary": ["lats", "shoulders", "biceps", "traps", "lower back", "forearms"]},
-  "approved": false
+  "params": {
+    "load": "bar",
+    "hinge": 55,
+    "knee": 22,
+    "grip_w": 0.25,
+    "grip": "over",
+    "stance": 0.13,
+    "toe_out": 8
+  },
+  "props": [
+    {
+      "kind": "barbell",
+      "plates": [
+        10
+      ]
+    }
+  ],
+  "tempo": {
+    "hold_start": 6,
+    "work": 20,
+    "hold_peak": 8,
+    "return": 30,
+    "hold_end": 8
+  },
+  "camera": {
+    "target": [
+      0,
+      0.05,
+      0.9
+    ],
+    "ortho": 2.4
+  },
+  "views": [
+    {
+      "name": "side",
+      "yaw": 75
+    },
+    {
+      "name": "threeq",
+      "yaw": 35
+    },
+    {
+      "name": "back",
+      "yaw": 150
+    }
+  ],
+  "draft_muscles": {
+    "primary": [
+      "middle back"
+    ],
+    "secondary": [
+      "lats",
+      "shoulders",
+      "biceps",
+      "traps",
+      "lower back",
+      "forearms"
+    ]
+  },
+  "approved": true
 }

@@ -49,7 +49,7 @@
       "lower back"
     ]
   },
-  "approved": false,
+  "approved": true,
   "qa": {
     "wrist_max": 105
   }

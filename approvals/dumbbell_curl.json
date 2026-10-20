@@ -1,0 +1,11 @@
+{
+  "id": "dumbbell_curl",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.268064+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "cb57578002245dba8661a5850e3290463fe0c609bbdc8bf1f3258a3e650e826c",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "c4221994a2707786552f29166d771c3cdfd9620d61d6464d63aac34d4d212803"
+  }
+}

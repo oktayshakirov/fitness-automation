@@ -1,0 +1,11 @@
+{
+  "id": "triceps_pushdown",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.289529+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "fef1b752e7b59900e0e22ccf53d5e20d694511fb5b65d6ac9d5437e621c98ce1",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "5097b20f53b4b8cebbbbc93c30d3181df1e288cac460b4d7dc3c5e0d8032a9fd"
+  }
+}

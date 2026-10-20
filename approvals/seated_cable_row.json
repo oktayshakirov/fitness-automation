@@ -1,0 +1,11 @@
+{
+  "id": "seated_cable_row",
+  "approved": true,
+  "at": "2026-10-20T21:05:46.288754+00:00",
+  "note": "User explicitly approved all currently delivered exercises in chat on 2026-10-20; later revisions may need changes.",
+  "fingerprint": {
+    "spec_sha256": "9bb603a24a11ef34fc994ed53051e62a45dedc7ac1af8dd8f1acba3ac71d06c6",
+    "pipeline_sha256": "0418930dc9fbf0a6542e2775b57a1257cbac798d05d2cba3c502823c27e73a30",
+    "media_sha256": "4e0b725ac742cef10166867c3784057f27ca89cf85a94e980e877798452bd2bc"
+  }
+}
