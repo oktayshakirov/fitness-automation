@@ -564,3 +564,8 @@ contract in plan.md wants 720×900.
   dist/review media remain ignored; preserve a separate versioned release bundle
   before app integration. Next recommendation: media release backup, then Expo muscle
   browser/player using local assets, followed by device review and CDN decisions.
+
+  Completion: workflow, documentation and all 30 version-bound approvals were
+  committed and pushed to origin/main as 7691ed1. The review server is running the
+  updated approval logic. Working tree was clean and main matched origin/main after
+  the push. Generated media are validated locally and remain outside Git.
