@@ -2,13 +2,18 @@
   "id": "lat_pulldown",
   "pattern": "seated",
   "params": {
-    "mode": "pulldown"
+    "mode": "pulldown",
+    "machine": {
+      "grip_w": 0.46,
+      "lean": -18
+    }
   },
   "props": [
     {
       "kind": "machine",
       "type": "pulldown",
-      "seat_z": 0.48
+      "seat_z": 0.48,
+      "lean": -18
     },
     {
       "kind": "cable_handle",
@@ -18,7 +23,8 @@
         -0.05,
         2.45
       ],
-      "standalone_cable": false
+      "standalone_cable": false,
+      "grip_w": 0.46
     }
   ],
   "tempo": {

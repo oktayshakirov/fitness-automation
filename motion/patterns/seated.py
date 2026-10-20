@@ -109,6 +109,11 @@ class Pattern:
             self.leg(side, knee, ank, rot_z(sgn * 8))
         sh = self.shoulders()
         top = Vector((0, sh.y - 0.06, sh.z + 0.96 * (self.ua + self.fa) * 0.93 + 0.15))
+        # Wider hands use more lateral reach; lower the top target accordingly
+        # instead of stretching the arms off the handle.
+        radius = .96 * (self.ua + self.fa)
+        lateral = max(0.0, m["grip_w"] - .20)
+        top.z += math.sqrt(max(.01, radius**2 - lateral**2)) - math.sqrt(radius**2 - .20**2)
         chest = sh + Vector((0, -0.17, -0.06))           # bar at the collarbones / upper chest
         c = top.lerp(chest, smooth(s))
         for side, sgn in (("L", 1), ("R", -1)):

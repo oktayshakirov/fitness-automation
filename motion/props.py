@@ -266,6 +266,8 @@ class CableHandle:
         self.pulley = Vector(spec.get("pulley", (0, -0.05, 2.45)))
         self.kind = spec.get("handle", "lat_bar")
         self.obj = eq.lat_bar("lat_bar") if self.kind == "lat_bar" else eq.v_bar("v_handle")
+        if self.kind == "lat_bar":
+            self.obj.scale.x = spec.get("grip_w", .40) / .40
         self.grip_local = Vector((0,0,-.04 if self.kind == "lat_bar" else -.13))
         self.obj.rotation_mode = "QUATERNION"
         self.spline = None
