@@ -519,3 +519,8 @@ contract in plan.md wants 720×900.
   completion. Remaining clips refresh because the shared builder hash changed.
   Preserve the user's two unstaged squat approval files. Pull/rebase attempted and
   blocked by unstaged changes; no upstream configured. No approvals changed.
+
+  Export checkpoint: both revised exercises have now finished full delivery and
+  passed `current_asset` validation (press 82s, pulldown 80s). Inspected decoded
+  final-video frames as well as the earlier contact sheets. Their updated videos
+  are ready on the review page; the remaining 28-item hash refresh continues.
