@@ -569,3 +569,18 @@ contract in plan.md wants 720×900.
   committed and pushed to origin/main as 7691ed1. The review server is running the
   updated approval logic. Working tree was clean and main matched origin/main after
   the push. Generated media are validated locally and remain outside Git.
+
+
+- 2026-10-21: Preserved approved release v0.1.0 outside the working render tree at
+  /Users/oktayshakirov/Coding/fitness-releases/v0.1.0/. Media ZIP contains dist, catalog,
+  bodymap, approvals, motion specs, metadata and checksums. Separate tooling ZIP
+  contains local Blender profile, source maps and a verified full Git bundle.
+  Source baseline: 3491fd25a0817acbaf6e5958fc4298563e76ce56. Receipt committed in
+  docs/releases/v0.1.0.json. Audit passes 30 approved exercises / 176 videos /
+  88 posters / 30 thumbs. Independently extracted media and verified all file
+  hashes, manifest references, tooling hashes and Git bundle. No rendering changes.
+  Created fitness-app planning documents: proposed Expo/React Native, native video
+  playback and independently versioned content; architecture awaits discussion.
+  User will provide screenshots/features later. Defer fitness-blog, hosting, custom
+  domain and app implementation until scope decisions. Local archives are not
+  offsite backups; preserve a remote copy when a destination is chosen.

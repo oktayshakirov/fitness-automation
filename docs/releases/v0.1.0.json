@@ -1,0 +1,29 @@
+{
+  "release": "v0.1.0",
+  "created_at": "2026-10-21T01:24:38.348187+00:00",
+  "source_commit": "3491fd25a0817acbaf6e5958fc4298563e76ce56",
+  "blender": "5.2.1",
+  "mpfb": "2.0.18",
+  "audit": {
+    "exercises": 30,
+    "videos": 176,
+    "posters": 88,
+    "thumbnails": 30,
+    "largest_video_bytes": 98248,
+    "largest_poster_bytes": 14000,
+    "video_and_poster_bytes": 9066004,
+    "approved": 30
+  },
+  "location": "/Users/oktayshakirov/Coding/fitness-releases/v0.1.0",
+  "archives": {
+    "fitness-media-v0.1.0.zip": {
+      "bytes": 10169324,
+      "sha256": "a56990584ea753ebd34b2ed5a9dcb74c67b51a7d02af57e1b13d7679a53c15d0"
+    },
+    "fitness-tooling-v0.1.0.zip": {
+      "bytes": 65790316,
+      "sha256": "ff053f1674f3143e764b347193629a6d895532a1c168f43890b85e029a917467"
+    }
+  },
+  "verification": "Media extracted independently; every media and tooling file hash verified; manifest paths resolve; Git source bundle verified."
+}
