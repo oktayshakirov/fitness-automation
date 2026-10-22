@@ -137,11 +137,15 @@ Muscle names = the 17 groups in `core/look.py: GROUPS` (free-exercise-db names).
 - Review page: `review/index.html` with every loop + its spec + muscle list, so the
   user (and later a trainer) can approve exercises; approval writes `approved: true`.
 
-### Phase 4 (later, not now): app + short-form content
-- Expo app: body map home → muscle list (+ "All") → exercise screen (loop + steps,
-  cues, mistakes). Feed-style vertical scrolling of exercises.
-- Short-form: 1080×1920 renders from the same scenes + voiceover, reusing the existing
-  video pipeline in `~/Coding/video-edit-automation`.
+### Phase 4: app + content publishing (started 2026-10-22)
+- The app lives in `~/Coding/fitness-app`; scope, architecture, milestones and the
+  content envelope are in `fitness-app/docs/MVP.md`.
+- This repo's part (Content agent): `core/publish.py` → immutable
+  `releases/<contentVersion>/` (content.json + H.264 media + posters + thumbs +
+  bodymap + attribution) and a `current.json` pointer, published to static hosting
+  (Cloudflare Pages); keep revising/adding exercises through the existing approval flow.
+- Short-form content (9:16 renders + voiceover via `~/Coding/video-edit-automation`)
+  comes after the app MVP.
 
 ## MVP exercise list (30, covers every pattern and equipment type)
 
