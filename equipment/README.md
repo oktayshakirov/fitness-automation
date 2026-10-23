@@ -16,7 +16,10 @@ are for this MPFB body, not universal dimensions for every person.
 
 `CableTower(pulley='high'|'mid'|'low', x=..., y_stack=..., y_front=...)` preserves
 `calibrate(shortest_handle_ring)` then `update(ring,frame)`. `DualCable` owns two
-independent stacks. `ResistanceBand.update(a,b,frame)` keys endpoints and thickness.
+independent stacks. The selector pin is 4 cm long: 1 cm recessed into the
+17 cm-deep plates and a 3 cm exposed grip. The shared tower serves cable crossover,
+face pull, rope pushdown and straight-bar pushdown. Seated cable row and lat
+pulldown use the separate machine stack. `ResistanceBand.update(a,b,frame)` keys endpoints and thickness.
 
 Run `equipment/preview.py` in Blender with the project profile to render all 30 assets
 and regenerate `equipment/contacts.json`. Curves need evaluated mesh vertices for

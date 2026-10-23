@@ -584,3 +584,19 @@ contract in plan.md wants 720×900.
   User will provide screenshots/features later. Defer fitness-blog, hosting, custom
   domain and app implementation until scope decisions. Local archives are not
   offsite backups; preserve a remote copy when a destination is chosen.
+
+
+- 2026-10-23 (cable selector pin): shortened the shared CableTower selector pin
+  from 14 cm to 4 cm and moved its centre inward. It now overlaps the plate by
+  1 cm and exposes a 3 cm grip instead of 11.5 cm. Consumers reviewed: cable
+  crossover (two stacks), rope face pull, rope pushdown, straight-bar pushdown.
+  Lat pulldown and seated cable row use separate Machine stack geometry and
+  require no geometry edit. No motion, cable paths, stack lift or external assets changed.
+  Rendered endpoint Face Pull preview plus an unobstructed stack close-up at frame
+  36; inspected the shortened pin and measured its mesh length at 0.040000 m.
+  Diagnostic: review/pin_detail.png. Shared source fingerprint invalidates previous
+  deliveries, so the existing unattended run_mvp.py runner (PID 76625) exports
+  those four first, then refreshes/audits the remaining library. Check
+  review/run_status.json and review/batch/report.json for completion; this entry
+  does not assert that the batch has finished. Prior approved archive v0.1.0 is
+  untouched. Revised exports need human review; no approval records were changed.
