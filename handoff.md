@@ -600,3 +600,15 @@ contract in plan.md wants 720×900.
   review/run_status.json and review/batch/report.json for completion; this entry
   does not assert that the batch has finished. Prior approved archive v0.1.0 is
   untouched. Revised exports need human review; no approval records were changed.
+
+
+- 2026-10-23 (resource cleanup): user requested closing Blender and unnecessary
+  resource-consuming processes after work. Waited for the remaining exports and
+  the runner's single Crunch retry. Final audit completed: 30 exercises, 176
+  videos, 88 posters, 30 thumbnails. Verified no Blender, ffmpeg/ffprobe, build,
+  QA or batch processes remain for this project. Only the review server remains
+  (PID 31309, idle at 0% CPU). Unrelated idle Claude blender-mcp connectors were
+  left alone. Added resource-cleanup guidance to docs/EXERCISE_WORKFLOW.md.
+  Approval records were not modified; the shared pipeline fingerprint means the
+  regenerated versions currently show zero effective approvals. The prior approved
+  v0.1.0 archive remains intact.

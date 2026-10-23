@@ -84,3 +84,15 @@ third-party source assets are ignored by Git: preserve approved release bundles
 separately, including manifest and attribution notices. Keep the project-local
 `.blender-profile` and source maps available for regeneration. Git alone is not a
 backup of the generated media or the Blender environment.
+
+
+## Release rendering resources
+
+After rendering, check that this project's Blender, ffmpeg, build and batch
+processes have exited. Let necessary exports and the final audit finish; do not
+leave redundant renders running. If a run is obsolete or cancelled, stop its
+specific process group, preserve completed exports, and mark the runner status
+accurately so the review page does not claim it is still working. Never kill all
+Blender/Python processes indiscriminately: other applications may own them.
+Keep the idle review server only while it is useful for review. Headless Blender
+exits after each build and run_mvp.py exits after the final audit.
