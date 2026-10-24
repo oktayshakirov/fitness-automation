@@ -61,7 +61,9 @@ class Pattern:
         sh = self.shoulders()
         # head back while the bar passes the face, through at lockout
         z_top = sh.z + 0.14 + p["top_reach"] * self.reach      # + girdle lift + hand
-        z = lerp(p["rack_z"], z_top, s)
+        # Optional body-relative rack targets share one spec across MPFB models.
+        rack_z = sh.z + p["rack_height_ratio"]*self.reach if "rack_height_ratio" in p else p["rack_z"]
+        z = lerp(rack_z, z_top, s)
         face = smooth((z - 1.40) / 0.12) * (1 - smooth((z - 1.62) / 0.12))
         P.local("neck02", (1, 0, 0), -9 * face + 5 * smooth((s - 0.8) / 0.2))
         P.local("head", (1, 0, 0), -6 * face)
@@ -107,7 +109,8 @@ class Pattern:
         for side, sgn in (("L", 1), ("R", -1)):
             # start: bells at ear level, forearms vertical over elbows just below
             # shoulder height (scapular plane); top: arms straight over the shoulders
-            x = lerp(p["grip_w"], p["db_top_w"], smooth(s))
+            rack_width = p["rack_width_ratio"]*self.reach if "rack_width_ratio" in p else p["grip_w"]
+            x = lerp(rack_width, p["db_top_w"], smooth(s))
             g = Vector((sgn * x, self.midfoot_y - lerp(0.03, 0.0, s), z))
             self.girdle(side, g, s)
             # The scapula raises the shoulder joint. Derive the terminal reach

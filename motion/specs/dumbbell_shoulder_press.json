@@ -11,7 +11,9 @@
     "clavicle_lift": 0.6,
     "top_shrug": 2,
     "scapula_rotation": 1.0,
-    "rack_girdle_scale": 0.2
+    "rack_girdle_scale": 0.2,
+    "rack_height_ratio": 0.46,
+    "rack_width_ratio": 0.806
   },
   "props": [
     {
