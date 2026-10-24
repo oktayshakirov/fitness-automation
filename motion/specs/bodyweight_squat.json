@@ -6,7 +6,8 @@
     "toe_out": 15,
     "shin_lean": 32,
     "torso": 40,
-    "arms": "counterbalance"
+    "arms": "counterbalance",
+    "hand_clearance": 0.02
   },
   "props": [],
   "tempo": {

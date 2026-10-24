@@ -328,5 +328,8 @@ class Pattern:
             sh = P.head(f"upperarm01.{side}")
             d = Vector((sgn * 0.12, -math.sin(e), -math.cos(e))).normalized()
             ua, fa = arm_lengths(P, side)
-            P.limb(f"upperarm01.{side}", f"lowerarm01.{side}", f"wrist.{side}", sh + d * 0.985 * (ua + fa),
+            target = sh + d * 0.985 * (ua + fa)
+            # Leave room for fabric when the fingers rest beside the thighs.
+            target.x += sgn * self.p.get("hand_clearance", 0.) * (1-smooth(s))
+            P.limb(f"upperarm01.{side}", f"lowerarm01.{side}", f"wrist.{side}", target,
                    Vector((sgn, 0.3, -0.4)), palm=Vector((0, 0.15, -1)), side=side)
