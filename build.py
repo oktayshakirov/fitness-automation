@@ -31,6 +31,7 @@ from core import OUT
 from core.body import make_human, key_pose
 from core.solver import Poser
 from core.clothes import add_clothing
+from core.hair import add_hair
 from core.look import muscle_material
 from core.studio import studio, camera
 from core.render import new_scene, render_views, stitch_video, contact_sheet, fit_delivery_cameras, export_delivery
@@ -87,6 +88,7 @@ body.data.materials.clear()
 body.data.materials.append(muscle_material(primary=tuple(catalog.get("primary", ())),
                                            secondary=tuple(catalog.get("secondary", ()))))
 garments = add_clothing(body, rig, args.model, catalog.get("primary", ()), catalog.get("secondary", ()))
+add_hair(body, rig, args.model)
 # Avoid repeated surface projections during each IK update; enable for playback.
 for garment in garments:
     for modifier in garment.modifiers: modifier.show_viewport = False
