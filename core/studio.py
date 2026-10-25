@@ -10,7 +10,7 @@ BG = tuple(c / 12.92 if c <= .04045 else ((c + .055) / 1.055) ** 2.4
            for c in BG_SRGB)
 
 
-def studio(scene, floor=True):
+def studio(scene, floor=True, transparent=False):
     for eng in ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"):
         try:
             scene.render.engine = eng
@@ -22,7 +22,8 @@ def studio(scene, floor=True):
     scene.view_settings.exposure = 0
     scene.view_settings.gamma = 1
     scene.render.dither_intensity = 0
-    scene.render.film_transparent = False
+    scene.render.film_transparent = transparent
+    scene.render.image_settings.color_mode = 'RGBA' if transparent else 'RGB'
     w = bpy.data.worlds.new("W"); scene.world = w; w.use_nodes = True
     w.node_tree.nodes["Background"].inputs[0].default_value = (*BG, 1)
     w.node_tree.nodes["Background"].inputs[1].default_value = 1.0
@@ -33,8 +34,10 @@ def studio(scene, floor=True):
     fill.data.energy = 0.7; fill.rotation_euler = (math.radians(65), 0, math.radians(140))
     for o in (key, fill):
         scene.collection.objects.link(o)
-    if floor:
+    if floor and not transparent:
         bpy.ops.mesh.primitive_plane_add(size=12)
+        bpy.context.active_object.name = 'Studio floor'
+        bpy.context.active_object['studio_floor'] = True
         # An unlit floor joins the world seamlessly at the exact display colour.
         # Lighting a diffuse floor changes its pixels with camera/light direction.
         m = bpy.data.materials.new("background floor"); m.use_nodes = True

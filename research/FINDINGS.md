@@ -104,3 +104,27 @@ interpolates both at garment cuts, and follows the corrected skin surface. No
 external clothing mesh, image or texture has been downloaded. The geometry uses
 the existing MPFB CC0 provenance; Z-Anatomy-derived highlights retain the licence
 and attribution in `assets/maps/LICENSE.md`. Fabric disables anatomy bump relief.
+
+## Appearance revision and alpha feasibility (2026-10-25)
+
+User-provided screenshots are style references only; no screenshot pixels, competitor
+textures, mesh or animation data were incorporated. Short high-cut training bottoms
+and a cropped sports bra are still procedural MPFB-surface derivatives, with shared
+UVs and rig weights. Active muscles beneath fabric use a subdued red/orange tint;
+other fabric stays opaque and dark. This suggests muscle activity through fabric
+without making the garments actually transparent.
+
+Hair is original procedural geometry in `core/hair.py`: a fitted CC0 MPFB scalp
+surface, fine combed curves, and a compact female ponytail. A constraint follows
+the head bone; no downloaded hair asset, simulation or extra motion licence.
+Existing Z-Anatomy / BodyParts3D highlight attribution remains applicable.
+
+Blender RGBA stills and lossless WebP preserve alpha and can be composited onto
+light or dark backgrounds. The installed libx264 encoder reports no alpha-capable
+pixel format. FFmpeg's source lists its YUV formats:
+https://ffmpeg.org/doxygen/trunk/libx264_8c.html
+Apple documents a separate HEVC-with-alpha path:
+https://developer.apple.com/documentation/avfoundation/using-hevc-video-with-alpha
+That does not establish the current Expo iOS/Android player's shared support.
+Keep the user's accepted #0A0A0C H.264 fallback for loops; no envelope change yet.
+Transparent still previews are not a claim of native alpha-video compatibility.

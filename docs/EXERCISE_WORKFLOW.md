@@ -131,3 +131,27 @@ intact for motion QA. The check reports raw overlap and measured existing body-f
 contact separately, failing when clothing adds more than 2 mm beyond that contact.
 This is a geometry check, not proof of visual quality: inspect the seams, folds and
 highlight continuity in the sheet before accepting the appearance.
+
+### Appearance revision 2: shorter clothing, hair, alpha stills
+
+`core/clothes.py` now shares the curved hem and bra-boundary functions between
+mesh cutting and skin occlusion. Side openings expose more upper thigh while the
+centre preserves groin coverage. Fabric has its own muted highlight colours;
+only the exercise's active groups tint it. The female top is cropped with narrower
+straps. `core/hair.py` builds original hair and follows the existing head bone.
+Both modules participate in the pipeline fingerprint, invalidating old approvals.
+
+After the four existing look previews pass, run the unpublished comparison studies:
+
+```sh
+BLENDER_USER_RESOURCES="$PWD/.blender-profile" /Applications/Blender.app/Contents/MacOS/Blender -b --python-exit-code 1 --python core/appearance_studies.py
+python3 core/appearance_review.py
+```
+
+Open `/review/look_v2/index.html` on the local review server. It includes true-alpha
+PNG/WebP previews on switchable light/dark backgrounds and solid/inactive versus
+muted/active bra material close-ups. The chest close-up is a material study, not
+an exercise muscle classification. Studies never save or approve exercise scenes.
+Hair loop closure and opaque fabric are checked; alpha channels are inspected.
+Exercise video delivery retains the dark H.264 default, as documented in the app's
+MVP Requests section. No full-library render before the revised appearance review.

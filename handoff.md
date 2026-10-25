@@ -663,3 +663,39 @@ contract in plan.md wants 720×900.
   The final preview batch exited successfully; generated preview frame folders
   are gone. Data-volume space is 54 GiB. The old review server had stopped across
   the usage-limit interruption; restarted it for this review.
+
+
+- **2026-10-25 (appearance revision 2, awaiting human review):** user requested
+  transparent-background feasibility, shorter clothing, a smaller female sports
+  bra, a distinct softer tint over active muscles covered by clothing, solid
+  inactive fabric, and hair on both models. References informed style only; no
+  competitor images/textures/models were incorporated or external assets added.
+
+  Revised procedural shorts have curved higher side openings and a lower waist,
+  retaining centre groin coverage. The female bra is cropped by another 8 cm,
+  with narrower straps and a closer fit. Fabric uses subdued red/orange rather
+  than the bare-skin highlight colours; inactive fabric stays opaque/dark.
+  `core/hair.py` adds a CC0 MPFB-derived scalp, original combed curves and a compact
+  female ponytail following the existing head bone. Hair source participates in
+  the pipeline fingerprint. All four squat/press × male/female previews pass full
+  72-frame motion and garment QA. Hair seam checks report 0 mm / 0 degrees drift.
+  Thirteen approval/export/workflow tests passed; no gate limits were relaxed.
+
+  True RGBA PNG and lossless WebP stills were rendered and verified (alpha 0..255).
+  `core/appearance_studies.py` produces the transparent model previews and a neutral
+  chest material study (not a workout classification); `core/appearance_review.py`
+  creates the Light/Dark comparison page. These studies never save/approve an
+  exercise scene. Local libx264 pixel-format inspection confirms no alpha output;
+  Apple HEVC alpha is a separate path without verified shared Expo iOS/Android
+  playback. Per the user's fallback, exercise loops retain dark H.264 #0A0A0C.
+  Alpha stills do not imply alpha-video compatibility. The decision and future
+  format requirements were appended only under fitness-app/docs/MVP.md Requests;
+  no app implementation/wire format changed and no App-repo commit was made here.
+
+  Current review: http://127.0.0.1:8765/review/look_v2/index.html (HTTP 200 verified).
+  Includes the updated four-preview sheet, transparent Light/Dark stills, opaque
+  inactive versus subdued active bra close-ups, and QA links. All renders exited;
+  frame folders and preview .blend1 backups were removed. Data-volume free space:
+  55 GiB. Idle review server remains available. No approvals, full-library batch or
+  publication. Next: user appearance feedback/approval, then remaining production
+  model/approval migration and assets/publisher in the original requested order.
