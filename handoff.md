@@ -623,8 +623,8 @@ contract in plan.md wants 720×900.
 
   Remaining shorts diagnosis: standing fingers touched the fabric; added opt-in
   3 cm hand clearance to the bodyweight-squat spec. Fabric clearance is now 1.5 mm
-  for shorts (6 mm for the top). Targeted female frames 1,6,38,44,71 pass the added
-  garment check with those settings. Body-fold contact is measured separately;
+  for shorts (6 mm for the top). Targeted female frames 1,6,38,44,71 passed at the initial 2 cm hand /
+  2 mm fabric settings; final settings were subsequently checked over all frames. Body-fold contact is measured separately;
   clothing fails if it adds >2 mm penetration beyond that existing contact.
   Existing motion QA limits have not been relaxed. Clothing QA now has scene/spec/
   pipeline receipts, is run by build.py, and gates delivery. Partial diagnostics
@@ -642,3 +642,24 @@ contract in plan.md wants 720×900.
   at resume; preview frame folders are removed after sheets/encoding. Scope is only
   this repository. Optimize usage with targeted diagnostic frames, batched commands,
   compact logs and a single full verification pass after geometry stabilizes.
+
+
+  **Completed appearance checkpoint (2026-10-25):** all four final previews pass
+  their complete 72-frame motion and garment checks. Maximum added penetration:
+  squat male shorts 1.369 mm; squat female shorts 1.339 mm / top .815 mm; press
+  male shorts 0 mm; press female shorts 0 mm / top .022 mm (limit 2 mm beyond
+  measured existing body contact). Thirteen approval/export/workflow tests pass,
+  including rejection of incomplete, failed and stale clothing receipts. Source
+  syntax and whitespace checks pass. Review page verified HTTP 200 at
+  http://127.0.0.1:8765/review/look_oct24/index.html; full-resolution sheets and
+  QA reports are linked there. Combined image: review/look_oct24/sheet.png.
+
+  No new exercise approvals were granted; previews are explicitly unapproved.
+  The next action is the user's appearance review of shorts/top, highlight
+  continuity and dark-background readability. Do not start the 30×2 batch before
+  that review. Then complete the female production naming/approval migration,
+  body assets, heroes, equipment icons and publish.py in the requested order;
+  document any app-envelope change in fitness-app/docs/MVP.md under Requests.
+  The final preview batch exited successfully; generated preview frame folders
+  are gone. Data-volume space is 54 GiB. The old review server had stopped across
+  the usage-limit interruption; restarted it for this review.
