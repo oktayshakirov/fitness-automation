@@ -790,3 +790,26 @@ contract in plan.md wants 720×900.
   backups removed; Data-volume free space was 52 GiB. No new approvals, publication
   or full-library batch. Await human appearance review, then continue the original
   production task list.
+
+- **2026-10-25 (appearance revision 6, awaiting human review):** user rejected
+  blonde hair and requested solid clothing with only very slight active-muscle
+  colour. Female ponytail is now black, retaining strand texture and alpha.
+  Garment muscle contribution is reduced from 28% to 4% under 96% charcoal fabric;
+  inactive fabric, solid binding, opaque alpha and textile shading are retained.
+  Inspected the female hair, active sports top and squat hip close-ups: active
+  regions now have only a faint tint rather than a large coloured patch.
+
+  All four previews pass complete 72-frame motion, garment and model checks with
+  current matching source/spec/scene hashes. Thirteen regression tests and syntax/
+  whitespace checks pass. Review: http://127.0.0.1:8765/review/look_v6/index.html
+  (HTTP 200 checked with head images, garment details, active top and full sheet).
+  Frame folders and Blender backups removed. Data-volume free space was 49 GiB.
+  No approvals, publication, full-library batch, app edits or format changes.
+
+  Runtime note: default Homebrew python3 changed to Python 3.15.1 during this run
+  and lacks Pillow. The four Blender previews/QA completed; only page assembly
+  failed. Recovered page assembly with the existing working runtime:
+  /opt/homebrew/opt/python@3.13/bin/python3.13 core/fabric_review.py
+  Use that pinned interpreter for Pillow-dependent review tools on resume; no
+  rerender was needed for the environment change. Await human appearance review
+  before continuing the original remaining production tasks.
