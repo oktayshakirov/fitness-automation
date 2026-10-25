@@ -766,3 +766,27 @@ contract in plan.md wants 720×900.
   publication or 30×2 batch; wait for human appearance review before proceeding
   with the original remaining production tasks. Preview frame folders and Blender
   backups are removed. Data-volume free space is checked at stop.
+
+- **2026-10-25 (fabric revision 5, awaiting human review):** user reported that
+  covered muscle colours looked painted over the clothing. Fabric now retains an
+  opaque outer textile appearance: 72% neutral fabric veil over the muscle tint,
+  subtle UV-space grain/sheen, and solid neutral binding along garment cut edges.
+  The rest-space edge-distance attribute follows deformation and preserves the
+  waistband/hem outline even over active muscles. Under-fabric visibility is a
+  shaded colour treatment, not actual garment transparency. Body UV muscle
+  alignment, garment geometry and skin occlusion remain the same. No external
+  assets, app edits or format changes.
+
+  Checked male/female squat before/after studies before one final four-preview
+  batch. All four pass complete 72-frame motion, clothing and model QA; source,
+  spec and scene hashes are current. Garment QA also checks opaque alpha and the
+  edge-binding attribute. Maximum added penetration 1.724 mm (limit 2 mm).
+  Thirteen approval/export/workflow tests and syntax/whitespace checks pass.
+  Active/inactive sports-top material studies demonstrate the same treatment.
+
+  Review: http://127.0.0.1:8765/review/look_v5/index.html (HTTP 200 verified with
+  comparison details, top studies and the full exercise sheet). New helpers:
+  core/fabric_studies.py and core/fabric_review.py. Frame folders and Blender
+  backups removed; Data-volume free space was 52 GiB. No new approvals, publication
+  or full-library batch. Await human appearance review, then continue the original
+  production task list.
