@@ -8,7 +8,26 @@ import bmesh
 from .look import muscle_material
 
 
-def _shell(body, name, material, bounds, top=False):
+def _smooth(t):
+    t = min(1., max(0., t))
+    return t*t*(3-2*t)
+
+
+def shorts_hem(x, hip, model):
+    # Higher side openings expose the upper thigh; the centre keeps groin coverage.
+    depth, rise = (.115, .060) if model == 'female' else (.130, .055)
+    return hip-depth + rise*_smooth(abs(x)/.14)
+
+
+def bra_neck(x, shoulder):
+    return shoulder-.065 + .165*_smooth((abs(x)-.045)/.065)
+
+
+def bra_width(z, shoulder):
+    return .18 - .045*_smooth((z-(shoulder-.12))/.10)
+
+
+def _shell(body, name, material, bounds, top=False, hem=None, shoulder=None):
     # Evaluate macro shape keys and the body-only mask, but not pose/correction.
     states = [(m, m.show_viewport) for m in body.modifiers]
     for m, _ in states:
@@ -40,26 +59,29 @@ def _shell(body, name, material, bounds, top=False):
             bmesh.ops.bisect_plane(bm, geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
                                   dist=.000001, plane_co=(x, 0, 0), plane_no=normal,
                                   clear_inner=True)
+    if hem:
+        for v in bm.verts: v.co.z -= hem(v.co.x)
+        bmesh.ops.bisect_plane(bm, geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
+                              dist=.000001, plane_co=(0, 0, 0), plane_no=(0, 0, 1),
+                              clear_inner=True)
+        for v in bm.verts: v.co.z += hem(v.co.x)
     if top:
-        # Cut the armholes with interpolated edges, not whole-face deletion.
-        for x, normal in ((-.18, (1, 0, 0)), (.18, (-1, 0, 0))):
+        # Narrow straps above the cups, with wider coverage across the bust band.
+        for v in bm.verts: v.co.x /= bra_width(v.co.z, shoulder)
+        for x, normal in ((-1., (1, 0, 0)), (1., (-1, 0, 0))):
             bmesh.ops.bisect_plane(bm, geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
                                   dist=.000001, plane_co=(x, 0, 0), plane_no=normal,
                                   clear_inner=True)
-        # Flatten a scoop-shaped boundary, bisect it, then restore the curvature.
-        # This produces a continuous neckline while interpolating UVs/weights.
-        def neck(x):
-            t = min(1., max(0., (abs(x)-.055)/.07))
-            return high-.195 + .195*t*t*(3-2*t)
-        for v in bm.verts: v.co.z -= neck(v.co.x)
+        for v in bm.verts: v.co.x *= bra_width(v.co.z, shoulder)
+        for v in bm.verts: v.co.z -= bra_neck(v.co.x, shoulder)
         bmesh.ops.bisect_plane(bm, geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
                               dist=.000001, plane_co=(0, 0, 0), plane_no=(0, 0, -1),
                               clear_inner=True)
-        for v in bm.verts: v.co.z += neck(v.co.x)
+        for v in bm.verts: v.co.z += bra_neck(v.co.x, shoulder)
     bm.normal_update()
     # Offset away from skin; a smooth fabric surface, not anatomy bump geometry.
     for v in bm.verts:
-        v.co += v.normal * (.006 if top else .0015)
+        v.co += v.normal * (.003 if top else .0015)
     bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
     bm.verts.ensure_lookup_table()
     bm.verts.index_update()
@@ -83,41 +105,49 @@ def _shell(body, name, material, bounds, top=False):
     follow.target = body
     follow.wrap_method = 'NEAREST_SURFACEPOINT'
     follow.wrap_mode = 'OUTSIDE_SURFACE'
-    follow.offset = .006 if top else .0015
+    follow.offset = .003 if top else .0015
     smooth = garment.modifiers.new('Fabric smoothing', 'SMOOTH')
-    smooth.factor = .5; smooth.iterations = 5
+    smooth.factor = .6 if top else .5; smooth.iterations = 12 if top else 5
     smooth.vertex_group = smooth_group.name
     solid = garment.modifiers.new('Fabric edge', 'SOLIDIFY')
-    solid.thickness = .002 if top else .001; solid.offset = 0
+    solid.thickness = .0015 if top else .001; solid.offset = 0
     garment['garment'] = True
     garment['uv_source'] = body.name
     garment['licence'] = 'CC0 geometry; anatomy highlights CC BY-SA 4.0'
     return garment
 
 
+def fabric_material(primary=(), secondary=()):
+    """Opaque fabric; worked muscles receive a subdued tint through the same UVs."""
+    fabric = muscle_material(primary, secondary, name='Training fabric',
+                             use_normal=False, base=(.025, .033, .045),
+                             hot=(.32, .065, .060), warm=(.40, .17, .075))
+    fabric.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = .85
+    return fabric
+
+
 def add_clothing(body, rig, model, primary=(), secondary=()):
     """Minimal shorts for both bodies and a sports top for the female body."""
-    fabric = muscle_material(primary, secondary, name='Training fabric',
-                             use_normal=False, base=(.025, .033, .045))
-    fabric.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = .85
+    fabric = fabric_material(primary, secondary)
     # Anatomical dimensions adapt to MPFB gender proportions.
     hip = rig.data.bones['upperleg01.L'].head_local.z
     knee = rig.data.bones['lowerleg01.L'].head_local.z
     shoulder = rig.data.bones['upperarm01.L'].head_local.z
     garments = [_shell(body, 'Training shorts', fabric,
-                       (hip - (hip-knee)*.40, hip+.11))]
+                       (shorts_hem(0, hip, model), hip+.070),
+                       hem=lambda x: shorts_hem(x, hip, model))]
     if model == 'female':
         garments.append(_shell(body, 'Sports top', fabric,
-                               (shoulder-.27, shoulder+.10), top=True))
+                               (shoulder-.19, shoulder+.10), top=True, shoulder=shoulder))
     _hide_covered_skin(body, hip, knee, shoulder, model)
     return garments
 
 
 def _hide_covered_skin(body, hip, knee, shoulder, model):
-    """Standard clothing occlusion: hide only skin skin inside a garment.
+    """Standard clothing occlusion: hide only skin inside a garment.
 
     Shader visibility keeps the complete skin geometry available to motion QA and
-    the cloth projection. Exposed seam faces retain an 2 mm overlap for coverage.
+    the cloth projection. Exposed seam faces retain a 2 mm overlap for coverage.
     """
     states = [(m, m.show_viewport) for m in body.modifiers]
     for m, _ in states: m.show_viewport = False
@@ -126,15 +156,13 @@ def _hide_covered_skin(body, hip, knee, shoulder, model):
     mesh = evaluated.to_mesh(); points = [v.co.copy() for v in mesh.vertices]
     evaluated.to_mesh_clear()
     for m, state in states: m.show_viewport = state
-    low, high = hip-(hip-knee)*.40, hip+.11
+    high = hip+.070
     def coverage_distance(point):
         x, _, z = point
-        distance = min(.298-abs(x), z-low-.002, high-.002-z)
+        distance = min(.298-abs(x), z-shorts_hem(x, hip, model)-.002, high-.002-z)
         if model == 'female':
-            t = min(1., max(0., (abs(x)-.055)/.07))
-            neckline = shoulder-.095 + .195*t*t*(3-2*t)
-            top_distance = min(.178-abs(x), z-(shoulder-.268),
-                               shoulder+.098-z, neckline-.002-z)
+            top_distance = min(bra_width(z, shoulder)-.002-abs(x), z-(shoulder-.188),
+                               shoulder+.098-z, bra_neck(x, shoulder)-.002-z)
             distance = max(distance, top_distance)
         return distance
     attribute = body.data.attributes.new('clothing_covered', 'FLOAT', 'POINT')
