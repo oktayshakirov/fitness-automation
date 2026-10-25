@@ -699,3 +699,45 @@ contract in plan.md wants 720×900.
   55 GiB. Idle review server remains available. No approvals, full-library batch or
   publication. Next: user appearance feedback/approval, then remaining production
   model/approval migration and assets/publisher in the original requested order.
+
+- **2026-10-25 (hair/body revision 3, awaiting human review):** user rejected the
+  procedural hair and the breast-like male chest. Replaced procedural caps/curves
+  with authored MakeHuman system `short01` and `ponytail01`, fitted through MPFB
+  basemesh references and attached rigidly to the head. Kept the original textured
+  alpha-card silhouettes. Official system-pack page and per-file notices identify
+  these assets as CC0; notices and the selected-file SHA-256 manifest are tracked
+  under `assets/hair/`. Distribution attribution now includes the hair notice;
+  render fingerprints include the actual hair assets. Only the selected 6.93 MiB
+  subset is retained; the full pack download was stopped and selective ZIP ranges
+  used instead. No competitor/reference screenshot content was incorporated.
+
+  Verified actual body macro/active shape keys: male=1, female=0; no female breast
+  macro was active on the male. Added the authored male-only MPFB pectoral reduction
+  target. Posed close-ups exposed folded chest/axilla geometry from the default rig;
+  a bounded corrective smoothing modifier now cleans those pose folds on both
+  models before garments follow the skin. An experimental local male sculpt was
+  discarded, not retained. Female body macro/anatomy stays separate. New Blender
+  model checks verify the model macro, male-only pectoral target, fitted hair UVs,
+  and head attachment every frame as part of the clothing receipt.
+
+  `core/model_studies.py` renders unpublished RGBA head/torso/full-body front,
+  three-quarter, side and back views; `core/model_review.py` assembles the new
+  review at http://127.0.0.1:8765/review/look_v3/index.html. It includes the two
+  exercises on both models with full-resolution sheets and QA links. Neutral
+  stills support light/dark backgrounds; exercise-video fallback remains dark
+  H.264. No app files or envelope format changed in this revision.
+
+  Thirteen approval/export/workflow tests and syntax/whitespace checks pass.
+  Final four-preview QA is being completed after the chest/axilla correction;
+  record final status below before stopping. Keep everything unapproved and do
+  not begin the 30×2 batch until the user's appearance review. Remaining production
+  model migration, body views/masks/SVGs, heroes, equipment icons and publisher
+  stay in the original requested order after that checkpoint.
+
+  **Final revision-3 verification:** all four final previews pass complete 72-frame
+  motion, garment and model/head-attachment QA with current matching source/spec/
+  scene hashes. Maximum added garment penetration 1.724 mm (limit 2 mm);
+  maximum head-attachment drift 0.000304 mm. Thirteen regression tests pass.
+  Review page and linked alpha images/sheet return HTTP 200. Frame folders and
+  Blender backups are removed; Data-volume free space remains 55 GiB. No new
+  approvals or publication. Stop at the user appearance-review checkpoint.
