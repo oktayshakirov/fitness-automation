@@ -10,7 +10,7 @@ def package_notices():
     (dist / 'ATTRIBUTION.md').write_text(anatomy + '\n## Exercise data\n\n'
         + 'free-exercise-db by yuhonas and contributors: https://github.com/yuhonas/free-exercise-db\n'
         + 'Source muscle/equipment classification: Unlicense. Original coaching text is provided as a draft for review.\n\n'
-        + '### Unlicense\n\n' + data)
+        + '### Unlicense\n\n' + data + '\n' + (ROOT / 'assets/hair/LICENSE.md').read_text())
 
 if __name__ == '__main__':
     package_notices()
