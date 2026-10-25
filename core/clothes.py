@@ -87,6 +87,7 @@ def _shell(body, name, material, bounds, top=False, hem=None, shoulder=None):
     bm.verts.index_update()
     interior = [v.index for v in bm.verts if not v.is_boundary]
     bm.to_mesh(mesh); bm.free(); mesh.update()
+    fabric_edge_attribute(mesh)
     smooth_group = garment.vertex_groups.new(name='fabric_interior')
     smooth_group.add(interior, 1., 'REPLACE')
     garment.data.materials.clear(); garment.data.materials.append(material)
@@ -117,12 +118,54 @@ def _shell(body, name, material, bounds, top=False, hem=None, shoulder=None):
     return garment
 
 
+def fabric_edge_attribute(mesh):
+    """Rest-space distance to cut edges, carried through cloth deformation."""
+    from mathutils.kdtree import KDTree
+    bm = bmesh.new(); bm.from_mesh(mesh)
+    boundary = [v.co.copy() for v in bm.verts if v.is_boundary]
+    bm.free()
+    tree = KDTree(len(boundary))
+    for index, point in enumerate(boundary):
+        tree.insert(point, index)
+    tree.balance()
+    attr = mesh.attributes.get('fabric_edge_distance') or mesh.attributes.new('fabric_edge_distance', 'FLOAT', 'POINT')
+    for vertex, item in zip(mesh.vertices, attr.data):
+        item.value = tree.find(vertex.co)[2] if boundary else 1.
+
+
 def fabric_material(primary=(), secondary=()):
-    """Opaque fabric; worked muscles receive a subdued tint through the same UVs."""
+    """Opaque textile veil over a muted muscle signal, with solid edge binding."""
     fabric = muscle_material(primary, secondary, name='Training fabric',
                              use_normal=False, base=(.025, .033, .045),
                              hot=(.32, .065, .060), warm=(.40, .17, .075))
-    fabric.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = .85
+    nt = fabric.node_tree
+    bsdf = nt.nodes['Principled BSDF']
+    signal = bsdf.inputs['Base Color'].links[0].from_socket
+    veil = nt.nodes.new('ShaderNodeMixRGB'); veil.label = 'Outer fabric over muscle tint'
+    veil.inputs[0].default_value = .72
+    veil.inputs[2].default_value = (.025, .033, .045, 1)
+    nt.links.new(signal, veil.inputs[1])
+    edge = nt.nodes.new('ShaderNodeAttribute'); edge.attribute_name = 'fabric_edge_distance'
+    band = nt.nodes.new('ShaderNodeMapRange'); band.interpolation_type = 'SMOOTHSTEP'
+    band.inputs['From Min'].default_value = .002
+    band.inputs['From Max'].default_value = .010
+    nt.links.new(edge.outputs['Fac'], band.inputs['Value'])
+    binding = nt.nodes.new('ShaderNodeMixRGB'); binding.label = 'Solid waistband and hem binding'
+    binding.inputs[1].default_value = (.012, .017, .025, 1)
+    nt.links.new(band.outputs['Result'], binding.inputs[0])
+    nt.links.new(veil.outputs[0], binding.inputs[2])
+    nt.links.new(binding.outputs[0], bsdf.inputs['Base Color'])
+    uv = nt.nodes.new('ShaderNodeTexCoord')
+    grain = nt.nodes.new('ShaderNodeTexNoise'); grain.inputs['Scale'].default_value = 550
+    grain.inputs['Detail'].default_value = 2
+    nt.links.new(uv.outputs['UV'], grain.inputs['Vector'])
+    bump = nt.nodes.new('ShaderNodeBump')
+    bump.inputs['Strength'].default_value = .16
+    bump.inputs['Distance'].default_value = .00018
+    nt.links.new(grain.outputs['Fac'], bump.inputs['Height'])
+    nt.links.new(bump.outputs['Normal'], bsdf.inputs['Normal'])
+    bsdf.inputs['Roughness'].default_value = .88
+    bsdf.inputs['Sheen Weight'].default_value = .25
     return fabric
 
 

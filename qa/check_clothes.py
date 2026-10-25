@@ -38,6 +38,9 @@ for garment in garments:
     assert garment.data.uv_layers.active is not None, 'Missing transferred UVs'
     assert garment.vertex_groups.keys()[:len(body.vertex_groups)] == body.vertex_groups.keys(), 'Missing rig weights'
     assert garment['uv_source'] == body.name
+    assert garment.data.attributes.get('fabric_edge_distance'), 'Missing garment edge binding'
+    alpha = garment.data.materials[0].node_tree.nodes['Principled BSDF'].inputs['Alpha']
+    assert not alpha.is_linked and alpha.default_value == 1., 'Garment must remain opaque'
 frames = [int(v) for v in os.environ.get('CLOTHES_FRAMES', '').split(',') if v] or list(range(1, scene.frame_end+1))
 report = {'complete': frames == list(range(1, scene.frame_end+1)), 'model': scene['fitness_model'], 'frames': len(frames),
           'pass': True, 'covered_skin_hidden': True, 'garments': {}}
