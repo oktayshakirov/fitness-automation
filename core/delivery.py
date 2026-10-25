@@ -19,7 +19,7 @@ def pipeline_digest():
     for folder in ('motion','equipment'):
         files += [p for p in sorted((ROOT/folder).rglob('*.py')) if p.name!='preview.py']
     files += sorted((ROOT/'assets/maps').rglob('*.png'))
-    files += sorted(p for p in (ROOT/'assets/hair').rglob('*') if p.is_file())
+    files += sorted(p for p in (ROOT/'assets/hair').rglob('*') if p.is_file() and p.name != 'sources.json')
     h=hashlib.sha256()
     for p in files:
         h.update(str(p.relative_to(ROOT)).encode());h.update(p.read_bytes())
