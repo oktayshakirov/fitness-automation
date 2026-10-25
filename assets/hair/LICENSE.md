@@ -14,3 +14,7 @@ The pipeline uses short01 for the male and ponytail01 for the female. The assets
 are fitted using MPFB's basemesh references; textures and authored silhouettes
 are retained. Reference screenshots supplied by the user are style references
 only and are not included in these assets.
+
+Pipeline modifications: short01 sides/nape are tapered toward the fitted scalp
+with a graded alpha density for a fade. Ponytail01 is recoloured blonde by a
+strand-preserving shader; original mesh/texture files remain intact.
