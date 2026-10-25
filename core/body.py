@@ -19,6 +19,14 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
     macro["muscle"] = muscle
     macro["weight"] = weight
     body = HumanService.create_human(macro_detail_dict=macro)
+    # The stock high-muscle male macro has a bulbous lower pectoral contour.
+    # Use the authored MPFB correction before fitting the rig/clothing; leave
+    # female breast anatomy independent of this male-only detail target.
+    if gender == 1.0:
+        from pathlib import Path
+        from bl_ext.user_default.mpfb.services.locationservice import LocationService
+        target = Path(LocationService.get_mpfb_data("targets")) / "torso/torso-muscle-pectoral-decr.target.gz"
+        TargetService.load_target(body, str(target), weight=1.0)
     rig = HumanService.add_builtin_rig(body, "default")
     # Dual-quaternion skinning preserves volume during axial twist. The overhead
     # press opts out: blended shoulder rotations otherwise produce large armpit bulges.
@@ -65,6 +73,20 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
         correction.iterations = 5
         correction.smooth_type = "LENGTH_WEIGHTED"
         correction.vertex_group = group.name
+    # Lowered arms also fold the stock chest/axilla weights. Smooth only the
+    # chest and shoulder regions after deformation, before clothing follows skin.
+    chest_group = body.vertex_groups.new(name="chest_pose_surface")
+    chest_indices = {g.index for g in body.vertex_groups
+                     if g.name.startswith(("breast.", "upperarm", "shoulder"))}
+    for vertex in body.data.vertices:
+        strength = min(1., sum(g.weight for g in vertex.groups if g.group in chest_indices))
+        if strength:
+            chest_group.add([vertex.index], strength, "REPLACE")
+    surface = body.modifiers.new("Chest and axilla pose surface", "CORRECTIVE_SMOOTH")
+    surface.use_only_smooth = True
+    surface.factor = .5
+    surface.iterations = 10
+    surface.vertex_group = chest_group.name
     if press_proportions:
         _shape_press_proportions(body, rig)
     for pb in rig.pose.bones:

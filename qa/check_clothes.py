@@ -27,6 +27,9 @@ def inside(tree, point):
                (Vector((0, 0, 1)), Vector((0, -1, 0))))
 
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from qa.model import validate_model, check_hair_frame
+
 scene = bpy.context.scene
 body = next(o for o in scene.objects if o.get('fitness_body'))
 garments = [o for o in scene.objects if o.get('garment')]
@@ -38,11 +41,13 @@ for garment in garments:
 frames = [int(v) for v in os.environ.get('CLOTHES_FRAMES', '').split(',') if v] or list(range(1, scene.frame_end+1))
 report = {'complete': frames == list(range(1, scene.frame_end+1)), 'model': scene['fitness_model'], 'frames': len(frames),
           'pass': True, 'covered_skin_hidden': True, 'garments': {}}
+report['model_checks'] = validate_model(scene, body)
 for garment in garments:
     report['garments'][garment.name] = {'max_visible_skin_penetration_mm': 0., 'max_added_penetration_mm': 0., 'max_existing_body_contact_mm': 0., 'frame': 1}
 for frame in frames:
     print(f'CLOTHES_FRAME {frame}', flush=True)
     scene.frame_set(frame)
+    check_hair_frame(scene, report['model_checks'])
     dg = bpy.context.evaluated_depsgraph_get()
     evaluated = body.evaluated_get(dg); mesh = evaluated.to_mesh()
     vertices = [evaluated.matrix_world @ v.co for v in mesh.vertices]
