@@ -57,15 +57,15 @@ def add_hair(body, rig, model):
         # Recolour in the shader: retain the authored strand detail and alpha.
         luminance = material.node_tree.nodes.new('ShaderNodeRGBToBW')
         material.node_tree.links.new(color, luminance.inputs[0])
-        blonde = material.node_tree.nodes.new('ShaderNodeValToRGB')
-        ramp = blonde.color_ramp
-        ramp.elements[0].color = (.10, .065, .022, 1)
+        black = material.node_tree.nodes.new('ShaderNodeValToRGB')
+        ramp = black.color_ramp
+        ramp.elements[0].color = (.002, .002, .003, 1)
         ramp.elements[1].position = .4
-        ramp.elements[1].color = (.82, .68, .39, 1)
+        ramp.elements[1].color = (.035, .038, .042, 1)
         mid = ramp.elements.new(.12)
-        mid.color = (.50, .35, .13, 1)
-        material.node_tree.links.new(luminance.outputs[0], blonde.inputs[0])
-        color = blonde.outputs['Color']
+        mid.color = (.010, .011, .013, 1)
+        material.node_tree.links.new(luminance.outputs[0], black.inputs[0])
+        color = black.outputs['Color']
     else:
         density = material.node_tree.nodes.new('ShaderNodeAttribute')
         density.attribute_name = 'fade_density'

@@ -142,7 +142,7 @@ def fabric_material(primary=(), secondary=()):
     bsdf = nt.nodes['Principled BSDF']
     signal = bsdf.inputs['Base Color'].links[0].from_socket
     veil = nt.nodes.new('ShaderNodeMixRGB'); veil.label = 'Outer fabric over muscle tint'
-    veil.inputs[0].default_value = .72
+    veil.inputs[0].default_value = .96
     veil.inputs[2].default_value = (.025, .033, .045, 1)
     nt.links.new(signal, veil.inputs[1])
     edge = nt.nodes.new('ShaderNodeAttribute'); edge.attribute_name = 'fabric_edge_distance'
