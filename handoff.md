@@ -741,3 +741,28 @@ contract in plan.md wants 720×900.
   Review page and linked alpha images/sheet return HTTP 200. Frame folders and
   Blender backups are removed; Data-volume free space remains 55 GiB. No new
   approvals or publication. Stop at the user appearance-review checkpoint.
+
+- **2026-10-25 (appearance revision 4, awaiting human review):** user requested
+  blonde female hair, a male fade, and a modestly larger, better-shaped female
+  bust. Ponytail recolouring preserves authored strand texture and alpha. The
+  male short01 sides/nape taper toward the fitted scalp with graded alpha density;
+  the top remains full. Original CC0 source assets remain intact; the hair notice
+  records these procedural/shader modifications. No external assets were added.
+
+  Female-only MPFB cupsize .60 / firmness .65 with authored breast-point-decr .65
+  and nipple-point-decr .9 produce a moderately fuller, rounder supported profile.
+  Garments are refitted through the same body UV/weight workflow; male cup/firmness
+  stay neutral .5/.5 and the male pectoral correction remains. Model QA now checks
+  those sex-specific settings/details. Close-ups were inspected first; the second
+  neutral study refreshed only the female model to save work. One final four-case
+  batch passes all 72-frame motion, clothing and model/head-attachment checks.
+  Current pipeline/spec/scene hashes match. Maximum added garment penetration
+  1.724 mm (2 mm limit); head-attachment drift 0.000304 mm. Thirteen
+  approval/export/workflow tests and source syntax/whitespace checks pass.
+
+  New review: http://127.0.0.1:8765/review/look_v4/index.html, HTTP 200 verified
+  with its head/torso images and full exercise sheet. Neutral stills remain RGBA;
+  video fallback stays dark H.264. No app files or format changes. No new approvals,
+  publication or 30×2 batch; wait for human appearance review before proceeding
+  with the original remaining production tasks. Preview frame folders and Blender
+  backups are removed. Data-volume free space is checked at stop.
