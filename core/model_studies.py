@@ -1,15 +1,18 @@
 """Unpublished neutral model review, run inside Blender before exercise QA."""
-import bpy, sys, json
+import bpy, sys, json, os
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
+from bl_ext.user_default.mpfb.services.targetservice import TargetService
 from core.body import make_human
 from core.hair import add_hair
 from core.clothes import add_clothing
 from core.look import muscle_material
 from core.studio import studio,camera
-OUT=ROOT/'review/look_v3';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'review/look_v4';OUT.mkdir(exist_ok=True)
 checks=[]
-for model in ('male','female'):
+models=os.environ.get('STUDY_MODELS','male,female').split(',')
+assert set(models) <= {'male','female'}
+for model in models:
  bpy.ops.wm.read_factory_settings(use_empty=True)
  scene=bpy.context.scene
  body,rig=make_human(gender=1.0 if model=='male' else 0.0)
@@ -34,5 +37,8 @@ for model in ('male','female'):
    scene.render.filepath=str(OUT/f'{model}_{part}_{view}.png')
    bpy.ops.render.render(write_still=True)
  macro=[k.name for k in body.data.shape_keys.key_blocks if k.value>.01]
- checks.append({'model':model,'active_targets':macro,'hair_style':hair[0]['hair_style'],'hair_top':hair_top})
+ checks.append({'model':model,'active_targets':macro,'hair_style':hair[0]['hair_style'],'hair_top':hair_top, 'macro': TargetService.get_macro_info_dict_from_basemesh(body)})
+if (OUT/'model_checks.json').exists():
+ old=json.loads((OUT/'model_checks.json').read_text())
+ checks=[q for q in old if q['model'] not in models]+checks
 (OUT/'model_checks.json').write_text(json.dumps(checks,indent=2)+'\n')
