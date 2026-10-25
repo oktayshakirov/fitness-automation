@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from core.clothes import fabric_material, _hide_covered_skin
 from core.look import muscle_material
 from core.studio import camera
-OUT=ROOT/'review/look_v5';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'review/look_v6';OUT.mkdir(exist_ok=True)
 bpy.ops.wm.open_mainfile(filepath=str(ROOT/'review/bodyweight_squat_female.blend'))
 scene=bpy.context.scene;scene.frame_set(1)
 body=next(o for o in scene.objects if o.get('fitness_body'))
