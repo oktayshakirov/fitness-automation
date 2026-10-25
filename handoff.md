@@ -612,3 +612,33 @@ contract in plan.md wants 720×900.
   Approval records were not modified; the shared pipeline fingerprint means the
   regenerated versions currently show zero effective approvals. The prior approved
   v0.1.0 archive remains intact.
+
+- **2026-10-25 (Content agent, dark/clothing review in progress):** resumed after
+  usage-limit interruptions. Studio background is exact sRGB #0A0A0C (verified PNG
+  samples and an H.264 round trip); commit e767954. Press rack height/width now use
+  arm-length ratios shared across models; commit 5c7b8f0. Procedural shorts and female
+  sports top copy skin UVs/weights, retain anatomy attribution, exclude rest-pose
+  hands, and use a shader mask for covered skin without removing motion-QA geometry.
+  No external assets imported. Current clothing/workflow source is not yet committed.
+
+  Remaining shorts diagnosis: standing fingers touched the fabric; added opt-in
+  3 cm hand clearance to the bodyweight-squat spec. Fabric clearance is now 1.5 mm
+  for shorts (6 mm for the top). Targeted female frames 1,6,38,44,71 pass the added
+  garment check with those settings. Body-fold contact is measured separately;
+  clothing fails if it adds >2 mm penetration beyond that existing contact.
+  Existing motion QA limits have not been relaxed. Clothing QA now has scene/spec/
+  pipeline receipts, is run by build.py, and gates delivery. Partial diagnostics
+  cannot count as complete QA. The same receipt checks gate core/look_review.py.
+
+  Four FINAL previews (squat + dumbbell shoulder press × male/female) are being
+  built sequentially by review/final_look_batch.py; inspect review/look_final_*.log
+  and the matching *_clothes.log / *_qa.json / *_clothes_qa.json for actual status.
+  The batch assembles review/look_oct24/index.html only if all four checks pass.
+  No full-library batch, new approvals or publication. The user's requested
+  appearance-review checkpoint precedes the 30×2 rerender. Female production naming/
+  approval migration, body views/masks/SVGs, heroes, equipment icons and publish.py
+  remain after that checkpoint. No app source or envelope format changed yet.
+  Prior approved v0.1.0 archive remains preserved. Free Data-volume space: 57 GiB
+  at resume; preview frame folders are removed after sheets/encoding. Scope is only
+  this repository. Optimize usage with targeted diagnostic frames, batched commands,
+  compact logs and a single full verification pass after geometry stabilizes.
