@@ -95,3 +95,12 @@ an 18-degree stable lean and 92 cm hand spacing (previously 80 cm). These number
 our animation settings, not prescriptions quoted from the sources. The top target
 accounts for lateral reach so the wider hands remain on the bar. Sources consulted
 for technique only; no images, video, or mesh assets incorporated.
+
+## Procedural training clothing (2026-10-24)
+
+`core/clothes.py` constructs fitted shorts and a female sports top directly from
+our existing CC0 MPFB body surface. It copies UV coordinates and rig weights,
+interpolates both at garment cuts, and follows the corrected skin surface. No
+external clothing mesh, image or texture has been downloaded. The geometry uses
+the existing MPFB CC0 provenance; Z-Anatomy-derived highlights retain the licence
+and attribution in `assets/maps/LICENSE.md`. Fabric disables anatomy bump relief.

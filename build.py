@@ -30,6 +30,7 @@ import argparse, shutil, subprocess
 from core import OUT
 from core.body import make_human, key_pose
 from core.solver import Poser
+from core.clothes import add_clothing
 from core.look import muscle_material
 from core.studio import studio, camera
 from core.render import new_scene, render_views, stitch_video, contact_sheet, fit_delivery_cameras, export_delivery
@@ -38,6 +39,8 @@ from motion import patterns, props as props_mod, micro
 
 ap = argparse.ArgumentParser(prog="build.py")
 ap.add_argument("id")
+ap.add_argument("--model", choices=("male", "female"), default="male")
+ap.add_argument("--look-preview", action="store_true", help="isolated model-named 4:5 clothing review; never exports or approves")
 ap.add_argument("--delivery", action="store_true", help="QA-gated 720x900 app export; all views, one rep, both codecs")
 ap.add_argument("--quick", action="store_true", help="render only the contact-sheet frames")
 ap.add_argument("--views", help="comma-separated subset of the spec's views")
@@ -47,6 +50,11 @@ ap.add_argument("--no-render", action="store_true", help="pose + save the .blend
 ap.add_argument("--no-blend", action="store_true")
 ap.add_argument("--no-micro", action="store_true", help="no breathing / head settle / weight shift")
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else [])
+if args.model != "male" and not args.look_preview:
+    ap.error("female delivery is pending the look review; use --look-preview")
+if args.look_preview and (args.delivery or args.no_blend):
+    ap.error("look preview needs its saved scene and cannot export delivery")
+prefix = f"{args.id}_{args.model}" if args.look_preview else args.id
 if args.delivery and (args.no_render or args.quick or args.no_blend or args.views):
     ap.error("--delivery requires a full render, saved blend and every declared view")
 
@@ -70,9 +78,18 @@ tempo = Tempo(motion["tempo"])
 N = tempo.n
 
 scene = new_scene()
-body, rig = make_human(shoulder_smooth=motion.get("shoulder_smooth", False),
+body, rig = make_human(gender=1.0 if args.model == "male" else 0.0, shoulder_smooth=motion.get("shoulder_smooth", False),
                        press_proportions=motion.get("press_proportions", False),
                        preserve_volume=motion.get("preserve_volume", True))
+body["fitness_body"] = True
+scene["fitness_model"] = args.model
+body.data.materials.clear()
+body.data.materials.append(muscle_material(primary=tuple(catalog.get("primary", ())),
+                                           secondary=tuple(catalog.get("secondary", ()))))
+garments = add_clothing(body, rig, args.model, catalog.get("primary", ()), catalog.get("secondary", ()))
+# Avoid repeated surface projections during each IK update; enable for playback.
+for garment in garments:
+    for modifier in garment.modifiers: modifier.show_viewport = False
 P = Poser(rig)
 pattern = patterns.get(motion["pattern"])(P, motion.get("params", {}))
 props = props_mod.build(P, motion.get("props", []))
@@ -88,11 +105,11 @@ for f in range(1, N + 1):
 for pr in props:
     pr.finish(N)
 micro.set_frame(P, 1, N, 0.0)
+for garment in garments:
+    for modifier in garment.modifiers: modifier.show_viewport = True
+scene.frame_set(1)
 print("POSED", args.id, N, "frames")
 
-body.data.materials.clear()
-body.data.materials.append(muscle_material(primary=tuple(catalog.get("primary", ())),
-                                           secondary=tuple(catalog.get("secondary", ()))))
 delivery_objects=list(scene.objects)
 studio(scene)
 scene.frame_start, scene.frame_end = 1, N
@@ -109,27 +126,43 @@ cams = [camera(scene, v["name"], v.get("target", target), v["yaw"], ortho=v.get(
                height=v.get("height", cam_cfg.get("height")))
         for v in views]
 
-if args.delivery:
+if args.delivery or args.look_preview:
     fit_delivery_cameras(scene,cams,delivery_objects,[1,1+N//4,1+N//2,1+3*N//4,N])
+
+def check_clothing():
+    # Separate Blender process keeps motion QA's temporary mask changes isolated.
+    log_path = OUT + prefix + "_clothes.log"
+    with open(log_path, "w") as log:
+        result = subprocess.run([BLENDER, "-b", OUT+prefix+".blend",
+                                 "--python-exit-code", "1", "--python",
+                                 HERE+"/qa/check_clothes.py"], stdout=log, stderr=log)
+    if result.returncode:
+        raise RuntimeError("Clothing QA failed; see " + log_path)
+
 
 sheet = [int(x) for x in args.frames.split(",")] if args.frames else motion.get("sheet") or tempo.key_frames()
 if args.delivery:
-    bpy.ops.wm.save_as_mainfile(filepath=OUT+f"{args.id}.blend")
+    bpy.ops.wm.save_as_mainfile(filepath=OUT+f"{prefix}.blend")
+    check_clothing()
     subprocess.run(["/usr/bin/env","python3",HERE+"/qa/check.py",args.id],check=True)
     from core.delivery import current_qa
     current_qa(args.id)
 
 if not args.no_render:
     res = tuple(cam_cfg.get("res", (720, 1280)))      # review size; dist/ size is Agent B's
-    if args.delivery: res=(720,900)
-    dirs = render_views(scene, cams, args.id, 1, N, res=res, frames=sheet if args.quick else None)
-    contact_sheet(dirs, sheet, OUT + f"{args.id}_sheet.png")
+    if args.delivery or args.look_preview: res=(720,900)
+    dirs = render_views(scene, cams, prefix, 1, N, res=res, frames=sheet if args.quick else None)
+    contact_sheet(dirs, sheet, OUT + f"{prefix}_sheet.png")
     if not args.quick:
-        stitch_video(dirs, OUT + f"{args.id}.mp4",loops=1 if args.delivery else 3)
+        stitch_video(dirs, OUT + f"{prefix}.mp4",loops=1 if args.delivery else 3)
         if args.delivery: export_delivery(args.id,dirs,views)
     if not args.keep_frames:
         for d in dirs:
             shutil.rmtree(d, ignore_errors=True)
 if not args.no_blend and not args.delivery:
-    bpy.ops.wm.save_as_mainfile(filepath=OUT + f"{args.id}.blend")
-print("BUILT", args.id)
+    bpy.ops.wm.save_as_mainfile(filepath=OUT + f"{prefix}.blend")
+if args.look_preview:
+    check_clothing()
+    subprocess.run(["/usr/bin/env", "python3", HERE+"/qa/check.py", args.id,
+                    "--model", args.model], check=True)
+print("BUILT", prefix)

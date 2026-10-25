@@ -14,8 +14,8 @@ def spec_digest(eid):
         data=read(ROOT/d/(eid+'.json'));data.pop(flag,None);obj.append(data)
     return hashlib.sha256(json.dumps(obj,sort_keys=True).encode()).hexdigest()
 def pipeline_digest():
-    files=[ROOT/'build.py', ROOT/'qa/check.py']
-    files += [ROOT/'core'/n for n in ('body.py','solver.py','look.py','studio.py','render.py')]
+    files=[ROOT/'build.py', ROOT/'qa/check.py', ROOT/'qa/check_clothes.py']
+    files += [ROOT/'core'/n for n in ('body.py','clothes.py','solver.py','look.py','studio.py','render.py')]
     for folder in ('motion','equipment'):
         files += [p for p in sorted((ROOT/folder).rglob('*.py')) if p.name!='preview.py']
     files += sorted((ROOT/'assets/maps').rglob('*.png'))
@@ -29,6 +29,12 @@ def current_qa(eid,path=None):
     if q.get('spec_sha256')!=spec_digest(eid):raise ValueError(eid+': QA spec is stale')
     if q.get('pipeline_sha256')!=pipeline_digest():raise ValueError(eid+': QA pipeline is stale')
     if q.get('blend_sha256')!=digest(ROOT/'review'/(eid+'.blend')):raise ValueError(eid+': QA blend is stale')
+    if q.get('clothes_required'):
+        clothing=read(ROOT/'review'/(eid+'_clothes_qa.json'))
+        if clothing.get('pass') is not True or clothing.get('complete') is not True:
+            raise ValueError(eid+': clothing QA missing, incomplete or failed')
+        for key in ('blend_sha256','pipeline_sha256','spec_sha256','model'):
+            if clothing.get(key)!=q.get(key):raise ValueError(eid+': clothing QA is stale')
     return q
 
 
@@ -101,7 +107,7 @@ def export_delivery(eid,dirs,views,qa_path=None):
             metadata[paths['poster']]={'bytes':(staged/paths['poster']).stat().st_size,'sha256':digest(staged/paths['poster'])}
             files[view]={k:f'{eid}/{v}' for k,v in paths.items()}
         poster=Image.open(staged/f'poster_{names[0]}.webp')
-        ImageOps.pad(poster,(320,320),color='#f4f5f7').save(staged/'thumb.webp','WEBP',quality=82,method=6)
+        ImageOps.pad(poster,(320,320),color='#0A0A0C').save(staged/'thumb.webp','WEBP',quality=82,method=6)
         entry={k:cat[k] for k in ('id','name','primary','secondary','equipment')}
         entry.update(views=names,files=files,thumb=f'{eid}/thumb.webp',duration=count/30,approved=bool(motion.get('approved') and cat.get('reviewed')),
                      qa=q,media=metadata,spec_sha256=spec_digest(eid),pipeline_sha256=pipeline_digest())

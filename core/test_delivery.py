@@ -65,6 +65,22 @@ class ExportGateTests(unittest.TestCase):
     with self.assertRaisesRegex(ValueError,'changed'):delivery.current_asset('demo',entry)
     video.unlink()
     with self.assertRaisesRegex(ValueError,'missing'):delivery.current_asset('demo',entry)
+ def test_clothing_report_must_be_complete_and_match_current_scene(self):
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t);(root/'review').mkdir()
+   report={'id':'demo','pass':True,'complete':True,'model':'male','blend_sha256':'b','pipeline_sha256':'p','spec_sha256':'s'}
+   q={**report,'clothes_required':True}
+   path=root/'review/demo_qa.json';path.write_text(json.dumps(q))
+   clothing=root/'review/demo_clothes_qa.json';clothing.write_text(json.dumps(report))
+   with patch.object(delivery,'ROOT',root),patch.object(delivery,'spec_digest',return_value='s'),patch.object(delivery,'pipeline_digest',return_value='p'),patch.object(delivery,'digest',return_value='b'):
+    delivery.current_qa('demo')
+    for key,value in [('pass',False),('complete',False),('model','female'),('blend_sha256','old'),('pipeline_sha256','old'),('spec_sha256','old')]:
+     with self.subTest(key=key):
+      clothing.write_text(json.dumps({**report,key:value}))
+      with self.assertRaises(ValueError):delivery.current_qa('demo')
+    clothing.unlink()
+    with self.assertRaises(OSError):delivery.current_qa('demo')
+
  def test_changed_scene_rejects_old_delivery(self):
   entry={'spec_sha256':'s','pipeline_sha256':'p','qa':{'blend_sha256':'old'}}
   with patch.object(delivery,'current_qa',return_value={'pipeline_sha256':'p','blend_sha256':'new'}),patch.object(delivery,'spec_digest',return_value='s'):

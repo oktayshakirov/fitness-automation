@@ -96,3 +96,38 @@ accurately so the review page does not claim it is still working. Never kill all
 Blender/Python processes indiscriminately: other applications may own them.
 Keep the idle review server only while it is useful for review. Headless Blender
 exits after each build and run_mvp.py exits after the final audit.
+
+## Dark clothing look review (before the model delivery migration)
+
+The app's `bg.video` is exactly sRGB `#0A0A0C`. The studio converts it to linear
+shader values, disables dithering and uses an unlit matching floor. Procedural
+compression shorts copy the body's UVs and deform weights; the female sports top
+uses the same method. Covered muscles retain the shared highlight material.
+No external clothing asset is required. The existing anatomy attribution applies.
+
+Use the isolated look-preview mode while the two-exercise appearance review is pending:
+
+```sh
+python3 build.py bodyweight_squat --model male --look-preview --quick --frames 1,40
+python3 build.py bodyweight_squat --model female --look-preview --quick --frames 1,40
+python3 build.py dumbbell_shoulder_press --model male --look-preview --quick --frames 1,30
+python3 build.py dumbbell_shoulder_press --model female --look-preview --quick --frames 1,30
+```
+
+Preview scenes, sheets and QA reports use `<id>_<model>` in `review/`. Omit `--quick`
+for a review video. Every preview runs the existing all-frame motion QA; failure
+returns a nonzero exit code. Preview mode cannot export to `dist/` or grant approval.
+Female delivery/approval migration is the next phase, after the look review. These
+local preview names do not yet change the app's content envelope.
+
+Reviewing this sheet approves only the proposed appearance. Every rebuilt exercise
+and model still needs its full delivery QA and explicit human approval. Do not run
+the full library batch until the user has reviewed the two-exercise sheet.
+
+Garment checks (`qa/check_clothes.py`, run inside each saved Blender preview) verify
+copied UVs/rig groups and sample vertices and face centres over all 72 frames. Skin
+fully beneath the garments is hidden by a rest-space shader mask; geometry remains
+intact for motion QA. The check reports raw overlap and measured existing body-fold
+contact separately, failing when clothing adds more than 2 mm beyond that contact.
+This is a geometry check, not proof of visual quality: inspect the seams, folds and
+highlight continuity in the sheet before accepting the appearance.

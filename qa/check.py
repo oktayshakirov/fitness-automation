@@ -32,9 +32,16 @@ if bpy is None:
     import subprocess
     env = dict(os.environ, BLENDER_USER_RESOURCES=os.path.join(HERE, ".blender-profile"))
     rc = 0
-    for eid in sys.argv[1:]:
-        cmd = [BLENDER, "-b", os.path.join(HERE, "review", eid + ".blend"), "--python-exit-code", "1", "--python",
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("ids", nargs="+")
+    parser.add_argument("--model", choices=("male", "female"))
+    args = parser.parse_args()
+    for eid in args.ids:
+        prefix = eid + "_" + args.model if args.model else eid
+        cmd = [BLENDER, "-b", os.path.join(HERE, "review", prefix + ".blend"), "--python-exit-code", "1", "--python",
                os.path.abspath(__file__), "--", eid]
+        if args.model: cmd += ["--model", args.model]
         r = subprocess.run(cmd, env=env, capture_output=True, text=True)
         out = [l for l in r.stdout.splitlines() if l.startswith(("QA", "  "))]
         print("\n".join(out) if out else r.stdout[-2000:] + r.stderr[-2000:])
@@ -48,6 +55,9 @@ from core.solver import Poser
 from motion.contact import grip_point
 
 eid = sys.argv[sys.argv.index("--") + 1]
+tail = sys.argv[sys.argv.index("--") + 1:]
+model = tail[tail.index("--model")+1] if "--model" in tail else None
+prefix = eid + "_" + model if model else eid
 spec = json.load(open(os.path.join(HERE, "motion/specs", eid + ".json")))
 qa_cfg = spec.get("qa", {})
 skip = set(qa_cfg.get("skip", []))
@@ -56,7 +66,7 @@ if spec["pattern"] not in ("stand_hinge", "arm_isolation", "split_stance", "over
 
 scene = bpy.context.scene
 rig = next(o for o in scene.objects if o.type == "ARMATURE")
-body = next(o for o in scene.objects if o.type == "MESH" and o.find_armature() == rig)
+body = next(o for o in scene.objects if o.type == "MESH" and o.find_armature() == rig and not o.get("garment"))
 mask_vg, mask_inv = None, False
 for m in body.modifiers:
     if m.type == "MASK":            # MPFB keeps the "body" group and hides the helpers
@@ -430,10 +440,10 @@ for joint, ranges in [('knee', knee_range), ('elbow', elbow_range)]:
                     fail('range_of_motion', f'{joint} {side} {name} flexion {values[index]:.1f} deg outside {lo}..{hi}')
 
 from core.delivery import spec_digest, pipeline_digest, digest
-result = {"id": eid, "pass": not fails, "fails": fails, "stats": stats,
+result = {"id": eid, "model": model or "male", "clothes_required": any(o.get("garment") for o in scene.objects), "pass": not fails, "fails": fails, "stats": stats,
           "skipped": sorted(skip), "allowances": qa_cfg, "spec_sha256": spec_digest(eid) if os.path.exists(os.path.join(HERE,"catalog",eid+".json")) else None,
-          "pipeline_sha256": pipeline_digest(), "blend_sha256": digest(os.path.join(HERE,"review",eid+".blend"))}
-with open(os.path.join(HERE, "review", eid + "_qa.json"), "w") as fh:
+          "pipeline_sha256": pipeline_digest(), "blend_sha256": digest(os.path.join(HERE,"review",prefix+".blend"))}
+with open(os.path.join(HERE, "review", prefix + "_qa.json"), "w") as fh:
     json.dump(result, fh, indent=1)
 print(f"QA {eid}: {'PASS' if not fails else 'FAIL'}")
 for x in fails:

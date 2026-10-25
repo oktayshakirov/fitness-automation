@@ -7,7 +7,7 @@
     "shin_lean": 32,
     "torso": 40,
     "arms": "counterbalance",
-    "hand_clearance": 0.02
+    "hand_clearance": 0.03
   },
   "props": [],
   "tempo": {
