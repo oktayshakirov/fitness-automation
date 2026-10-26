@@ -841,3 +841,31 @@ contract in plan.md wants 720×900.
   checks pass. Frame folders and Blender backups removed. Use pinned Python 3.13
   for review tooling. No app edits, format change, approvals, publication or 30×2
   batch. Await human appearance review before the original remaining tasks.
+
+- **2026-10-26 (appearance revision 8, awaiting human review):** user requested
+  thinner sports-bra straps matching the reference, a slightly larger bust, and
+  white as default if video transparency is unavailable. Bra neckline/outer cut
+  now produces narrower straps while keeping cup coverage; female cupsize is .74
+  (previously .70), with the relaxed .45 firmness and rounded details retained.
+
+  Default camera background and thumbnail padding are now exact white #FFFFFF.
+  Camera-ray world mixing preserves the previous low environment illumination so
+  white does not wash out the models. PNG/WebP neutral stills retain true alpha.
+  H.264 remains opaque. App handoff appended only under fitness-app/docs/MVP.md
+  Requests, superseding the dark bg.video fallback; no app source or wire-format
+  change and no App-repo commit. Initial automatic permission review timed out;
+  its permitted single retry succeeded.
+
+  All four new previews pass complete 72-frame motion, clothing and model QA with
+  current source/spec/scene hashes; maximum added garment penetration 1.724 mm
+  (2 mm limit). Thirteen regression tests and source syntax/whitespace checks pass.
+  Rendered a full 72-frame female squat side H.264 sample using
+  core/white_background_study.py. Decoded video corners are RGB 255/255/255; codec,
+  dimensions and frame count pass encoder validation. Frames removed after encode.
+
+  Review: http://127.0.0.1:8765/review/look_v8/index.html (HTTP 200 verified with
+  torso images, full sheet and sample video). Review defaults to white; its theme
+  toggle demonstrates the neutral stills' alpha only. Preview frame folders and
+  Blender backups removed. No approvals, publication or 30×2 batch. Continue the
+  original production task list after human appearance review; use pinned Python
+  3.13 for Pillow-dependent tools.
