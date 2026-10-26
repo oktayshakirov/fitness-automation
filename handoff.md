@@ -869,3 +869,23 @@ contract in plan.md wants 720×900.
   Blender backups removed. No approvals, publication or 30×2 batch. Continue the
   original production task list after human appearance review; use pinned Python
   3.13 for Pillow-dependent tools.
+
+- **2026-10-26 (appearance revision 9, awaiting human review):** fixed the
+  transparent side-armhole sliver with 15 mm opaque skin overlap at the curved
+  outer bra cut (other seams retain 2 mm). Increased female cupsize .74 to .84
+  while retaining rounded, relaxed shaping. Female outfit is muted pink and male
+  outfit blue; solid fabric retains only the faint 4% active-muscle signal.
+  White H.264 background and transparent neutral stills remain.
+
+  Review: http://127.0.0.1:8765/review/look_v9/index.html. Includes 24 neutral
+  studies, updated female squat video, and both models in squat/shoulder press.
+  All four previews pass full 72-frame motion/garment/model QA with current
+  source/spec/scene hashes; 13 regression tests pass. A source-fingerprint
+  mismatch from a transient comment edit was resolved by rerunning motion QA;
+  the final strict sheet validation passes. Temporary frames and blend backups
+  removed; 49 GiB free. No approvals, publishing or full 30x2 rerender.
+
+  Recorded GymFaster catalog as user-requested future exercise inspiration in
+  docs/EXERCISE_WORKFLOW.md. Its catalog does not identify the 3D model source;
+  shared MPFB provenance is unconfirmed. No external assets were imported.
+  Resume remaining production deliveries after human appearance approval.

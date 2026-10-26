@@ -13,9 +13,9 @@ for suffix in ('qa','clothes_qa'):
  if suffix=='clothes_qa':assert q['complete']
 bpy.ops.wm.open_mainfile(filepath=str(blend))
 s=bpy.context.scene
-folders=render_views(s,[bpy.data.objects['side']],'look_v8/white_video',1,s.frame_end,res=(720,900))
+folders=render_views(s,[bpy.data.objects['side']],'look_v9/white_video',1,s.frame_end,res=(720,900))
 try:
- path=ROOT/'review/look_v8/female_squat_white.mp4'
+ path=ROOT/'review/look_v9/female_squat_white.mp4'
  metadata=encode_frames(Path(folders[0]),path,'libx264',s.frame_end)
  (path.with_suffix('.json')).write_text(json.dumps(metadata,indent=2)+'\n')
 finally:
