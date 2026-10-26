@@ -889,3 +889,20 @@ contract in plan.md wants 720×900.
   docs/EXERCISE_WORKFLOW.md. Its catalog does not identify the 3D model source;
   shared MPFB provenance is unconfirmed. No external assets were imported.
   Resume remaining production deliveries after human appearance approval.
+
+- **2026-10-26 (appearance revision 10, awaiting human review):** restored
+  black outfits; female cupsize .89 and breast-dist-decr .30 bring the fuller
+  bust closer together. Lowered bra hem 35 mm to avoid cutting the enlarged
+  lower contour. Armhole overlap fix and faint active-muscle tint retained.
+  Added original procedural brown eyes and a black smartwatch on each left
+  wrist in core/accessories.py. Eyes follow eye bones; watches follow lowerarm02.L.
+  No downloaded assets. Added accessory presence and all-frame attachment QA;
+  accessories.py participates in render fingerprints.
+
+  Review: http://127.0.0.1:8765/review/look_v10/index.html includes neutral
+  close-ups, updated H.264 squat sample and both exercises/models. All four
+  previews pass full 72-frame motion/garment/model/accessory checks with current
+  source/spec/scene hashes. All 13 regression tests pass. White backgrounds and
+  transparent stills retained. Frames and Blender backups removed; 49 GiB free.
+  No approvals or publication, and no full-library rerender. Await user review
+  before the remaining production-delivery tasks.
