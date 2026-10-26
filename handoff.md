@@ -923,3 +923,21 @@ contract in plan.md wants 720×900.
   backups removed; disk free 49 GiB. Commits preserve original notices.
   No exercise approvals, publication or full-library rerender. Await human
   appearance review before remaining production deliveries.
+
+- **2026-10-26 (appearance revision 12, awaiting human review):** aligned watches
+  to the wrist.L hand frame rather than lowerarm02.L roll, keeping the screen
+  on the dorsal side. QA checks the hand anchor and zero relative rotation.
+  A knuckle-plane trial was discarded because it rotated too far. Trainers
+  now have shorter toe/heel allowances, narrower outlines, lower uppers and
+  12 mm soles instead of 18 mm; slightly fuller sidewalls prevent exposed skin.
+  Female sports-bra support uses firmness .55, distance reduction .45, upward
+  translation .12 and lower-pole detail .10, retaining cupsize .89. The centre
+  neckline is 20 mm lower for subtle cleavage while preserving coverage.
+
+  Review: http://127.0.0.1:8765/review/look_v12/index.html includes current
+  torso, wrist and trainer close-ups, two exercises for both models, and a
+  fresh H.264 squat sample. All four previews pass full 72-frame motion,
+  garment/model, attachment and shoe floor-clearance QA. Eight receipts match
+  current source/spec/scene hashes. Thirteen regression tests pass. Frames
+  and blend backups removed; 49 GiB free. No approvals or publication and no
+  full-library rerender. Continue remaining deliveries after appearance approval.
