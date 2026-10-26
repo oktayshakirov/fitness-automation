@@ -3,9 +3,9 @@ import bpy, math
 from mathutils import Vector
 from .look import flat_material
 
-# DESIGN.md bg.video is an sRGB display colour. Blender shaders use linear RGB.
-BG_HEX = "#0A0A0C"
-BG_SRGB = (10 / 255, 10 / 255, 12 / 255)
+# User-selected white fallback for H.264 (2026-10-26). Shader colours are linear.
+BG_HEX = "#FFFFFF"
+BG_SRGB = (1., 1., 1.)
 BG = tuple(c / 12.92 if c <= .04045 else ((c + .055) / 1.055) ** 2.4
            for c in BG_SRGB)
 
@@ -27,6 +27,18 @@ def studio(scene, floor=True, transparent=False):
     w = bpy.data.worlds.new("W"); scene.world = w; w.use_nodes = True
     w.node_tree.nodes["Background"].inputs[0].default_value = (*BG, 1)
     w.node_tree.nodes["Background"].inputs[1].default_value = 1.0
+    # White is the camera backdrop, not an added white environment light.
+    # Preserve the established studio illumination/reflections on the models.
+    nodes = w.node_tree.nodes
+    ambient = nodes.new('ShaderNodeBackground')
+    ambient.inputs[0].default_value = (.00303527, .00303527, .00367651, 1)
+    ambient.inputs[1].default_value = 1.
+    rays = nodes.new('ShaderNodeLightPath')
+    backdrop = nodes.new('ShaderNodeMixShader')
+    w.node_tree.links.new(rays.outputs['Is Camera Ray'], backdrop.inputs[0])
+    w.node_tree.links.new(ambient.outputs[0], backdrop.inputs[1])
+    w.node_tree.links.new(nodes['Background'].outputs[0], backdrop.inputs[2])
+    w.node_tree.links.new(backdrop.outputs[0], nodes['World Output'].inputs['Surface'])
     key = bpy.data.objects.new("key", bpy.data.lights.new("key", "SUN"))
     key.data.energy = 1.5; key.data.angle = math.radians(12)
     key.rotation_euler = (math.radians(50), 0, math.radians(-30))

@@ -108,7 +108,7 @@ def export_delivery(eid,dirs,views,qa_path=None):
             metadata[paths['poster']]={'bytes':(staged/paths['poster']).stat().st_size,'sha256':digest(staged/paths['poster'])}
             files[view]={k:f'{eid}/{v}' for k,v in paths.items()}
         poster=Image.open(staged/f'poster_{names[0]}.webp')
-        ImageOps.pad(poster,(320,320),color='#0A0A0C').save(staged/'thumb.webp','WEBP',quality=82,method=6)
+        ImageOps.pad(poster,(320,320),color='#FFFFFF').save(staged/'thumb.webp','WEBP',quality=82,method=6)
         entry={k:cat[k] for k in ('id','name','primary','secondary','equipment')}
         entry.update(views=names,files=files,thumb=f'{eid}/thumb.webp',duration=count/30,approved=bool(motion.get('approved') and cat.get('reviewed')),
                      qa=q,media=metadata,spec_sha256=spec_digest(eid),pipeline_sha256=pipeline_digest())
