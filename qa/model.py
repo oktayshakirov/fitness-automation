@@ -8,7 +8,7 @@ def validate_model(scene, body):
     model = scene['fitness_model']
     macro = TargetService.get_macro_info_dict_from_basemesh(body)
     assert macro['gender'] == (1. if model == 'male' else 0.), 'Wrong body macro'
-    expected_cup, expected_firmness = (.70, .45) if model == 'female' else (.5, .5)
+    expected_cup, expected_firmness = (.74, .45) if model == 'female' else (.5, .5)
     assert abs(macro['cupsize']-expected_cup) < 1e-6, 'Wrong bust volume macro'
     assert abs(macro['firmness']-expected_firmness) < 1e-6, 'Wrong bust firmness macro'
     correction = TargetService.get_target_value(body, 'torso-muscle-pectoral-decr')

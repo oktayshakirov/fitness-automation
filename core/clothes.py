@@ -20,11 +20,11 @@ def shorts_hem(x, hip, model):
 
 
 def bra_neck(x, shoulder):
-    return shoulder-.065 + .165*_smooth((abs(x)-.045)/.065)
+    return shoulder-.065 + .165*_smooth((abs(x)-.065)/.045)
 
 
 def bra_width(z, shoulder):
-    return .18 - .045*_smooth((z-(shoulder-.12))/.10)
+    return .18 - .060*_smooth((z-(shoulder-.12))/.10)
 
 
 def _shell(body, name, material, bounds, top=False, hem=None, shoulder=None):
