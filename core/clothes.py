@@ -135,7 +135,7 @@ def fabric_edge_attribute(mesh):
 
 def fabric_material(primary=(), secondary=(), model="male"):
     """Opaque textile veil over a muted muscle signal, with solid edge binding."""
-    colour = (.48, .075, .19) if model == "female" else (.025, .16, .48)
+    colour = (.025, .033, .045)
     fabric = muscle_material(primary, secondary, name='Training fabric',
                              use_normal=False, base=colour,
                              hot=(.32, .065, .060), warm=(.40, .17, .075))
@@ -182,8 +182,10 @@ def add_clothing(body, rig, model, primary=(), secondary=()):
                        hem=lambda x: shorts_hem(x, hip, model))]
     if model == 'female':
         garments.append(_shell(body, 'Sports top', fabric,
-                               (shoulder-.19, shoulder+.10), top=True, shoulder=shoulder))
+                               (shoulder-.225, shoulder+.10), top=True, shoulder=shoulder))
     _hide_covered_skin(body, hip, knee, shoulder, model)
+    from core.accessories import add_watch
+    add_watch(rig)
     return garments
 
 
@@ -208,7 +210,7 @@ def _hide_covered_skin(body, hip, knee, shoulder, model):
             # Keep a generous opaque skin overlap at the curved armhole.
             # Interpolated rest-space cuts move differently from smoothed cloth;
             # the old 2 mm inset could reveal transparency in side views.
-            top_distance = min(bra_width(z, shoulder)-.015-abs(x), z-(shoulder-.188),
+            top_distance = min(bra_width(z, shoulder)-.015-abs(x), z-(shoulder-.223),
                                shoulder+.098-z, bra_neck(x, shoulder)-.002-z)
             distance = max(distance, top_distance)
         return distance

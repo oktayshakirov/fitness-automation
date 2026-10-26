@@ -21,7 +21,7 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
     if gender == 0.0:
         # Fuller volume with a relaxed, supported lower contour for the adult athlete.
         # Keep these female-only: MPFB cup/firmness details are not male morphs.
-        macro["cupsize"] = .84
+        macro["cupsize"] = .89
         macro["firmness"] = .45
     body = HumanService.create_human(macro_detail_dict=macro)
     # The stock high-muscle male macro has a bulbous lower pectoral contour.
@@ -37,7 +37,7 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
         from bl_ext.user_default.mpfb.services.locationservice import LocationService
         targets = Path(LocationService.get_mpfb_data("targets")) / "breast"
         # Round the profile rather than increasing only its pointed projection.
-        for detail, strength in (("breast-point-decr", .85), ("nipple-point-decr", 1.0), ("breast-volume-vert-down", .20)):
+        for detail, strength in (("breast-dist-decr", .30), ("breast-point-decr", .85), ("nipple-point-decr", 1.0), ("breast-volume-vert-down", .20)):
             TargetService.load_target(body, str(targets / (detail + ".target.gz")), weight=strength)
     from pathlib import Path
     from bl_ext.user_default.mpfb.services.locationservice import LocationService
@@ -114,6 +114,8 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
     for pb in rig.pose.bones:
         pb.rotation_mode = "QUATERNION"
     update()
+    from core.accessories import add_eyes
+    add_eyes(rig)
     return body, rig
 
 
