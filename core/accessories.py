@@ -48,11 +48,19 @@ def add_eyes(rig):
 
 
 def add_watch(rig):
-    root=anchor(rig,'lowerarm02.L','Watch follows wrist')
+    from mathutils import Vector
+    wrist=rig.data.bones['wrist.L']
+    # The wrist frame follows the back of the hand; forearm roll differs.
+    fitted=wrist.matrix_local.copy()
+    fitted.translation=wrist.head_local-fitted.to_3x3().col[1]*.020
+    attachment=anchor(rig,'wrist.L','Watch follows wrist')
+    root=bpy.data.objects.new('Watch aligned to hand plane',None)
+    bpy.context.collection.objects.link(root);root.parent=attachment
+    root.matrix_world=rig.matrix_world@fitted
     band=material('Black silicone strap',(.012,.015,.020),.75)
     case=material('Watch graphite case',(.045,.055,.065),.28,.65)
     glass=material('Watch glass',(.008,.022,.030),.16,.15)
-    centre=rig.data.bones['lowerarm02.L'].length-.022
+    centre=0.
     verts=[];faces=[]
     for y,scale in ((centre-.011,1),(centre+.011,1),(centre-.011,1.10),(centre+.011,1.10)):
         for i in range(64):
@@ -86,8 +94,8 @@ def add_shoes(rig):
         toes=[b for b in rig.data.bones if b.name.startswith('toe') and b.name.endswith('.'+side)]
         points=[p for b in toes for p in (b.head_local,b.tail_local)]
         x=(min(p.x for p in points)+max(p.x for p in points))/2
-        front=min(p.y for p in points)-.022;rear=foot.head_local.y+.075
-        width=(max(p.x for p in points)-min(p.x for p in points))/2+.022
+        front=min(p.y for p in points)-.017;rear=foot.head_local.y+.060
+        width=(max(p.x for p in points)-min(p.x for p in points))/2+.018
         root=anchor(rig,'foot.'+side,'Trainer follows foot '+side)
         def meshpart(name,verts,faces,mat):
             me=bpy.data.meshes.new(name);me.from_pydata(verts,[],faces);me.update()
@@ -97,12 +105,12 @@ def add_shoes(rig):
             for f in me.polygons:f.use_smooth=True
             return o
         # Rounded plan outline, wider at the ball and narrower through the heel.
-        stations=[(0,.08,.025),(.05,.65,.038),(.16,1.,.045),(.38,1.,.055),(.58,.85,.075),(.78,.72,.083),(.93,.65,.065),(1,.08,.030)]
+        stations=[(0,.08,.020),(.05,.65,.030),(.16,1.,.035),(.38,1.,.045),(.58,.85,.060),(.78,.72,.068),(.93,.65,.052),(1,.08,.025)]
         verts=[];faces=[];n=25
         for t,w,h in stations:
             y=front+(rear-front)*t
             for i in range(n):
-                a=math.pi*i/(n-1);verts.append((x+width*w*math.cos(a),y,.016+h*math.sin(a)))
+                a=math.pi*i/(n-1);verts.append((x+width*w*math.cos(a),y,.011+h*math.sin(a)**.65))
         for j in range(len(stations)-1):
             for i in range(n-1):
                 ids=(j*n+i,j*n+i+1,(j+1)*n+i+1,(j+1)*n+i)
@@ -118,15 +126,15 @@ def add_shoes(rig):
         # Continuous rubber outsole, kept above the existing bare-foot floor datum.
         outline=[(x+width*w,front+(rear-front)*t) for t,w,h in stations]
         outline += [(x-width*w,front+(rear-front)*t) for t,w,h in reversed(stations)]
-        count=len(outline);v=[(a,b,z) for z in (.001,.018) for a,b in outline]
+        count=len(outline);v=[(a,b,z) for z in (.001,.012) for a,b in outline]
         f=[tuple(range(count-1,-1,-1)),tuple(range(count,count*2))]
         f += [(i,(i+1)%count,(i+1)%count+count,i+count) for i in range(count)]
         o=meshpart('Trainer sole '+side,v,f,sole)
         m=o.modifiers.new('Rounded rubber edge','BEVEL');m.width=.004;m.segments=3
         o.modifiers.new('Sole normals','WEIGHTED_NORMAL')
         for j,t in enumerate((.40,.46,.52,.58)):
-            y=front+(rear-front)*t;h=.055+(t-.38)/.20*.020
+            y=front+(rear-front)*t;h=.045+(t-.38)/.20*.015
             curve=bpy.data.curves.new('Lace','CURVE');curve.dimensions='3D';curve.bevel_depth=.0016;curve.bevel_resolution=2
             s=curve.splines.new('POLY');s.points.add(2)
-            for p,co in zip(s.points,((x-.020,y,.016+h*.90+.003),(x,y-.004,.016+h+.004),(x+.020,y,.016+h*.90+.003))):p.co=(*co,1)
+            for p,co in zip(s.points,((x-.020,y,.011+h*.90+.003),(x,y-.004,.011+h+.004),(x+.020,y,.011+h*.90+.003))):p.co=(*co,1)
             o=bpy.data.objects.new('Trainer lace '+side+str(j),curve);bpy.context.collection.objects.link(o);o.parent=root;o.matrix_parent_inverse=root.matrix_world.inverted();o.data.materials.append(lace);o['shoe']=True

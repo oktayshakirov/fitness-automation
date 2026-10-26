@@ -20,7 +20,7 @@ def shorts_hem(x, hip, model):
 
 
 def bra_neck(x, shoulder):
-    return shoulder-.065 + .165*_smooth((abs(x)-.065)/.045)
+    return shoulder-.085 + .185*_smooth((abs(x)-.065)/.045)
 
 
 def bra_width(z, shoulder):
