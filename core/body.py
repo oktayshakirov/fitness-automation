@@ -19,10 +19,10 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
     macro["muscle"] = muscle
     macro["weight"] = weight
     if gender == 0.0:
-        # Moderate volume and a firmer, supported contour for the adult athlete.
+        # Fuller volume with a relaxed, supported lower contour for the adult athlete.
         # Keep these female-only: MPFB cup/firmness details are not male morphs.
-        macro["cupsize"] = .60
-        macro["firmness"] = .65
+        macro["cupsize"] = .70
+        macro["firmness"] = .45
     body = HumanService.create_human(macro_detail_dict=macro)
     # The stock high-muscle male macro has a bulbous lower pectoral contour.
     # Use the authored MPFB correction before fitting the rig/clothing; leave
@@ -37,8 +37,18 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
         from bl_ext.user_default.mpfb.services.locationservice import LocationService
         targets = Path(LocationService.get_mpfb_data("targets")) / "breast"
         # Round the profile rather than increasing only its pointed projection.
-        for detail, strength in (("breast-point-decr", .65), ("nipple-point-decr", .9)):
+        for detail, strength in (("breast-point-decr", .85), ("nipple-point-decr", 1.0), ("breast-volume-vert-down", .20)):
             TargetService.load_target(body, str(targets / (detail + ".target.gz")), weight=strength)
+    from pathlib import Path
+    from bl_ext.user_default.mpfb.services.locationservice import LocationService
+    targets = Path(LocationService.get_mpfb_data("targets"))
+    face = (("head/head-square", .32), ("chin/chin-width-incr", .25),
+            ("chin/chin-prominent-incr", .18), ("nose/nose-width1-incr", .08)) if gender == 1.0 else (
+            ("head/head-oval", .30), ("chin/chin-width-decr", .25),
+            ("chin/chin-prominent-decr", .08), ("nose/nose-width1-decr", .12),
+            ("mouth/mouth-upperlip-volume-incr", .18), ("mouth/mouth-lowerlip-volume-incr", .10))
+    for detail, strength in face:
+        TargetService.load_target(body, str(targets / (detail + ".target.gz")), weight=strength)
     rig = HumanService.add_builtin_rig(body, "default")
     # Dual-quaternion skinning preserves volume during axial twist. The overhead
     # press opts out: blended shoulder rotations otherwise produce large armpit bulges.

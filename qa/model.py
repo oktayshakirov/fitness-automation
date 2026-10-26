@@ -8,15 +8,17 @@ def validate_model(scene, body):
     model = scene['fitness_model']
     macro = TargetService.get_macro_info_dict_from_basemesh(body)
     assert macro['gender'] == (1. if model == 'male' else 0.), 'Wrong body macro'
-    expected_cup, expected_firmness = (.60, .65) if model == 'female' else (.5, .5)
+    expected_cup, expected_firmness = (.70, .45) if model == 'female' else (.5, .5)
     assert abs(macro['cupsize']-expected_cup) < 1e-6, 'Wrong bust volume macro'
     assert abs(macro['firmness']-expected_firmness) < 1e-6, 'Wrong bust firmness macro'
     correction = TargetService.get_target_value(body, 'torso-muscle-pectoral-decr')
     assert correction == (1. if model == 'male' else 0.), 'Wrong pectoral correction'
-    for detail, expected in (('breast-point-decr', .65), ('nipple-point-decr', .9)):
+    for detail, expected in (('breast-point-decr', .85), ('nipple-point-decr', 1.0), ('breast-volume-vert-down', .20)):
         actual = TargetService.get_target_value(body, detail)
         assert abs(actual-(expected if model == 'female' else 0.)) < 1e-6, 'Wrong female contour detail'
     assert body.modifiers.get('Chest and axilla pose surface'), 'Missing pose surface correction'
+    face_detail = 'head-square' if model == 'male' else 'head-oval'
+    assert abs(TargetService.get_target_value(body, face_detail)-(.32 if model=='male' else .30)) < 1e-6, 'Wrong face profile'
     hair = [o for o in scene.objects if o.type == 'MESH' and o.get('hair')]
     assert len(hair) == 1 and hair[0]['hair_style'] == STYLES[model], 'Wrong fitted hair'
     assert hair[0].data.uv_layers.active, 'Missing hair texture UVs'

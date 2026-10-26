@@ -25,6 +25,7 @@ def add_hair(body, rig, model):
         str(source / (style + '.mhclo')), body, asset_type='Hair',
         subdiv_levels=0, material_type='NONE', set_up_rigging=False)
     hair.name = model + ' ' + style
+    _soft_edges(hair)
     if model == 'male':
         # The taper exposes scalp, so do not apply the source full-hair scalp mask.
         for modifier in body.modifiers:
@@ -48,7 +49,7 @@ def add_hair(body, rig, model):
     material.use_nodes = True
     material.surface_render_method = 'DITHERED'
     bsdf = material.node_tree.nodes['Principled BSDF']
-    bsdf.inputs['Roughness'].default_value = .62
+    bsdf.inputs['Roughness'].default_value = .66
     tex = material.node_tree.nodes.new('ShaderNodeTexImage')
     tex.image = bpy.data.images.load(str(source / (style + '_diffuse.png')), check_existing=True)
     color = tex.outputs['Color']
@@ -74,6 +75,16 @@ def add_hair(body, rig, model):
         material.node_tree.links.new(alpha, product.inputs[0])
         material.node_tree.links.new(density.outputs['Fac'], product.inputs[1])
         alpha = product.outputs[0]
+    edge = material.node_tree.nodes.new('ShaderNodeAttribute')
+    edge.attribute_name = 'hair_edge_softness'
+    softened = material.node_tree.nodes.new('ShaderNodeMath'); softened.operation = 'MULTIPLY'
+    material.node_tree.links.new(alpha, softened.inputs[0])
+    material.node_tree.links.new(edge.outputs['Fac'], softened.inputs[1])
+    alpha = softened.outputs[0]
+    for name in ('Anisotropic IOR Level', 'Anisotropic'):
+        if name in bsdf.inputs:
+            bsdf.inputs[name].default_value = .20
+            break
     material.node_tree.links.new(color, bsdf.inputs['Base Color'])
     material.node_tree.links.new(alpha, bsdf.inputs['Alpha'])
     hair.data.materials.clear()
@@ -105,3 +116,24 @@ def _fade(hair, scalp, top):
             vertex.co = inverse @ point.lerp(clipped, .96*blend)
         value.value = 1-.88*blend
     hair.data.update()
+
+
+def _soft_edges(hair):
+    """Feather authored card boundaries so hairlines and loose ends stay soft."""
+    import bmesh
+    from mathutils.kdtree import KDTree
+    bm = bmesh.new(); bm.from_mesh(hair.data)
+    boundary = [v.co.copy() for v in bm.verts if v.is_boundary]
+    bm.free()
+    attr = hair.data.attributes.new('hair_edge_softness', 'FLOAT', 'POINT')
+    if not boundary:
+        for item in attr.data: item.value = 1.
+        return
+    tree = KDTree(len(boundary))
+    for index, point in enumerate(boundary): tree.insert(point, index)
+    tree.balance()
+    top = max(v.co.z for v in hair.data.vertices)
+    for vertex, item in zip(hair.data.vertices, attr.data):
+        t = min(1., tree.find(vertex.co)[2]/.006)
+        low = min(1., max(0., (top-.055-vertex.co.z)/.035))
+        item.value = 1-.20*low*(1-t*t*(3-2*t))

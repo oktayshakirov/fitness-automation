@@ -18,3 +18,6 @@ only and are not included in these assets.
 Pipeline modifications: short01 sides/nape are tapered toward the fitted scalp
 with a graded alpha density for a fade. Ponytail01 is recoloured black by a
 strand-preserving shader; original mesh/texture files remain intact.
+
+Revision 7 gently feathers low hairline/card ends while keeping the crown opaque,
+with softer rough strand highlights. Source textures and meshes remain intact.
