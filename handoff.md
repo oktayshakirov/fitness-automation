@@ -813,3 +813,31 @@ contract in plan.md wants 720×900.
   Use that pinned interpreter for Pillow-dependent review tools on resume; no
   rerender was needed for the environment change. Await human appearance review
   before continuing the original remaining production tasks.
+
+- **2026-10-26 (appearance revision 7, awaiting human review):** user requested
+  more distinct masculine/feminine faces, natural softer hair edges, fuller and
+  less perky female breasts, and softer selected-muscle ends. Authored MPFB face
+  details now broaden the male jaw/chin and soften the female oval jaw/nose with
+  modest lip fullness. Female cupsize .70 / firmness .45, breast-point reduction
+  .85, nipple-point reduction 1.0 and lower-pole volume .20 replace the previous
+  firmer .60/.65 profile. Both models retain their separate anatomy and rig flow.
+
+  Hair remains black with the male fade and female ponytail. Hair-card boundaries
+  are gently feathered only at low hairlines/ends, preserving an opaque crown;
+  rough strand shading is softer. A stronger whole-card feathering trial was
+  rejected because it exposed too much scalp, and is not retained. No new external
+  assets or screenshot pixels were incorporated. Original notices remain intact.
+
+  Muscle masks now use a 7 px feather at 2048 px with unsharpened mask weights, a
+  wider smooth ramp and a coverage floor to fade isolated endpoints. Compared the
+  rendered before/after thigh boundaries: the selected region stays legible while
+  ends blend into skin. Opaque clothes and their faint 4% active tint remain.
+
+  Current review: http://127.0.0.1:8765/review/look_v7/index.html, HTTP 200 verified
+  with head/torso images, muscle-edge comparison and full exercise sheet. All four
+  previews pass complete 72-frame motion, garment/model and hair-attachment QA,
+  with current source/spec/scene hashes. Maximum added garment penetration
+  1.724 mm (limit 2 mm). Thirteen regression tests, syntax and whitespace
+  checks pass. Frame folders and Blender backups removed. Use pinned Python 3.13
+  for review tooling. No app edits, format change, approvals, publication or 30×2
+  batch. Await human appearance review before the original remaining tasks.
