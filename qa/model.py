@@ -21,6 +21,8 @@ def validate_model(scene, body):
     assert abs(TargetService.get_target_value(body, face_detail)-(.32 if model=='male' else .30)) < 1e-6, 'Wrong face profile'
     assert len([o for o in scene.objects if o.get('coloured_eye')]) == 2, 'Missing coloured eyes'
     assert len([o for o in scene.objects if o.get('smartwatch')]) == 4, 'Missing watch parts'
+    assert len([o for o in scene.objects if o.get('shoe')]) == 12, 'Missing shoes'
+    assert scene.objects['Smartwatch screen'].location.z < 0, 'Watch display on palm side'
     hair = [o for o in scene.objects if o.type == 'MESH' and o.get('hair')]
     assert len(hair) == 1 and hair[0]['hair_style'] == STYLES[model], 'Wrong fitted hair'
     assert hair[0].data.uv_layers.active, 'Missing hair texture UVs'
@@ -35,6 +37,10 @@ def check_hair_frame(scene, report):
         expected=c.target.matrix_world @ c.target.pose.bones[c.subtarget].matrix
         delta=expected.inverted() @ a.matrix_world
         assert delta.translation.length < .00001 and delta.to_quaternion().angle < .0002, 'Accessory detached'
+    for sole in [o for o in scene.objects if o.name.startswith('Trainer sole')]:
+        evaluated=sole.evaluated_get(__import__('bpy').context.evaluated_depsgraph_get())
+        lowest=min((evaluated.matrix_world @ v.co).z for v in evaluated.data.vertices)
+        assert lowest >= -.004, f'Shoe crosses floor: {lowest:.4f} m'
     root = next(o for o in scene.objects if o.get('hair') and o.type == 'EMPTY')
     constraint = next(c for c in root.constraints if c.type == 'COPY_TRANSFORMS')
     expected = constraint.target.matrix_world @ constraint.target.pose.bones[constraint.subtarget].matrix
