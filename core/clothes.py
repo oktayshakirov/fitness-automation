@@ -133,17 +133,18 @@ def fabric_edge_attribute(mesh):
         item.value = tree.find(vertex.co)[2] if boundary else 1.
 
 
-def fabric_material(primary=(), secondary=()):
+def fabric_material(primary=(), secondary=(), model="male"):
     """Opaque textile veil over a muted muscle signal, with solid edge binding."""
+    colour = (.48, .075, .19) if model == "female" else (.025, .16, .48)
     fabric = muscle_material(primary, secondary, name='Training fabric',
-                             use_normal=False, base=(.025, .033, .045),
+                             use_normal=False, base=colour,
                              hot=(.32, .065, .060), warm=(.40, .17, .075))
     nt = fabric.node_tree
     bsdf = nt.nodes['Principled BSDF']
     signal = bsdf.inputs['Base Color'].links[0].from_socket
     veil = nt.nodes.new('ShaderNodeMixRGB'); veil.label = 'Outer fabric over muscle tint'
     veil.inputs[0].default_value = .96
-    veil.inputs[2].default_value = (.025, .033, .045, 1)
+    veil.inputs[2].default_value = (*colour, 1)
     nt.links.new(signal, veil.inputs[1])
     edge = nt.nodes.new('ShaderNodeAttribute'); edge.attribute_name = 'fabric_edge_distance'
     band = nt.nodes.new('ShaderNodeMapRange'); band.interpolation_type = 'SMOOTHSTEP'
@@ -151,7 +152,7 @@ def fabric_material(primary=(), secondary=()):
     band.inputs['From Max'].default_value = .010
     nt.links.new(edge.outputs['Fac'], band.inputs['Value'])
     binding = nt.nodes.new('ShaderNodeMixRGB'); binding.label = 'Solid waistband and hem binding'
-    binding.inputs[1].default_value = (.012, .017, .025, 1)
+    binding.inputs[1].default_value = (*(c*.65 for c in colour), 1)
     nt.links.new(band.outputs['Result'], binding.inputs[0])
     nt.links.new(veil.outputs[0], binding.inputs[2])
     nt.links.new(binding.outputs[0], bsdf.inputs['Base Color'])
@@ -171,7 +172,7 @@ def fabric_material(primary=(), secondary=()):
 
 def add_clothing(body, rig, model, primary=(), secondary=()):
     """Minimal shorts for both bodies and a sports top for the female body."""
-    fabric = fabric_material(primary, secondary)
+    fabric = fabric_material(primary, secondary, model)
     # Anatomical dimensions adapt to MPFB gender proportions.
     hip = rig.data.bones['upperleg01.L'].head_local.z
     knee = rig.data.bones['lowerleg01.L'].head_local.z
@@ -204,7 +205,10 @@ def _hide_covered_skin(body, hip, knee, shoulder, model):
         x, _, z = point
         distance = min(.298-abs(x), z-shorts_hem(x, hip, model)-.002, high-.002-z)
         if model == 'female':
-            top_distance = min(bra_width(z, shoulder)-.002-abs(x), z-(shoulder-.188),
+            # Keep a generous opaque skin overlap at the curved armhole.
+            # Interpolated rest-space cuts move differently from smoothed cloth;
+            # the old 2 mm inset could reveal transparency in side views.
+            top_distance = min(bra_width(z, shoulder)-.015-abs(x), z-(shoulder-.188),
                                shoulder+.098-z, bra_neck(x, shoulder)-.002-z)
             distance = max(distance, top_distance)
         return distance

@@ -21,7 +21,7 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
     if gender == 0.0:
         # Fuller volume with a relaxed, supported lower contour for the adult athlete.
         # Keep these female-only: MPFB cup/firmness details are not male morphs.
-        macro["cupsize"] = .74
+        macro["cupsize"] = .84
         macro["firmness"] = .45
     body = HumanService.create_human(macro_detail_dict=macro)
     # The stock high-muscle male macro has a bulbous lower pectoral contour.

@@ -155,3 +155,10 @@ an exercise muscle classification. Studies never save or approve exercise scenes
 Hair loop closure and opaque fabric are checked; alpha channels are inspected.
 Exercise video delivery retains the dark H.264 default, as documented in the app's
 MVP Requests section. No full-library render before the revised appearance review.
+
+### Future catalog inspiration
+
+Use https://gymfaster.com/exercises as a user-requested reference for exercise
+ideas and presentation. Its catalog does not identify the model source; do not
+assume it uses MPFB or grants reuse rights. Build our own motion specs and retain
+our existing asset licences; inspect any new external asset licence before use.
