@@ -8,7 +8,7 @@ from core.hair import add_hair
 from core.clothes import add_clothing
 from core.look import muscle_material
 from core.studio import studio,camera
-OUT=ROOT/'review/look_v10';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'review/look_v11';OUT.mkdir(exist_ok=True)
 checks=[]
 models=os.environ.get('STUDY_MODELS','male,female').split(',')
 assert set(models) <= {'male','female'}
@@ -31,7 +31,8 @@ for model in models:
  ev=hair[0].evaluated_get(dg)
  points=[ev.matrix_world@v.co for v in ev.data.vertices]
  hair_top=max(p.z for p in points)
- for part,target,scale in [('head',(0,.01,shoulder+.15),.60),('torso',(0,0,shoulder-.13),.85),('body',(0,0,shoulder*.53),1.95)]:
+ for part,target,scale in [('head',(0,.01,shoulder+.15),.60),('torso',(0,0,shoulder-.13),.85),('body',(0,0,shoulder*.53),1.95),('shoes',(0,-.06,.12),.95),('watch',tuple(rig.data.bones['lowerarm02.L'].tail_local),.23)]:
+  if os.environ.get('STUDY_PARTS') and part not in os.environ['STUDY_PARTS'].split(','):continue
   for view,yaw in [('front',0),('threeq',35),('side',90),('back',180)]:
    scene.camera=camera(scene,part+view,target,yaw,ortho=scale)
    scene.render.filepath=str(OUT/f'{model}_{part}_{view}.png')

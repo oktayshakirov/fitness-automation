@@ -906,3 +906,20 @@ contract in plan.md wants 720×900.
   transparent stills retained. Frames and Blender backups removed; 49 GiB free.
   No approvals or publication, and no full-library rerender. Await user review
   before the remaining production-delivery tasks.
+
+- **2026-10-26 (appearance revision 11, awaiting human review):** moved the
+  smartwatch case, screen and indicator from palm side to dorsal wrist side.
+  Added original procedural charcoal trainers with grey rubber soles and laces
+  to both models, fitted using foot/toe landmarks and attached to foot bones.
+  No external assets or new licence requirements. Neutral wrist close-ups
+  visually confirm the display is on the back of the hand. Closed toe/heel
+  surfaces after an initial open-end trial.
+
+  Review: http://127.0.0.1:8765/review/look_v11/index.html includes trainer and
+  wrist close-ups, both exercises/models and the updated H.264 squat sample.
+  All four previews pass complete 72-frame motion, garment, model, accessory
+  attachment and shoe-floor clearance checks. Eight QA receipts match current
+  source/spec/scene hashes; 13 regression tests pass. Frame folders and blend
+  backups removed; disk free 49 GiB. Commits preserve original notices.
+  No exercise approvals, publication or full-library rerender. Await human
+  appearance review before remaining production deliveries.
