@@ -57,15 +57,15 @@ def muscle_material(primary=(), secondary=(), name="body", use_normal=True,
 
     # Treat the smoothed masks as a partition of the skin. Independently mixing
     # each mask with grey left gaps where neighbouring masks were each ~0.5.
-    # A modest power tightens the anatomical boundary without UV dilation.
-    weights = {g: math_node("POWER", channel(g), 3.0) for g in GROUPS}
+    # Keep the feathered mask ramps intact instead of sharpening their ends.
+    weights = {g: math_node("POWER", channel(g), 1.0) for g in GROUPS}
     def combined(names):
         total = 0.0
         for g in dict.fromkeys(names):
             total = math_node("ADD", total, weights[g])
         return total
 
-    denominator = math_node("MAXIMUM", combined(GROUPS), .0001)
+    denominator = math_node("MAXIMUM", combined(GROUPS), .65)
     primary = tuple(dict.fromkeys(primary))
     secondary = tuple(g for g in dict.fromkeys(secondary) if g not in primary)
     p_weight = combined(primary)
@@ -74,8 +74,8 @@ def muscle_material(primary=(), secondary=(), name="body", use_normal=True,
     coverage = math_node("DIVIDE", active, denominator)
     ramp = nt.nodes.new("ShaderNodeMapRange")
     ramp.interpolation_type = "SMOOTHSTEP"
-    ramp.inputs["From Min"].default_value = .12
-    ramp.inputs["From Max"].default_value = .78
+    ramp.inputs["From Min"].default_value = .02
+    ramp.inputs["From Max"].default_value = .98
     nt.links.new(coverage, ramp.inputs["Value"])
     active_colour = nt.nodes.new("ShaderNodeMixRGB")
     active_colour.inputs[1].default_value = (*warm, 1)

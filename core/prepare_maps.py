@@ -11,7 +11,7 @@ for i in range(6):
  source=maps/'repaired'/f'mask_{i}.png'
  if not source.exists():source=maps/f'mask_{i}.png'
  im=Image.open(source).convert('RGB')
- im.filter(ImageFilter.GaussianBlur(1.2)).save(soft/f'mask_{i}.png')
+ im.filter(ImageFilter.GaussianBlur(7.0)).save(soft/f'mask_{i}.png')
  for j,c in enumerate(im.split()):
   # Only body groups: no face, scalp, skeletal rays or neck relief.
   if i*3+j>=16:continue
