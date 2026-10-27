@@ -1020,3 +1020,17 @@ contract in plan.md wants 720×900.
   and fresh exercise previews/video. All four full QA runs pass with matching
   source/spec/scene hashes. Frames and backups removed; 50 GiB free. No delivery
   approvals, publication or full-library rerender; await watch/appearance review.
+
+- **2026-10-27 (appearance revision 19, awaiting human review):** female watch
+  explicitly accepted; retained its revision 18 orientation. Male watch rotated
+  another signed 20 degrees and strap refitted. Added short muted rose nail polish
+  to all ten female fingernails, following each distal finger bone. Appearance-
+  approved shoes are unchanged. Inspected wrist and nail close-ups.
+
+  Review: http://127.0.0.1:8765/review/look_v19/index.html includes transparent
+  close-ups, two-exercise/both-model checkpoint and current white H.264 sample.
+  All four full motion/garment/model/accessory QA runs pass; eight receipts match
+  current source/spec/scene hashes. All 13 delivery/workflow tests pass. Frames
+  and blend backups removed; approximately 49 GiB free. No exercise approvals,
+  publication or full-library rerender. Await appearance review before production
+  deliveries; female watch and shoes have specific appearance acceptance only.
