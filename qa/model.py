@@ -28,7 +28,7 @@ def validate_model(scene, body):
     assert body.data.attributes.get('beard_shade'), 'Missing facial shading'
     assert len([o for o in scene.objects if o.name.startswith('Eyebrow ')]) == 2, 'Missing eyebrows'
     assert len([o for o in scene.objects if o.name.startswith('Upper lashes ')]) == 2, 'Missing lashes'
-    if model == 'female':assert scene.objects.get('Ponytail elastic band'), 'Missing ponytail band'
+    assert not scene.objects.get('Ponytail elastic band'), 'Removed ponytail band must remain absent'
     assert body.get('nail_polish') == ('black_uv' if model=='female' else None), 'Wrong nail polish binding'
     if model == 'female':
         nt=body.data.materials[0].node_tree

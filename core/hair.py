@@ -95,9 +95,6 @@ def add_hair(body, rig, model):
         obj['hair'] = True
         obj['licence'] = 'MakeHuman system assets CC0; see assets/hair/LICENSE.md'
         obj['hair_style'] = style
-    if model == 'female':
-        from core.face_details import ponytail_band
-        ponytail_band(hair,rig)
     return [hair]
 
 

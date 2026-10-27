@@ -1081,3 +1081,12 @@ contract in plan.md wants 720×900.
   from v22 are now stale after the source change and are not represented as current.
   Production renders still require fresh QA and per-model human approval. V21
   approval evidence remains preserved; no publishing or production batch started.
+
+- **2026-10-27 (revision 24, band removed):** user rejected the elastic and
+  explicitly requested its removal while retaining the ponytail. Removed band
+  creation and unused geometry function; QA now checks that it stays absent.
+  Ponytail mesh/material unchanged. Female head views rerendered and side view
+  inspected. Review: http://127.0.0.1:8765/review/look_v24/index.html. Exercise
+  receipts remain stale pending production refresh; no exercise renders or
+  publication performed for this removal. Continue production delivery migration
+  using this final band-free appearance and fresh QA/human exercise approval.

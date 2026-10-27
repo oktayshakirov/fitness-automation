@@ -62,15 +62,3 @@ def add_face_details(body,rig,gender):
         lip=1-math.exp(-((x/.030)**2+((d-.061)/.009)**2)*2)
         front=1-smooth(-.075,-.035,y)
         item.value=(max(jaw,cheek)*lip*front*.65) if gender else 0
-
-
-def ponytail_band(hair,rig):
-    root=anchor(rig,'head','Ponytail band follows head')
-    bpy.context.view_layer.update();ev=hair.evaluated_get(bpy.context.evaluated_depsgraph_get())
-    points=[ev.matrix_world@v.co for v in ev.data.vertices]
-    top=max(p.z for p in points)
-    # Simple elastic around the high ponytail root.
-    centre=Vector((0,.071,top-.066))
-    mat=material('Ponytail elastic',(.13,.14,.15),.9)
-    pts=[centre+Vector((.018*math.cos(i*2*math.pi/48),-.004*math.sin(i*2*math.pi/48),.009*math.sin(i*2*math.pi/48))) for i in range(49)]
-    strand('Ponytail elastic band',pts,.0025,mat,root,False)
