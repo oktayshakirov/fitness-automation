@@ -96,6 +96,21 @@ def add_watch(rig, body, model):
     for j,k in ((0,1),(2,3),(0,2),(1,3)):
         for i in range(64):faces.append((j*64+i,j*64+(i+1)%64,k*64+(i+1)%64,k*64+i))
     face_z=-radius(0,-math.pi/2)-.002
+    # Continuous silicone seat: curved against the wrist, flat against the case.
+    # The thin strap joins this seat beneath the entire rounded case footprint.
+    outline=[];w,h,r=.032,.037,.007
+    for cx,cy,start in ((w/2-r,h/2-r,0),(-w/2+r,h/2-r,90),(-w/2+r,-h/2+r,180),(w/2-r,-h/2+r,270)):
+        for i in range(9):
+            a=math.radians(start+i*90/8)
+            outline.append((cx+r*math.cos(a),cy+r*math.sin(a)))
+    base=len(verts);n=len(outline)
+    for x,y in outline:
+        hit,_,_,_=tree.ray_cast(Vector((x,y,-.08)),Vector((0,0,1)),.16)
+        assert hit is not None, 'Watch seat misses wrist'
+        verts.append((x,y,hit.z-.0005))
+    verts.extend((x,y,face_z+.0002) for x,y in outline)
+    faces.extend((tuple(base+i for i in range(n-1,-1,-1)),tuple(base+n+i for i in range(n))))
+    faces.extend((base+i,base+(i+1)%n,base+n+(i+1)%n,base+n+i) for i in range(n))
     mesh=bpy.data.meshes.new('Watch strap');mesh.from_pydata(verts,[],faces);mesh.update()
     o=bpy.data.objects.new('Smartwatch strap',mesh);bpy.context.collection.objects.link(o);o.parent=root;o.data.materials.append(band);o['smartwatch']=True
     import bmesh
@@ -206,8 +221,9 @@ def add_nail_polish(body,rig):
         nail.inputs['Base Color'].default_value=(.004,.004,.004,1)
         nail.inputs['Roughness'].default_value=.25
         nail.inputs['Coat Weight'].default_value=.25
-        mix=nt.nodes.new('ShaderNodeMixShader')
+        source=nt.nodes.get('Material Output').inputs['Surface'].links[0].from_socket
+        mix=nt.nodes.new('ShaderNodeMixShader');mix.name='Polish over clothed skin'
         nt.links.new(mask.outputs['Color'],mix.inputs[0])
-        nt.links.new(bsdf.outputs[0],mix.inputs[1]);nt.links.new(nail.outputs[0],mix.inputs[2])
+        nt.links.new(source,mix.inputs[1]);nt.links.new(nail.outputs[0],mix.inputs[2])
         nt.links.new(mix.outputs[0],nt.nodes.get('Material Output').inputs['Surface'])
     body['nail_polish']='black_uv'

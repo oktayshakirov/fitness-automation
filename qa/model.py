@@ -30,6 +30,11 @@ def validate_model(scene, body):
     assert len([o for o in scene.objects if o.name.startswith('Upper lashes ')]) == 2, 'Missing lashes'
     if model == 'female':assert scene.objects.get('Ponytail elastic band'), 'Missing ponytail band'
     assert body.get('nail_polish') == ('black_uv' if model=='female' else None), 'Wrong nail polish binding'
+    if model == 'female':
+        nt=body.data.materials[0].node_tree
+        polish=nt.nodes['Polish over clothed skin']
+        clothed=polish.inputs[1].links[0].from_node
+        assert clothed.type=='MIX_SHADER' and any(link.from_node.type=='BSDF_TRANSPARENT' for link in clothed.inputs[2].links), 'Polish bypasses clothing coverage'
     hair = [o for o in scene.objects if o.type == 'MESH' and o.get('hair')]
     assert len(hair) == 1 and hair[0]['hair_style'] == STYLES[model], 'Wrong fitted hair'
     assert hair[0].data.uv_layers.active, 'Missing hair texture UVs'
