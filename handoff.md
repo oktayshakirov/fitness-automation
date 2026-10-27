@@ -1120,3 +1120,16 @@ contract in plan.md wants 720×900.
   review; nothing published or auto-approved. Next remaining deliveries: body
   bases/masks/SVGs per model, heroes, procedural equipment icons and tested
   core/publish.py app envelope. No app repo edits in this phase.
+
+- **2026-10-27 (batch status checked after reported device shutdown):** no
+  run_mvp/batch/Blender render process remains. Review server PID 60096 is alive.
+  Runner status is failed: both attempts completed all 60 jobs, with 35 PASS and
+  25 FAIL; failure was recorded at 2026-10-27T16:54:19Z. Thus the 25 not-ready
+  cards are QA failures, not merely interrupted jobs. Failures include clothing
+  intersections/clearance, female implement grip/ROM, goblet wrist/contact and
+  female glute_bridge missing head_back lookup. Summary saved to
+  review/production_failures.json; detailed logs remain review/batch and
+  review/<id>_<model>_clothes.log. No blind retry started: unchanged jobs would
+  fail again. Preserve the 35 validated exports. Correct failing scenes/specs
+  before resuming; account for source fingerprint invalidation if changing shared
+  pipeline code. Disk remains 49 GiB free. User informed of actual failure cause.
