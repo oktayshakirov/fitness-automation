@@ -130,8 +130,10 @@ def add_shoes(rig, body):
         points=[p for b in toes for p in (b.head_local,b.tail_local)]
         x=(min(p.x for p in points)+max(p.x for p in points))/2
         foot_skin=[p for p in skin if p.z<.075 and p.x*(1 if side=='L' else -1)>0]
-        front=min(p.y for p in foot_skin)-.009;rear=max(p.y for p in foot_skin)+.014
-        width=(max(p.x for p in points)-min(p.x for p in points))/2+.016
+        front=min(p.y for p in foot_skin)-.014;rear=max(p.y for p in foot_skin)+.014
+        forefoot=[p for p in foot_skin if p.y<foot.head_local.y-.055]
+        x=(min(p.x for p in forefoot)+max(p.x for p in forefoot))/2
+        width=(max(p.x for p in forefoot)-min(p.x for p in forefoot))/2+.008
         root=anchor(rig,'foot.'+side,'Trainer follows foot '+side)
         def meshpart(name,verts,faces,mat):
             me=bpy.data.meshes.new(name);me.from_pydata(verts,[],faces);me.update()
@@ -141,12 +143,12 @@ def add_shoes(rig, body):
             for f in me.polygons:f.use_smooth=True
             return o
         # Rounded plan outline, wider at the ball and narrower through the heel.
-        stations=[(0,.08,.020),(.05,.65,.030),(.16,1.,.035),(.38,1.,.045),(.58,.85,.060),(.78,.72,.068),(.93,.65,.052),(1,.35,.040)]
+        stations=[(0,.40,.025),(.05,.88,.035),(.16,1.,.040),(.38,1.,.045),(.58,.85,.060),(.78,.72,.068),(.93,.65,.052),(1,.35,.040)]
         verts=[];faces=[];n=25
         for t,w,h in stations:
             y=front+(rear-front)*t
             for i in range(n):
-                a=math.pi*i/(n-1);verts.append((x+width*w*math.cos(a),y,.011+h*math.sin(a)**.65))
+                a=math.pi*i/(n-1);verts.append((x+width*w*math.copysign(abs(math.cos(a))**.65,math.cos(a)),y,.011+h*math.sin(a)**.65))
         for j in range(len(stations)-1):
             for i in range(n-1):
                 ids=(j*n+i,j*n+i+1,(j+1)*n+i+1,(j+1)*n+i)
