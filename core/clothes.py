@@ -27,7 +27,7 @@ def bra_width(z, shoulder):
     return .18 - .060*_smooth((z-(shoulder-.12))/.10)
 
 
-def _shell(body, name, material, bounds, top=False, hem=None, shoulder=None):
+def _shell(body, name, material, bounds, top=False, hem=None, shoulder=None, refinement=1):
     # Evaluate macro shape keys and the body-only mask, but not pose/correction.
     states = [(m, m.show_viewport) for m in body.modifiers]
     for m, _ in states:
@@ -100,7 +100,7 @@ def _shell(body, name, material, bounds, top=False, hem=None, shoulder=None):
             modifier.use_deform_preserve_volume = source.use_deform_preserve_volume
     refine = garment.modifiers.new('Smooth fabric panels', 'SUBSURF')
     refine.subdivision_type = 'SIMPLE'
-    refine.levels = 1; refine.render_levels = 1
+    refine.levels = refinement; refine.render_levels = refinement
     # Follow the final corrected skin too (e.g. the overhead shoulder smoothing).
     follow = garment.modifiers.new('Follow corrected skin', 'SHRINKWRAP')
     follow.target = body
@@ -110,8 +110,15 @@ def _shell(body, name, material, bounds, top=False, hem=None, shoulder=None):
     smooth = garment.modifiers.new('Fabric smoothing', 'SMOOTH')
     smooth.factor = .6 if top else .5; smooth.iterations = 12 if top else 5
     smooth.vertex_group = smooth_group.name
+    # Smoothing can pull cup/hem vertices back through the corrected skin.
+    # Restore outward clearance after smoothing, including concave armholes.
+    clearance = garment.modifiers.new('Final skin clearance', 'SHRINKWRAP')
+    clearance.target = body
+    clearance.wrap_method = 'NEAREST_SURFACEPOINT'
+    clearance.wrap_mode = 'OUTSIDE_SURFACE'
+    clearance.offset = .0003
     solid = garment.modifiers.new('Fabric edge', 'SOLIDIFY')
-    solid.thickness = .0015 if top else .001; solid.offset = 0
+    solid.thickness = .0008; solid.offset = 0
     garment['garment'] = True
     garment['uv_source'] = body.name
     garment['licence'] = 'CC0 geometry; anatomy highlights CC BY-SA 4.0'
@@ -170,7 +177,7 @@ def fabric_material(primary=(), secondary=(), model="male"):
     return fabric
 
 
-def add_clothing(body, rig, model, primary=(), secondary=()):
+def add_clothing(body, rig, model, primary=(), secondary=(), refinement=1):
     """Minimal shorts for both bodies and a sports top for the female body."""
     fabric = fabric_material(primary, secondary, model)
     # Anatomical dimensions adapt to MPFB gender proportions.
@@ -182,7 +189,7 @@ def add_clothing(body, rig, model, primary=(), secondary=()):
                        hem=lambda x: shorts_hem(x, hip, model))]
     if model == 'female':
         garments.append(_shell(body, 'Sports top', fabric,
-                               (shoulder-.225, shoulder+.10), top=True, shoulder=shoulder))
+                               (shoulder-.225, shoulder+.10), top=True, shoulder=shoulder, refinement=refinement))
     _hide_covered_skin(body, hip, knee, shoulder, model)
     from core.accessories import add_watch, add_shoes
     add_watch(rig, body, model)

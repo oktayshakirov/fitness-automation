@@ -35,7 +35,13 @@ class Landmarks:
         ev.to_mesh_clear()
         self.local = {}
         for name, (bone, sel, score) in SPECS.items():
-            cand = [v for v in verts if sel(v)]
+            if name == 'head_back':
+                # Locate the occiput relative to this model's head, rather than
+                # the male model's absolute world height.
+                head=P.rest_head('head')
+                cand=[v for v in verts if abs(v.x-head.x)<.03 and head.z+.025<v.z<head.z+.085]
+            else:
+                cand = [v for v in verts if sel(v)]
             if not cand:
                 continue
             w = max(cand, key=score)

@@ -241,7 +241,7 @@ class Pattern:
         P = self.P
         for side, sgn in (("L", 1), ("R", -1)):
             P.scap_rhythm(side, Vector((0, -1, 0)))
-            tgt = Vector((sgn * 0.27, -0.48, 0.004))
+            tgt = Vector((sgn * 0.36, -0.48, 0.004))
             ua, fa = arm_lengths(P)
             sh = P.head(f"upperarm01.{side}")
             d = tgt - sh
