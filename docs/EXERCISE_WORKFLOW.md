@@ -185,3 +185,16 @@ actual loops and instructions. A targeted explicit approval can also use
 `python3 exercises.py approve <id> --model female --reviewed --note '…'`.
 The runner does not publish or approve content. Monitor `review/run_status.json`,
 `review/mvp_batch.log` and `review/batch/report.json`.
+
+### Repair preflight and saved scenes
+
+`python3 core/preflight.py` checks the last recorded production failures, using at
+most two Blender processes and no video renders. It never approves content.
+`--ids <id> ...` targets a subset. Historical repair results do not bypass the
+current pipeline/scene/spec hashes.
+
+The production batch can render an already validated scene with
+`core/render_saved.py <id> <model>`; this requires current complete motion and
+garment/model QA before rendering. It avoids rebuilding the same pose after a
+QA-only preflight. Any shared source edit invalidates old QA and approval
+fingerprints; refresh the complete library once corrections are stable.
