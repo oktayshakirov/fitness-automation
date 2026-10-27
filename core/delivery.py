@@ -15,7 +15,7 @@ def spec_digest(eid):
     return hashlib.sha256(json.dumps(obj,sort_keys=True).encode()).hexdigest()
 def pipeline_digest():
     files=[ROOT/'build.py', ROOT/'qa/check.py', ROOT/'qa/check_clothes.py', ROOT/'qa/model.py']
-    files += [ROOT/'core'/n for n in ('face_details.py','accessories.py','body.py','clothes.py','hair.py','solver.py','look.py','studio.py','render.py')]
+    files += [ROOT/'core'/n for n in ('face_details.py','accessories.py','body.py','clothes.py','hair.py','solver.py','look.py','studio.py','render.py','render_saved.py')]
     for folder in ('motion','equipment'):
         files += [p for p in sorted((ROOT/folder).rglob('*.py')) if p.name!='preview.py']
     files += sorted((ROOT/'assets/maps').rglob('*.png'))

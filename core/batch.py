@@ -2,7 +2,7 @@
 import argparse, json, os, shutil, subprocess, sys, time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
-from core.delivery import read,current_asset,rebuild_manifest
+from core.delivery import read,current_asset,current_qa,rebuild_manifest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -22,8 +22,13 @@ def main():
                 current_asset(eid,read(asset));reused=True
             if not reused:
                 if shutil.disk_usage(ROOT).free<8*1024**3:raise ValueError('Less than 8 GiB free; render stopped')
+                try:
+                    current_qa(eid,model=model)
+                    cmd=[sys.executable,str(ROOT/'core/render_saved.py'),eid,model]
+                except (OSError,ValueError,KeyError):
+                    cmd=[sys.executable,str(ROOT/'build.py'),eid,'--model',model,'--delivery']
                 with (logs/(prefix+'.log')).open('w') as log:
-                    subprocess.run([sys.executable,str(ROOT/'build.py'),eid,'--model',model,'--delivery'],cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,check=True)
+                    subprocess.run(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,check=True)
                 current_asset(eid,read(asset))
             # Encoding succeeded and files validated; discard interrupted-run leftovers.
             for view in read(asset)['views']:
