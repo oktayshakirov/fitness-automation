@@ -1090,3 +1090,33 @@ contract in plan.md wants 720×900.
   receipts remain stale pending production refresh; no exercise renders or
   publication performed for this removal. Continue production delivery migration
   using this final band-free appearance and fresh QA/human exercise approval.
+
+- **2026-10-27 (production phase started after final appearance approval):**
+  user approved band-free look_v24 and requested the next step. Approval saved
+  in approvals/appearance_v24.json. Female delivery is enabled; both models
+  use review/<id>_<model> scenes/QA/sheets and dist/<id>/<model>/ media, with
+  model-prefixed H.264 loops and WebP posters. Each model has a separate
+  version-bound approval record; legacy approval records remain compatible.
+  Review page/API/CLI distinguish models; reopening an exercise revokes both
+  model approvals. New production export is H.264 only, white #FFFFFF.
+
+  Both squat and shoulder-press model exports are complete: 4 deliveries, 12
+  videos and 12 posters. All current QA, codecs/dimensions, checksums, budgets
+  and cleanup verified. All 17 regression tests pass, including independent
+  model approvals, wrong-model QA/media rejection and scoped HTTP approvals.
+  Initial smoke encoder hit the system Python/Pillow mismatch; encoded its
+  saved frames with pinned Python 3.13. Batch now propagates the runner runtime
+  through PATH to nested Blender/export subprocesses. No frames wasted.
+
+  **ACTIVE:** persistent core/run_mvp.py PID 60097, rendering all 30 × 2 models;
+  review server PID 60096 on http://127.0.0.1:8765/review/index.html. First 4/60
+  PASS; remaining jobs continue locally. Monitor review/run_status.json,
+  review/mvp_batch.log and review/batch/report.json. Runner resumes verified
+  assets, stops individual jobs below 8 GiB free, deletes encoded frames and
+  blend backups, retries failures once and runs the final complete audit.
+  Disk: 49 GiB free. Do not modify fingerprinted appearance/motion/render
+  sources during the batch. Source commits 605056d and efafbdc; clean before
+  this log update. Production content still awaits per-exercise/model human
+  review; nothing published or auto-approved. Next remaining deliveries: body
+  bases/masks/SVGs per model, heroes, procedural equipment icons and tested
+  core/publish.py app envelope. No app repo edits in this phase.
