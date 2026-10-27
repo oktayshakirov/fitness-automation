@@ -977,3 +977,14 @@ contract in plan.md wants 720×900.
   pass; eight receipts match current source/spec/scene hashes. All 13 regression
   tests pass. Frames and blend backups removed. No approvals, publication or
   full-library rerender; await human visual review before remaining deliveries.
+
+- **2026-10-27 (appearance revision 15, awaiting human review):** fixed toes
+  protruding through the shoe front. Toe boxes now use actual forefoot skin width,
+  a fuller rounded taper and a squarer cross-section with clearance; heel fit is
+  retained. Inspected male and female close-ups; no exposed toe patches remain.
+
+  Review: http://127.0.0.1:8765/review/look_v15/index.html includes the corrected
+  close-ups, two-exercise sheet and updated H.264 sample. All four previews pass
+  complete motion/garment/model/accessory/floor QA with current source/spec/scene
+  hashes. Frames and Blender backups removed. No approvals, publication or full
+  library rerender. Await human visual review before remaining delivery tasks.
