@@ -1165,3 +1165,21 @@ contract in plan.md wants 720×900.
   Source commits: 4a73bc0, 3e7a21d, bb9468c, d525fe6, 8217405. No production
   approvals granted or content published. Next user action is human review of
   refreshed loops, then remaining body assets/heroes/icons/publish envelope.
+
+- **2026-10-27 (resume verification and active runner correction):** immediately
+  after the prior restart, stale existing exports were incorrectly marked FAIL
+  instead of rebuilt. Stopped runner 66933 and corrected core/batch.py to treat
+  a stale cache as a rebuild request. Added 3 regressions: stale export rebuild,
+  current QA scene render reuse and valid export skip. All 20 tests pass.
+  Real stale male swing rebuilt successfully in 54 s; both swing model exports
+  now validate current and are unapproved. No failure was hidden or force-approved.
+
+  **CURRENT ACTIVE PIDs replace the previous entry:** runner 67103, caffeinate
+  67104, review server 66932. review/repair_runner.json records these. Runner
+  starts by reusing both current swings, then freshly builds the remaining
+  exercises/models. All 25 original failed cases have passed complete technical
+  QA during repairs; refreshed production QA/render hashes are still required
+  for the full library and remain enforced. Progress in review/run_status.json
+  and review/batch/report.json. Keep source frozen while rendering. No user
+  input is needed until refreshed loops await human review. Source commit
+  85bae1b contains the resume fix. No publication or new human approvals.
