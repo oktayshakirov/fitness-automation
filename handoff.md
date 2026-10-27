@@ -1183,3 +1183,28 @@ contract in plan.md wants 720×900.
   and review/batch/report.json. Keep source frozen while rendering. No user
   input is needed until refreshed loops await human review. Source commit
   85bae1b contains the resume fix. No publication or new human approvals.
+
+- **2026-10-28 (complete production render and audit checkpoint):** user reported
+  two not-ready cards after the device turned off. Existing runner was still
+  alive and advancing; no duplicate process/restart was necessary. It completed
+  the final female triceps pushdown and the complete-bundle audit successfully.
+
+  **60/60 model deliveries ready, 30 exercises, 176 H.264 videos, 176 WebP
+  posters, 60 thumbnails.** All current QA/spec/pipeline/scene hashes, media
+  checksums, dimensions, codecs, frame counts, file budgets and frame cleanup
+  passed core/verify_delivery.py. Largest video 122,094 bytes; largest poster
+  17,400 bytes; videos+posters total 12,877,109 bytes. Evidence:
+  review/run_status.json and review/delivery_audit.json (complete);
+  review/batch/report.json (all PASS). Review API independently reports 60 ready.
+  Runner 67103 and caffeinate 67104 have exited; review server 66932 remains
+  available at http://127.0.0.1:8765/review/index.html. Source remains frozen at
+  this successful fingerprint. Frames and remaining .blend1 backups cleaned;
+  approximately 48 GiB free. Earlier 20 regression tests remain passing; no
+  source changes were made during this completion check.
+
+  **Human review checkpoint:** zero production approvals; nothing published.
+  User should inspect every model's views/contact/instructions and approve the
+  current versions through the review page. Final appearance approval remains
+  preserved. Original remaining content deliveries after production checkpoint:
+  body-view bases/masks/hit SVGs per model, onboarding heroes, equipment icons,
+  and tested core/publish.py envelope. Do not describe those as delivered.
