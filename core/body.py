@@ -115,7 +115,7 @@ def make_human(gender=1.0, muscle=0.95, weight=0.40, shoulder_smooth=False, pres
         pb.rotation_mode = "QUATERNION"
     update()
     from core.accessories import add_eyes
-    add_eyes(rig)
+    add_eyes(rig, gender)
     from core.face_details import add_face_details
     add_face_details(body, rig, gender)
     return body, rig

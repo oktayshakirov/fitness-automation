@@ -22,12 +22,21 @@ def add_face_details(body,rig,gender):
     for side in ('L','R'):
         eye=rig.data.bones['eye.'+side].head_local
         sign=1 if side=='L' else -1
-        brow=[]
-        for i in range(25):
-            t=i/24;x=eye.x+sign*(t-.5)*.039;z=eye.z+.012+.003*math.sin(math.pi*t)
-            hit,normal,_,_=tree.ray_cast(Vector((x,-.4,z)),Vector((0,1,0)),.6)
-            if hit is not None:brow.append(hit+normal*.0007)
-        if len(brow)>2:strand('Eyebrow '+side,brow,.0020 if gender else .0014,dark,root)
+        # Flat tapered brow follows the forehead, rather than a round tube.
+        verts=[];faces=[]
+        for i in range(33):
+            t=i/32;x=eye.x+sign*(t-.5)*.041
+            z=eye.z+.018+.004*math.sin(math.pi*t)
+            half=(.0032 if gender else .0026)*(.20+.80*math.sin(math.pi*t)**.5)
+            for dz in (-half,half):
+                hit,normal,_,_=tree.ray_cast(Vector((x,-.4,z+dz)),Vector((0,1,0)),.6)
+                assert hit is not None, 'Brow projection missed forehead'
+                verts.append(hit+normal*.0006)
+            if i:faces.append((2*i-2,2*i-1,2*i+1,2*i))
+        me=bpy.data.meshes.new('Tapered brow');me.from_pydata(verts,[],faces);me.update()
+        brow=bpy.data.objects.new('Eyebrow '+side,me);bpy.context.collection.objects.link(brow)
+        brow.parent=root;brow.matrix_parent_inverse=root.matrix_world.inverted();brow.data.materials.append(dark);brow['face_detail']=True
+        for f in me.polygons:f.use_smooth=True
         # Fine upper-lid lash line; tips are deliberately short and understated.
         line=[]
         for i in range(17):

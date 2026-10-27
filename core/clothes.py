@@ -186,7 +186,7 @@ def add_clothing(body, rig, model, primary=(), secondary=()):
     _hide_covered_skin(body, hip, knee, shoulder, model)
     from core.accessories import add_watch, add_shoes
     add_watch(rig, body)
-    add_shoes(rig)
+    add_shoes(rig, body)
     return garments
 
 

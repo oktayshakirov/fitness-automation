@@ -20,8 +20,8 @@ def anchor(rig,bone,name):
     return root
 
 
-def add_eyes(rig):
-    m=material('Warm brown eyes',(.65,.68,.64),.22)
+def add_eyes(rig, gender=1.0):
+    m=material('Blue eyes' if gender else 'Green eyes',(.65,.68,.64),.22)
     nt=m.node_tree;n=nt.nodes;l=nt.links;p=n.get('Principled BSDF')
     tex=n.new('ShaderNodeTexCoord');sep=n.new('ShaderNodeSeparateXYZ');l.new(tex.outputs['Generated'],sep.inputs[0])
     def mathnode(op,a,b):
@@ -34,7 +34,9 @@ def add_eyes(rig):
     radius=mathnode('SQRT',mathnode('ADD',mathnode('MULTIPLY',x,x),mathnode('MULTIPLY',z,z)),0)
     ramp=n.new('ShaderNodeValToRGB');r=ramp.color_ramp;r.interpolation='EASE'
     r.elements.remove(r.elements[1])
-    for i,(pos,col) in enumerate(((0,(.002,.003,.004,1)),(.095,(.003,.004,.005,1)),(.115,(.12,.055,.018,1)),(.20,(.20,.11,.035,1)),(.23,(.025,.018,.010,1)),(.25,(.65,.68,.64,1)))):
+    iris=(.035,.17,.32,1) if gender else (.055,.22,.095,1)
+    inner=(.02,.07,.13,1) if gender else (.045,.11,.035,1)
+    for i,(pos,col) in enumerate(((0,(.002,.003,.004,1)),(.095,(.003,.004,.005,1)),(.115,inner),(.20,iris),(.23,(.025,.018,.010,1)),(.25,(.65,.68,.64,1)))):
         e=r.elements[0] if i==0 else r.elements.new(pos);e.position=pos;e.color=col
     l.new(radius,ramp.inputs[0]);l.new(ramp.outputs[0],p.inputs['Base Color'])
     for side in ('L','R'):
@@ -109,7 +111,7 @@ def add_watch(rig, body):
     box('Watch activity indicator',(0,centre,face_z-.0048),(.018,.002,.0005),accent,.0005)
 
 
-def add_shoes(rig):
+def add_shoes(rig, body):
     """Low-profile trainers fitted to foot/toe landmarks, rigid to each foot."""
     from mathutils import Vector
     upper=material('Trainer charcoal mesh',(.022,.028,.035),.85)
@@ -119,12 +121,16 @@ def add_shoes(rig):
     sole=material('Trainer grey rubber',(.16,.18,.20),.8)
     panel=material('Trainer reinforced toe and heel',(.012,.017,.023),.6)
     lace=material('Trainer laces',(.32,.35,.38),.8)
+    bpy.context.view_layer.update()
+    ev=body.evaluated_get(bpy.context.evaluated_depsgraph_get());me=ev.to_mesh()
+    skin=[body.matrix_world@v.co for v in me.vertices];ev.to_mesh_clear()
     for side in ('L','R'):
         foot=rig.data.bones['foot.'+side]
         toes=[b for b in rig.data.bones if b.name.startswith('toe') and b.name.endswith('.'+side)]
         points=[p for b in toes for p in (b.head_local,b.tail_local)]
         x=(min(p.x for p in points)+max(p.x for p in points))/2
-        front=min(p.y for p in points)-.014;rear=foot.head_local.y+.050
+        foot_skin=[p for p in skin if p.z<.075 and p.x*(1 if side=='L' else -1)>0]
+        front=min(p.y for p in foot_skin)-.009;rear=max(p.y for p in foot_skin)+.014
         width=(max(p.x for p in points)-min(p.x for p in points))/2+.016
         root=anchor(rig,'foot.'+side,'Trainer follows foot '+side)
         def meshpart(name,verts,faces,mat):
@@ -135,7 +141,7 @@ def add_shoes(rig):
             for f in me.polygons:f.use_smooth=True
             return o
         # Rounded plan outline, wider at the ball and narrower through the heel.
-        stations=[(0,.08,.020),(.05,.65,.030),(.16,1.,.035),(.38,1.,.045),(.58,.85,.060),(.78,.72,.068),(.93,.65,.052),(1,.08,.025)]
+        stations=[(0,.08,.020),(.05,.65,.030),(.16,1.,.035),(.38,1.,.045),(.58,.85,.060),(.78,.72,.068),(.93,.65,.052),(1,.35,.040)]
         verts=[];faces=[];n=25
         for t,w,h in stations:
             y=front+(rear-front)*t
