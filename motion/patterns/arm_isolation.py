@@ -62,6 +62,10 @@ class Pattern:
         sh = P.head(f"upperarm01.{side}")
         ua, fa = arm_lengths(P, side)
         x, y, z = p["ua_dir"]
+        # Narrower shoulders need a little abduction to clear the thigh with
+        # a full-size dumbbell while the forearm stays under the load.
+        if p['grip_x'] is None:
+            x += max(0.,.186-P.rest_head('upperarm01.'+side).x*(1 if side=='L' else -1))*1.5
         d_ua = Vector((sgn * x, y, z)).normalized()
         elbow = sh + d_ua * ua
         f_dir = rot_x(-phi) @ d_ua          # forearm swings forward/up in the sagittal plane

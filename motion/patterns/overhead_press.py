@@ -60,7 +60,7 @@ class Pattern:
         self.place_body(tilt, bar_y + lerp(0.13 if p["load"] == "bar" else 0.0, 0.0, smooth(s)))
         sh = self.shoulders()
         # head back while the bar passes the face, through at lockout
-        z_top = sh.z + 0.14 + p["top_reach"] * self.reach      # + girdle lift + hand
+        z_top = sh.z + (0.14-max(0.,.186-P.rest_head("upperarm01.L").x)*1.25 if p["load"] == "bar" else 0.14) + p["top_reach"] * self.reach      # + girdle lift + hand
         # Optional body-relative rack targets share one spec across MPFB models.
         rack_z = sh.z + p["rack_height_ratio"]*self.reach if "rack_height_ratio" in p else p["rack_z"]
         z = lerp(rack_z, z_top, s)

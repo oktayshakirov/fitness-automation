@@ -46,7 +46,7 @@ class Pattern:
         self.root_rest = P.rest_head("root")
         self.hands = {s: Vector((sg * p["grip_w"], 0.0, p["bar_z"])) for s, sg in (("L", 1), ("R", -1))}
         # straight-arm reach from the shoulder joint to the grip point
-        self.arm = 0.985 * (ua + fa) + (0.110 if mode == "pullup" else 0.075 if mode != "dip" else 0.05)
+        self.arm = (.985-max(0.,.186-P.rest_head("upperarm01.L").x)*1.4) * (ua + fa) + ((grip_point(P,"L")[0]-P.head("wrist.L")).length if mode == "pullup" else 0.075 if mode != "dip" else 0.05)
 
     def shoulders(self):
         P = self.P
@@ -103,7 +103,7 @@ class Pattern:
     def hang_shoulders(self):
         """Shoulder midpoint in a dead hang: arms straight, hands on the bar."""
         p = self.p
-        dx = p["grip_w"] - 0.2
+        dx = p["grip_w"] - self.P.rest_head("upperarm01.L").x
         return Vector((0, 0.03, p["bar_z"] - math.sqrt(self.arm ** 2 - dx * dx)))
 
     def pose_pullup(self, s):

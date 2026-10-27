@@ -54,6 +54,8 @@ class Pattern:
         mode = params.get("mode", "pulldown")
         m = dict(MACHINES[mode], **params.get("machine", {}))
         self.p = p = {"mode": mode, "width": 0.13, "toe_out": 8.0, **params}
+        if mode == "pulldown":
+            m["grip_w"] *= min(1.,P.rest_head("upperarm01.L").x/.186)
         self.m = m
         ua, fa = arm_lengths(P)
         self.ua, self.fa = ua, fa
@@ -108,7 +110,7 @@ class Pattern:
             ank = Vector((knee.x, knee.y + 0.05, self.az))
             self.leg(side, knee, ank, rot_z(sgn * 8))
         sh = self.shoulders()
-        top = Vector((0, sh.y - 0.06, sh.z + 0.96 * (self.ua + self.fa) * 0.93 + 0.15))
+        top = Vector((0, sh.y - 0.06, sh.z + 0.96 * (self.ua + self.fa) * 0.93 + 0.15*min(1.,P.rest_head("upperarm01.L").x/.186)**3))
         # Wider hands use more lateral reach; lower the top target accordingly
         # instead of stretching the arms off the handle.
         radius = .96 * (self.ua + self.fa)
@@ -139,14 +141,14 @@ class Pattern:
             self.leg(side, mid, ank, rot_x(-70) @ rot_z(sgn * 4))
         sh = self.shoulders()
         reach_pt = Vector((0, sh.y - 0.95 * (self.ua + self.fa) - 0.05, m["handle_z"] + 0.0))
-        belly = Vector((0, sh.y - 0.20, m["seat_z"] + 0.32))
+        belly = Vector((0, sh.y - 0.20, min(m["seat_z"] + 0.32,sh.z-.32)))
         c = reach_pt.lerp(belly, smooth(s))
         for side, sgn in (("L", 1), ("R", -1)):
             g = c + X * sgn * 0.045 + Z * 0.0
             arm = (g - P.head(f"upperarm01.{side}")).normalized()
             rh = max(0.0, P.humeral_elevation(arm) - 30.0) / 3.0
             P.scap_rhythm(side, arm, protraction=lerp(12, -18, smooth(s)), elevation=-0.3 * rh)
-            pole = Vector((sgn * 0.3, 0.3, -1))               # elbows down, close to the body
+            pole = Vector((sgn * 0.6, 0.3, -1))               # elbows down, close to the body
             reach(P, side, g, pole, knuckle_dir=Vector((0, 0, -1)),
                   palm=lambda fd, sgn=sgn: Vector((-sgn, 0, 0)))
         return {"handle": (c, Z.copy(), "v_handle")}

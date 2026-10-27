@@ -63,7 +63,7 @@ class Pattern:
         sp = P.rig.pose.bones["spine01"].matrix
         self.bar_local = sp.inverted() @ Vector((0, 0.074, 1.43))
         # goblet dumbbell: vertical, lower head against the sternum
-        self.goblet_local = sp.inverted() @ Vector((0, -0.19, 1.255))
+        self.goblet_local = sp.inverted() @ Vector((0, -.19-max(0.,.186-P.rest_head("upperarm01.L").x)*.62, self.shoulders().z-.125))
         self.arm_len = self.hang_length()
 
     # --- helpers ------------------------------------------------------------
@@ -307,15 +307,16 @@ class Pattern:
         thighs, bell behind the knees (s = 1)."""
         P, p = self.P, self.p
         sh = self.shoulders()
-        a = math.radians(lerp(-80.0, p.get("hike", 28.0), s))   # world angle from straight down, + = back
+        hike=p.get("hike",28.)-max(0.,.186-P.rest_head("upperarm01.L").x)*125
+        a = math.radians(lerp(-80.0, hike, s))   # world angle from straight down, + = back
         d = Vector((0, math.sin(a), -math.cos(a)))
         c = sh + d * (self.arm_len * 0.975)
         body = P.delta("spine01")
         for side, sgn in (("L", 1), ("R", -1)):
-            g = c + X * sgn * 0.045
+            g = c + X * sgn * 0.055
             arm = (g - P.head(f"upperarm01.{side}")).normalized()
             P.scap_rhythm(side, arm, protraction=lerp(4, -4, s))
-            reach(P, side, g, body @ Vector((sgn * 0.3, 1, 0)), knuckle_dir=knuckles(sgn, "over"),
+            reach(P, side, g, body @ Vector((sgn * 1.0, .2, 0)), knuckle_dir=knuckles(sgn, "over"),
                   palm=lambda fd: bar_palm(X, fd, "over"))
         # the bell hangs off the handle along the arms (it swings with them)
         return {"kb": (c, X.copy(), d)}

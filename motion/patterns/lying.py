@@ -75,7 +75,10 @@ class Pattern(Floor):
     def pose_press(self, s):
         P, p = self.P, self.p
         sh = self.shoulders()
-        top = Vector((0, sh.y - 0.01, sh.z + 0.94 * (self.ua + self.fa) + 0.03))
+        height=.94*(self.ua+self.fa)+.03
+        if P.rest_head('upperarm01.L').x<.17 and p['load']=='bar':
+            height=math.sqrt((.92*(self.ua+self.fa))**2-(p['grip_w']-P.head('upperarm01.L').x)**2)+.03
+        top = Vector((0, sh.y - 0.01, sh.z+height))
         chest = self.lm["chest"]
         # +Y is toward the head. Keep the bottom position on the chest rather
         # than subtracting a fixed offset toward the abdomen for every press.

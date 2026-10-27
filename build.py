@@ -85,14 +85,18 @@ scene["fitness_model"] = args.model
 body.data.materials.clear()
 body.data.materials.append(muscle_material(primary=tuple(catalog.get("primary", ())),
                                            secondary=tuple(catalog.get("secondary", ()))))
-garments = add_clothing(body, rig, args.model, catalog.get("primary", ()), catalog.get("secondary", ()))
+garments = add_clothing(body, rig, args.model, catalog.get("primary", ()), catalog.get("secondary", ()), refinement=motion.get("garment_refinement", 1))
 add_hair(body, rig, args.model)
 # Avoid repeated surface projections during each IK update; enable for playback.
 for garment in garments:
     for modifier in garment.modifiers: modifier.show_viewport = False
 P = Poser(rig)
 pattern = patterns.get(motion["pattern"])(P, motion.get("params", {}))
-props = props_mod.build(P, motion.get("props", []))
+prop_specs=json.loads(json.dumps(motion.get("props", [])))
+if motion["pattern"]=="seated" and motion.get("params",{}).get("mode")=="pulldown":
+    for item in prop_specs:
+        if item.get("handle")=="lat_bar":item["grip_w"]=pattern.m["grip_w"]
+props = props_mod.build(P, prop_specs)
 
 micro_amp = float(motion.get("micro", 1.0)) if not args.no_micro else 0.0
 for f in range(1, N + 1):
