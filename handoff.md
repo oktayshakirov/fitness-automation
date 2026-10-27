@@ -1034,3 +1034,14 @@ contract in plan.md wants 720×900.
   and blend backups removed; approximately 49 GiB free. No exercise approvals,
   publication or full-library rerender. Await appearance review before production
   deliveries; female watch and shoes have specific appearance acceptance only.
+
+- **2026-10-27 (appearance revision 20, awaiting review):** replaced small
+  projected rose nail patches with black polish using MPFB's authored fingernail
+  UV mask, covering the actual nail beds and following skin deformation. CC0
+  source/licence recorded in assets/maps/FINGERNAILS_LICENSE.md; mask included
+  in pipeline fingerprint. Watches and approved shoes unchanged. Hand close-ups
+  visually inspected. Review: http://127.0.0.1:8765/review/look_v20/index.html.
+  All four exercise previews pass complete QA; eight receipts match current
+  source/spec/scene hashes. All 13 tests pass. Current white H.264 sample included;
+  frames and blend backups removed, 49 GiB free. No publication or exercise
+  approvals; await human appearance review before remaining production tasks.
