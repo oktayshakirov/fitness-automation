@@ -988,3 +988,16 @@ contract in plan.md wants 720×900.
   complete motion/garment/model/accessory/floor QA with current source/spec/scene
   hashes. Frames and Blender backups removed. No approvals, publication or full
   library rerender. Await human visual review before remaining delivery tasks.
+
+- **2026-10-27 (appearance revision 16, awaiting human review):** rotated
+  watches up to 10 degrees back toward the wrist-frame orientation, fitting
+  the thin strap again to the skin. Replaced bevel-limited boxes with explicit
+  rounded outlines (7 mm case / 6 mm screen radii), plain black glass and no
+  activity indicator. Rear shoe clearance reduced from 14 to 8 mm; heel and
+  toe coverage visually checked on both models.
+
+  Review: http://127.0.0.1:8765/review/look_v16/index.html with close-ups, current
+  two-exercise sheet and H.264 sample. All four full 72-frame QA runs pass with
+  matching source/spec/scene hashes. Frames and blend backups removed; 50 GiB
+  free. Source committed. No approvals, publication or full-library rerender;
+  await visual approval before remaining production deliveries.

@@ -2,7 +2,7 @@
 from pathlib import Path
 import json, shutil
 from PIL import Image, ImageDraw
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'review/look_v15'
+ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'review/look_v16'
 for model in ('male','female'):
  for part in ('head','torso','body','shoes','watch'):
   for view in ('front','threeq','side','back'):
@@ -33,7 +33,7 @@ for part,label in [('head','Brows, lashes, beard and hair details'),('torso','To
  parts.append(f'<h2>{label}</h2><div class="grid">{cards}</div>')
 (OUT/'index.html').write_text('''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hair and body review</title>
 <style>body{background:#fff;color:#15151a;font:16px system-ui;max-width:1600px;margin:auto;padding:24px}body.dark{background:#0A0A0C;color:#eee}p{line-height:1.5}button{padding:10px 20px;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}figure{margin:0;text-align:center}img{width:100%;height:auto}a{color:#39ac68}li{margin-bottom:10px}.note{border-left:3px solid #f90;padding-left:14px}@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}body{padding:12px}}</style>
-<h1>Toe-box fit correction</h1><p class="note">Unapproved review. Toe boxes fitted to the skin outline, with a fuller rounded front to keep toes enclosed. White remains the default video background. Clothes stay opaque with a faint active-muscle tint. Neutral views show body shape without active-muscle colours.</p>
+<h1>Rounded black watch and compact heel</h1><p class="note">Unapproved review. Slightly rotated watches with rounded black screens, and a smaller rear shoe allowance preserving heel coverage. White remains the default video background. Clothes stay opaque with a faint active-muscle tint. Neutral views show body shape without active-muscle colours.</p>
 <button onclick="document.body.classList.add('dark')">Dark</button> <button onclick="document.body.classList.remove('dark')">White</button>
 <p>Neutral stills have true transparency. Exercise loops use a white H.264 background; transparent stills remain available.</p>
 ''' + ''.join(parts) + '<h2>Two exercise checkpoint · both models</h2><img src="sheet.png" alt="Squat and shoulder press preview sheets"><ul>' + ''.join(receipts) + '</ul><p>Appearance still requires human approval. No new exercises have been approved or published, and the full-library rerender has not begun.</p><p>Hair source and licence: <a href="../../assets/hair/LICENSE.md">CC0 notices</a>.</p>')
