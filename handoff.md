@@ -1045,3 +1045,16 @@ contract in plan.md wants 720×900.
   source/spec/scene hashes. All 13 tests pass. Current white H.264 sample included;
   frames and blend backups removed, 49 GiB free. No publication or exercise
   approvals; await human appearance review before remaining production tasks.
+
+- **2026-10-27 (appearance revision 21, awaiting final review):** user accepted
+  black polish, then reported top skin patches and watch case/strap gap. Fixed
+  polish shader composition to retain clothing skin occlusion; added a QA check
+  against bypassing that shader. The top now has continuous opaque coverage.
+  Added a rounded silicone seat beneath the entire watch case footprint, flat
+  against the case and curved against the wrist, joined into the strap mesh.
+  Both watch orientations and approved shoes retained. Inspected torso/wrist
+  close-ups. Review: http://127.0.0.1:8765/review/look_v21/index.html.
+  All four full exercise QA runs pass and eight receipts match current hashes.
+  All 13 tests pass; fresh white H.264 sample included. Frames and backups
+  removed, 49 GiB free. No publication or exercise approvals. Await human review
+  before full-library rendering and remaining production deliveries.
