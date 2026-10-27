@@ -68,7 +68,7 @@ def add_watch(rig, body):
     z=-dorsal;y=(y-z*y.dot(z)).normalized();x=y.cross(z).normalized();y=z.cross(x).normalized()
     fitted=Matrix((x,y,z)).transposed().to_4x4()
     target=fitted.to_3x3().inverted() @ (-wrist.matrix_local.to_3x3().col[2])
-    turn=2*max(-math.radians(10),min(math.radians(10),math.atan2(-target.x,-target.z)))
+    turn=4*max(-math.radians(10),min(math.radians(10),math.atan2(-target.x,-target.z)))
     fitted=fitted @ Matrix.Rotation(turn,4,'Y')
     fitted.translation=wrist.head_local-y*.018
     attachment=anchor(rig,'wrist.L','Watch follows wrist')
