@@ -67,6 +67,9 @@ def add_watch(rig, body):
     if dorsal.y>0:dorsal.negate()
     z=-dorsal;y=(y-z*y.dot(z)).normalized();x=y.cross(z).normalized();y=z.cross(x).normalized()
     fitted=Matrix((x,y,z)).transposed().to_4x4()
+    target=fitted.to_3x3().inverted() @ (-wrist.matrix_local.to_3x3().col[2])
+    turn=max(-math.radians(10),min(math.radians(10),math.atan2(-target.x,-target.z)))
+    fitted=fitted @ Matrix.Rotation(turn,4,'Y')
     fitted.translation=wrist.head_local-y*.018
     attachment=anchor(rig,'wrist.L','Watch follows wrist')
     root=bpy.data.objects.new('Watch aligned to hand plane',None)
@@ -74,7 +77,7 @@ def add_watch(rig, body):
     root.matrix_world=rig.matrix_world@fitted
     band=material('Black silicone strap',(.012,.015,.020),.75)
     case=material('Watch graphite case',(.045,.055,.065),.28,.65)
-    glass=material('Watch glass',(.008,.022,.030),.16,.15)
+    glass=material('Watch glass',(.003,.003,.003),.20,.05)
     centre=0.
     from mathutils.bvhtree import BVHTree
     bpy.context.view_layer.update()
@@ -98,17 +101,23 @@ def add_watch(rig, body):
     import bmesh
     bm=bmesh.new();bm.from_mesh(mesh);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(mesh);bm.free()
     for f in mesh.polygons:f.use_smooth=True
-    def box(name,loc,size,mat,bevel):
-        bpy.ops.mesh.primitive_cube_add(size=1)
-        o=bpy.context.object;o.name=name;o.parent=root;o.location=loc;o.scale=size
-        bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
+    def rounded_case(name,loc,size,mat,radius):
+        # Explicit rounded XY outline: corner radius is independent of thickness.
+        w,h,d=size;outline=[]
+        for cx,cy,start in ((w/2-radius,h/2-radius,0),(-w/2+radius,h/2-radius,90),(-w/2+radius,-h/2+radius,180),(w/2-radius,-h/2+radius,270)):
+            for i in range(9):
+                a=math.radians(start+i*90/8)
+                outline.append((cx+radius*math.cos(a),cy+radius*math.sin(a)))
+        n=len(outline);verts=[(x,y,z) for z in (-d/2,d/2) for x,y in outline]
+        faces=[tuple(range(n-1,-1,-1)),tuple(range(n,2*n))]
+        faces += [(i,(i+1)%n,(i+1)%n+n,i+n) for i in range(n)]
+        me=bpy.data.meshes.new(name);me.from_pydata(verts,[],faces);me.update()
+        o=bpy.data.objects.new(name,me);bpy.context.collection.objects.link(o);o.parent=root;o.location=loc
         o.data.materials.append(mat);o['smartwatch']=True
-        b=o.modifiers.new('Rounded corners','BEVEL');b.width=bevel;b.segments=4
+        b=o.modifiers.new('Soft rim','BEVEL');b.width=.00025;b.segments=3
         o.modifiers.new('Weighted normals','WEIGHTED_NORMAL')
-    box('Smartwatch case',(0,centre,face_z-.002),(.032,.037,.004),case,.005)
-    box('Smartwatch screen',(0,centre,face_z-.0043),(.027,.032,.0008),glass,.004)
-    accent=material('Watch display',(.05,.45,.30),.35)
-    box('Watch activity indicator',(0,centre,face_z-.0048),(.018,.002,.0005),accent,.0005)
+    rounded_case('Smartwatch case',(0,centre,face_z-.002),(.032,.037,.004),case,.007)
+    rounded_case('Smartwatch screen',(0,centre,face_z-.0043),(.027,.032,.0008),glass,.006)
 
 
 def add_shoes(rig, body):
@@ -130,7 +139,7 @@ def add_shoes(rig, body):
         points=[p for b in toes for p in (b.head_local,b.tail_local)]
         x=(min(p.x for p in points)+max(p.x for p in points))/2
         foot_skin=[p for p in skin if p.z<.075 and p.x*(1 if side=='L' else -1)>0]
-        front=min(p.y for p in foot_skin)-.014;rear=max(p.y for p in foot_skin)+.014
+        front=min(p.y for p in foot_skin)-.014;rear=max(p.y for p in foot_skin)+.008
         forefoot=[p for p in foot_skin if p.y<foot.head_local.y-.055]
         x=(min(p.x for p in forefoot)+max(p.x for p in forefoot))/2
         width=(max(p.x for p in forefoot)-min(p.x for p in forefoot))/2+.008

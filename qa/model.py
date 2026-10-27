@@ -21,7 +21,7 @@ def validate_model(scene, body):
     face_detail = 'head-square' if model == 'male' else 'head-oval'
     assert abs(TargetService.get_target_value(body, face_detail)-(.32 if model=='male' else .30)) < 1e-6, 'Wrong face profile'
     assert len([o for o in scene.objects if o.get('coloured_eye')]) == 2, 'Missing coloured eyes'
-    assert len([o for o in scene.objects if o.get('smartwatch')]) == 4, 'Missing watch parts'
+    assert len([o for o in scene.objects if o.get('smartwatch')]) == 3, 'Missing watch parts'
     assert len([o for o in scene.objects if o.get('shoe')]) == 12, 'Missing shoes'
     assert scene.objects['Smartwatch screen'].location.z < 0, 'Watch display on palm side'
     assert scene.objects['Watch follows wrist'].constraints[0].subtarget == 'wrist.L', 'Watch must follow hand orientation'
