@@ -1001,3 +1001,13 @@ contract in plan.md wants 720×900.
   matching source/spec/scene hashes. Frames and blend backups removed; 50 GiB
   free. Source committed. No approvals, publication or full-library rerender;
   await visual approval before remaining production deliveries.
+
+- **2026-10-27 (appearance revision 17, awaiting watch review):** user explicitly
+  accepted the shoes as perfect. Preserve revision 16 shoe geometry. Repeated
+  the previous watch rotation by the same signed amount (doubled the prior
+  per-model adjustment); thin fitted strap and rounded black screen retained.
+  Review: http://127.0.0.1:8765/review/look_v17/index.html. All four previews
+  pass full QA with current source/spec/scene hashes; current H.264 sample and
+  close-ups regenerated. Frames and backups removed; 50 GiB free. Shoes are
+  appearance-approved only; no exercise delivery approval or publication.
+  Await final watch/overall appearance review before remaining deliveries.
