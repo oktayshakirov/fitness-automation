@@ -964,3 +964,16 @@ contract in plan.md wants 720×900.
   entire batch uses frozen source and passes strict review validation. Frames and
   blend backups removed; 47 GiB free. No approvals, publication or full-library
   rerender. Await visual approval before original remaining delivery tasks.
+
+- **2026-10-27 (appearance revision 14, awaiting human review):** raised brows
+  6 mm and replaced round strands with thicker, flat tapered forehead-fitted
+  shapes. Male eyes are blue and female eyes green. Shoe length now comes from
+  the actual low-foot skin bounds, with rear allowance and a fuller heel cap;
+  side close-ups confirm the exposed male heel is covered. Other appearance
+  choices remain from revision 13.
+
+  Review: http://127.0.0.1:8765/review/look_v14/index.html with head/heel close-ups,
+  both exercises/models and fresh H.264 squat sample. All four 72-frame QA runs
+  pass; eight receipts match current source/spec/scene hashes. All 13 regression
+  tests pass. Frames and blend backups removed. No approvals, publication or
+  full-library rerender; await human visual review before remaining deliveries.
