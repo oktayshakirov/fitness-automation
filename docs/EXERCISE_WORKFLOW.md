@@ -162,3 +162,26 @@ Use https://gymfaster.com/exercises as a user-requested reference for exercise
 ideas and presentation. Its catalog does not identify the model source; do not
 assume it uses MPFB or grants reuse rights. Build our own motion specs and retain
 our existing asset licences; inspect any new external asset licence before use.
+
+## Approved appearance → both-model production (2026-10-27)
+
+The band-free appearance in look_v24 is approved. New production files live in
+`dist/<exercise>/<male|female>/`, with model-prefixed loop/poster filenames.
+Scenes, QA receipts and contact sheets use `<exercise>_<model>`. Each model needs
+its own fingerprint-bound human approval; appearance approval never grants
+production exercise approval. Existing legacy records remain available.
+
+Use the Pillow-equipped Python 3.13 runtime for production commands:
+
+```sh
+/opt/homebrew/opt/python@3.13/bin/python3.13 core/run_mvp.py --first bodyweight_squat dumbbell_shoulder_press
+```
+
+The runner renders both models, skips verified current exports, checks free disk
+space before each job, deletes frames after encoding, and audits all 60 model
+deliveries. New exports contain H.264 only, white #FFFFFF background, 720×900 at
+30 fps. Review at http://127.0.0.1:8765/review/index.html; approve each model's
+actual loops and instructions. A targeted explicit approval can also use
+`python3 exercises.py approve <id> --model female --reviewed --note '…'`.
+The runner does not publish or approve content. Monitor `review/run_status.json`,
+`review/mvp_batch.log` and `review/batch/report.json`.

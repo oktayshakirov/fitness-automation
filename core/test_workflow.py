@@ -43,6 +43,20 @@ class WorkflowTests(unittest.TestCase):
         self.assertFalse(json.loads((self.root/'catalog/demo.json').read_text())['reviewed'])
         self.assertEqual(len((self.root/'approvals/history.jsonl').read_text().splitlines()), 2)
 
+    def test_model_approvals_are_independent_and_legacy_does_not_transfer(self):
+        male={**self.entry,'model':'male'};female={**self.entry,'model':'female'}
+        record_review('demo',True,self.entry,'Legacy reviewed',self.root)
+        self.assertFalse(is_approved('demo',male,self.root))
+        self.assertFalse(is_approved('demo',female,self.root))
+        record_review('demo',True,male,'Male reviewed',self.root)
+        self.assertTrue(is_approved('demo',male,self.root))
+        self.assertFalse(is_approved('demo',female,self.root))
+        record_review('demo',True,female,'Female reviewed',self.root)
+        record_review('demo',False,male,'Male needs revision',self.root)
+        self.assertFalse(is_approved('demo',male,self.root))
+        self.assertTrue(is_approved('demo',female,self.root))
+        self.assertTrue(is_approved('demo',self.entry,self.root))
+
     def test_legacy_flags_alone_are_not_a_review_record(self):
         self.cat['reviewed'] = self.motion['approved'] = True
         self.write('catalog/demo.json', self.cat)

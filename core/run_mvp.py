@@ -19,7 +19,7 @@ def main():
         try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         except BlockingIOError:raise SystemExit('An MVP runner is already active')
         try:
-            status('running',f'Preparing the {len(ordered)}-exercise batch')
+            status('running',f'Preparing {len(ordered)} exercises × 2 models')
             with (REVIEW/'mvp_batch.log').open('w') as log:
                 for attempt in (1,2):
                     p=subprocess.Popen([sys.executable,'core/batch.py',*ordered],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)
@@ -30,7 +30,7 @@ def main():
                 status('running','Auditing codecs, dimensions, checksums, QA and file sizes')
                 subprocess.run([sys.executable,'core/verify_delivery.py'],cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,check=True)
             audit=json.loads((REVIEW/'delivery_audit.json').read_text())
-            status('complete',f"{audit['exercises']} exercises exported and validated",audit=audit)
+            status('complete',f"{audit['model_deliveries']} model deliveries validated; awaiting human approval",audit=audit)
         except Exception as exc:
             status('failed',str(exc));traceback.print_exc();return 1
     return 0

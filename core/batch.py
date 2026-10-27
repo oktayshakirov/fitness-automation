@@ -1,41 +1,43 @@
-"""Resume-safe MVP batch. Build/QA every catalog; failures never enter manifest."""
-import subprocess,sys,json,time
+"""Resume-safe per-model production renders. Never grants human approval."""
+import argparse, json, os, shutil, subprocess, sys, time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
-from core.delivery import pipeline_digest,spec_digest,read,rebuild_manifest,current_asset
-args=sys.argv[1:];quick='--quick' in args;pose='--pose-only' in args
-chosen=[s for s in args if not s.startswith('--')]
-ids=chosen or [p.stem for p in sorted((ROOT/'catalog').glob('*.json'))]
-logs=ROOT/'review/batch';logs.mkdir(exist_ok=True);report=[]
-for i,eid in enumerate(ids):
-    asset=ROOT/'dist'/eid/'asset.json'
-    if not quick and not pose and asset.exists():
-        e=read(asset)
+from core.delivery import read,current_asset,rebuild_manifest
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('ids',nargs='*')
+    parser.add_argument('--models',nargs='+',choices=('male','female'),default=['male','female'])
+    args=parser.parse_args()
+    # Blender subprocesses must use the same Python/Pillow runtime as the runner.
+    os.environ['PATH']=str(Path(sys.executable).parent)+os.pathsep+os.environ.get('PATH','')
+    ids=args.ids or sorted(p.stem for p in (ROOT/'catalog').glob('*.json'))
+    if any(not (ROOT/'catalog'/(eid+'.json')).is_file() for eid in ids):parser.error('Unknown exercise')
+    logs=ROOT/'review/batch';logs.mkdir(exist_ok=True);report=[]
+    jobs=[(eid,model) for eid in ids for model in args.models]
+    for i,(eid,model) in enumerate(jobs):
+        prefix=f'{eid}_{model}';asset=ROOT/'dist'/eid/model/'asset.json';started=time.time();reused=False
         try:
-            current_asset(eid,e)
-            # A process may exit after publishing valid media but before cleanup.
-            # Only discard generated frames after verifying the complete export.
-            for view in e['views']:
-                folder=ROOT/'review'/f'{eid}_{view}'
-                for frame in folder.glob('[0-9][0-9][0-9][0-9].png'):
-                    frame.unlink()
-                if folder.is_dir() and not any(folder.iterdir()):folder.rmdir()
-            report.append({'id':eid,'status':'PASS','reused':True,'seconds':0})
-            print(f'{i+1}/{len(ids)} {eid}: current, skipped',flush=True);continue
-        except (OSError,ValueError,KeyError): pass
-    cmd=[sys.executable,str(ROOT/'build.py'),eid]+(['--no-render'] if pose else ['--quick','--frames','1,30,54,72'] if quick else ['--delivery'])
-    started=time.time()
-    with (logs/(eid+'.log')).open('w') as log:
-        r=subprocess.run(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
-        if (pose or quick) and r.returncode==0:r=subprocess.run([sys.executable,str(ROOT/'qa/check.py'),eid],cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
-    # Blender can return 0 after a script exception: inspect expected QA freshness.
-    qpath=ROOT/'review'/(eid+'_qa.json');q=read(qpath) if qpath.exists() else {}
-    valid=q.get('pass') is True and q.get('spec_sha256')==spec_digest(eid) and q.get('pipeline_sha256')==pipeline_digest()
-    if not quick and not pose:valid=valid and asset.exists() and read(asset).get('pipeline_sha256')==pipeline_digest()
-    status='PASS' if r.returncode==0 and valid else 'FAIL'
-    entry={'id':eid,'status':status,'seconds':round(time.time()-started),'log':str(logs/(eid+'.log'))};report.append(entry)
-    (logs/'report.json').write_text(json.dumps(report,indent=2)+'\n')
-    print(f'{i+1}/{len(ids)} {eid}: {status} ({entry["seconds"]}s)',flush=True)
-(logs/'report.json').write_text(json.dumps(report,indent=2)+'\n')
-if not quick and not pose:rebuild_manifest()
-sys.exit(1 if any(e['status']=='FAIL' for e in report) else 0)
+            if asset.exists():
+                current_asset(eid,read(asset));reused=True
+            if not reused:
+                if shutil.disk_usage(ROOT).free<8*1024**3:raise ValueError('Less than 8 GiB free; render stopped')
+                with (logs/(prefix+'.log')).open('w') as log:
+                    subprocess.run([sys.executable,str(ROOT/'build.py'),eid,'--model',model,'--delivery'],cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,check=True)
+                current_asset(eid,read(asset))
+            # Encoding succeeded and files validated; discard interrupted-run leftovers.
+            for view in read(asset)['views']:
+                shutil.rmtree(ROOT/'review'/f'{prefix}_{view}',ignore_errors=True)
+            (ROOT/'review'/(prefix+'.blend1')).unlink(missing_ok=True)
+            result=dict(id=eid,model=model,status='PASS',reused=reused,seconds=round(time.time()-started))
+        except (OSError,ValueError,KeyError,subprocess.CalledProcessError) as exc:
+            result=dict(id=eid,model=model,status='FAIL',error=str(exc),seconds=round(time.time()-started))
+            # Partial frames cannot ship; retry starts from the scene.
+            for folder in (ROOT/'review').glob(prefix+'_*'):
+                if folder.is_dir():shutil.rmtree(folder)
+        report.append(result)
+        (logs/'report.json').write_text(json.dumps(report,indent=2)+'\n')
+        print(f'{i+1}/{len(jobs)} {prefix}: {result["status"]} ({result["seconds"]}s)',flush=True)
+    rebuild_manifest()
+    return int(any(r['status']=='FAIL' for r in report))
+if __name__=='__main__':sys.exit(main())

@@ -81,6 +81,19 @@ class ExportGateTests(unittest.TestCase):
     clothing.unlink()
     with self.assertRaises(OSError):delivery.current_qa('demo')
 
+ def test_model_qa_rejects_other_model(self):
+  with tempfile.TemporaryDirectory() as t:
+   p=Path(t)/'q.json';p.write_text(json.dumps({'id':'demo','model':'male','pass':True}))
+   with self.assertRaisesRegex(ValueError,'wrong QA model'):delivery.current_qa('demo',p,model='female')
+
+ def test_model_media_cannot_point_at_other_model(self):
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t);folder=root/'dist/demo/male';folder.mkdir(parents=True)
+   video=folder/'loop.mp4';video.write_bytes(b'male')
+   entry={'model':'female','spec_sha256':'s','pipeline_sha256':'p','qa':{'blend_sha256':'b'},'files':{'front':{'h264':'demo/male/loop.mp4'}},'thumb':'demo/male/loop.mp4'}
+   with patch.object(delivery,'ROOT',root),patch.object(delivery,'current_qa',return_value={'model':'female','pipeline_sha256':'p','blend_sha256':'b'}),patch.object(delivery,'spec_digest',return_value='s'):
+    with self.assertRaisesRegex(ValueError,'missing or invalid'):delivery.current_asset('demo',entry)
+
  def test_changed_scene_rejects_old_delivery(self):
   entry={'spec_sha256':'s','pipeline_sha256':'p','qa':{'blend_sha256':'old'}}
   with patch.object(delivery,'current_qa',return_value={'pipeline_sha256':'p','blend_sha256':'new'}),patch.object(delivery,'spec_digest',return_value='s'):

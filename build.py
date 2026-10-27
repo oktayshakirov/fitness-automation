@@ -42,7 +42,7 @@ ap = argparse.ArgumentParser(prog="build.py")
 ap.add_argument("id")
 ap.add_argument("--model", choices=("male", "female"), default="male")
 ap.add_argument("--look-preview", action="store_true", help="isolated model-named 4:5 clothing review; never exports or approves")
-ap.add_argument("--delivery", action="store_true", help="QA-gated 720x900 app export; all views, one rep, both codecs")
+ap.add_argument("--delivery", action="store_true", help="QA-gated 720x900 app export; all views, one rep, H.264")
 ap.add_argument("--quick", action="store_true", help="render only the contact-sheet frames")
 ap.add_argument("--views", help="comma-separated subset of the spec's views")
 ap.add_argument("--frames", help="comma-separated frames for the sheet (and --quick)")
@@ -51,11 +51,9 @@ ap.add_argument("--no-render", action="store_true", help="pose + save the .blend
 ap.add_argument("--no-blend", action="store_true")
 ap.add_argument("--no-micro", action="store_true", help="no breathing / head settle / weight shift")
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else [])
-if args.model != "male" and not args.look_preview:
-    ap.error("female delivery is pending the look review; use --look-preview")
 if args.look_preview and (args.delivery or args.no_blend):
     ap.error("look preview needs its saved scene and cannot export delivery")
-prefix = f"{args.id}_{args.model}" if args.look_preview else args.id
+prefix = f"{args.id}_{args.model}" if (args.look_preview or args.delivery) else args.id
 if args.delivery and (args.no_render or args.quick or args.no_blend or args.views):
     ap.error("--delivery requires a full render, saved blend and every declared view")
 
@@ -146,9 +144,9 @@ sheet = [int(x) for x in args.frames.split(",")] if args.frames else motion.get(
 if args.delivery:
     bpy.ops.wm.save_as_mainfile(filepath=OUT+f"{prefix}.blend")
     check_clothing()
-    subprocess.run(["/usr/bin/env","python3",HERE+"/qa/check.py",args.id],check=True)
+    subprocess.run(["/usr/bin/env","python3",HERE+"/qa/check.py",args.id,"--model",args.model],check=True)
     from core.delivery import current_qa
-    current_qa(args.id)
+    current_qa(args.id, model=args.model)
 
 if not args.no_render:
     res = tuple(cam_cfg.get("res", (720, 1280)))      # review size; dist/ size is Agent B's
@@ -157,7 +155,7 @@ if not args.no_render:
     contact_sheet(dirs, sheet, OUT + f"{prefix}_sheet.png")
     if not args.quick:
         stitch_video(dirs, OUT + f"{prefix}.mp4",loops=1 if args.delivery else 3)
-        if args.delivery: export_delivery(args.id,dirs,views)
+        if args.delivery: export_delivery(args.id,dirs,views,model=args.model)
     if not args.keep_frames:
         for d in dirs:
             shutil.rmtree(d, ignore_errors=True)

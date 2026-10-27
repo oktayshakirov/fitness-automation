@@ -11,17 +11,24 @@ TOKEN=secrets.token_urlsafe(32);LOCK=threading.Lock()
 
 def state():
     items=[]
+    model_deliveries=any((ROOT/'dist').glob('*/*/asset.json'))
     for p in sorted((ROOT/'catalog').glob('*.json')):
         cat=read(p);eid=cat['id'];motion=read(ROOT/'motion/specs'/p.name)
-        qpath=ROOT/'review'/(eid+'_qa.json');q=read(qpath) if qpath.exists() else None
-        asset=ROOT/'dist'/eid/'asset.json';media=read(asset) if asset.exists() else None
-        ready=False;reason='No delivery yet'
-        if media:
-            try:
-                current_asset(eid,media)
-                ready=True;reason='Ready for human review'
-            except (OSError,ValueError,KeyError) as e:reason=str(e)
-        items.append(dict(catalog=cat,motion=motion,qa=q,media=media,ready=ready,reason=reason,approved=ready and is_approved(eid,media,ROOT)))
+        modern=any((ROOT/'dist'/eid/m/'asset.json').exists() for m in ('male','female'))
+        models=('male','female') if model_deliveries or modern or not (ROOT/'dist'/eid/'asset.json').exists() else (None,)
+        for model in models:
+            prefix=f'{eid}_{model}' if model else eid
+            qpath=ROOT/'review'/(prefix+'_qa.json');q=read(qpath) if qpath.exists() else None
+            base=ROOT/'dist'/eid
+            if model:base=base/model
+            asset=base/'asset.json';media=read(asset) if asset.exists() else None
+            ready=False;reason='No delivery yet'
+            if media:
+                try:
+                    current_asset(eid,media)
+                    ready=True;reason='Ready for human review'
+                except (OSError,ValueError,KeyError) as e:reason=str(e)
+            items.append(dict(catalog=cat,motion=motion,model=model,prefix=prefix,qa=q,media=media,ready=ready,reason=reason,approved=ready and is_approved(eid,media,ROOT)))
     return {'items':items,'token':TOKEN}
 
 class Handler(SimpleHTTPRequestHandler):
@@ -50,9 +57,9 @@ class Handler(SimpleHTTPRequestHandler):
             if not secrets.compare_digest(d.get('token',''),TOKEN):raise ValueError('Session token rejected')
             if not re.fullmatch(r'[a-z0-9_]+',eid) or type(approved)!=bool:raise ValueError('Invalid approval')
             with LOCK:
-                item=next(i for i in state()['items'] if i['catalog']['id']==eid)
+                item=next(i for i in state()['items'] if i['catalog']['id']==eid and i.get('model')==d.get('model'))
                 if approved and (not item['ready'] or d.get('reviewed') is not True):raise ValueError('Review the current loop and instructions before approving')
-                record_review(eid,approved,item['media'],"Human review in local approval page",ROOT)
+                record_review(eid,approved,item['media'],"Human review in local approval page",ROOT,model=d.get("model"))
                 rebuild_manifest()
             return self.send_json({'ok':True,'approved':approved})
         except (ValueError,KeyError,OSError,StopIteration) as e:return self.send_json({'error':str(e)},400)

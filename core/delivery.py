@@ -24,14 +24,21 @@ def pipeline_digest():
     for p in files:
         h.update(str(p.relative_to(ROOT)).encode());h.update(p.read_bytes())
     return h.hexdigest()
-def current_qa(eid,path=None):
-    q=read(path or ROOT/'review'/(eid+'_qa.json'))
+def asset_folder(eid,model=None):
+    if model not in (None,'male','female'):raise ValueError('Invalid model')
+    return ROOT/'dist'/eid/model if model else ROOT/'dist'/eid
+
+def current_qa(eid,path=None,model=None):
+    if model not in (None,'male','female'):raise ValueError('Invalid model')
+    prefix=f'{eid}_{model}' if model else eid
+    q=read(path or ROOT/'review'/(prefix+'_qa.json'))
+    if model and q.get('model')!=model:raise ValueError(eid+': wrong QA model')
     if q.get('id')!=eid or q.get('pass') is not True:raise ValueError(eid+': QA missing or failed')
     if q.get('spec_sha256')!=spec_digest(eid):raise ValueError(eid+': QA spec is stale')
     if q.get('pipeline_sha256')!=pipeline_digest():raise ValueError(eid+': QA pipeline is stale')
-    if q.get('blend_sha256')!=digest(ROOT/'review'/(eid+'.blend')):raise ValueError(eid+': QA blend is stale')
+    if q.get('blend_sha256')!=digest(ROOT/'review'/(prefix+'.blend')):raise ValueError(eid+': QA blend is stale')
     if q.get('clothes_required'):
-        clothing=read(ROOT/'review'/(eid+'_clothes_qa.json'))
+        clothing=read(ROOT/'review'/(prefix+'_clothes_qa.json'))
         if clothing.get('pass') is not True or clothing.get('complete') is not True:
             raise ValueError(eid+': clothing QA missing, incomplete or failed')
         for key in ('blend_sha256','pipeline_sha256','spec_sha256','model'):
@@ -41,14 +48,15 @@ def current_qa(eid,path=None):
 
 def current_asset(eid, entry):
     """Require matching QA and complete, unmodified delivered media."""
-    q = current_qa(eid)
+    q = current_qa(eid, model=entry.get("model"))
+    if entry.get('model') and q.get('model')!=entry['model']:raise ValueError(eid+': wrong delivery model')
     if entry.get('spec_sha256') != spec_digest(eid):
         raise ValueError(eid + ': delivery spec is stale')
     if entry.get('pipeline_sha256') != q.get('pipeline_sha256'):
         raise ValueError(eid + ': delivery pipeline is stale')
     if entry.get('qa', {}).get('blend_sha256') != q.get('blend_sha256'):
         raise ValueError(eid + ': delivery scene is stale')
-    base = ROOT / 'dist' / eid
+    base = asset_folder(eid,entry.get('model'))
     paths = [p for view in entry['files'].values() for p in view.values()]
     paths.append(entry['thumb'])
     for relative in paths:
@@ -77,15 +85,16 @@ def encode_frames(folder,path,codec,count):
     assert v[0]['r_frame_rate']=='30/1' and int(v[0]['nb_frames'])==count
     return {'bytes':path.stat().st_size,'sha256':digest(path),'codec':v[0]['codec_name'],'crf':crf}
 
-def export_delivery(eid,dirs,views,qa_path=None):
+def export_delivery(eid,dirs,views,qa_path=None,model=None):
     from PIL import Image,ImageOps
     if not re.fullmatch(r'[a-z0-9_]+',eid):raise ValueError('bad id')
-    q=current_qa(eid,qa_path); cat=read(ROOT/'catalog'/(eid+'.json'));motion=read(ROOT/'motion/specs'/(eid+'.json'))
+    q=current_qa(eid,qa_path,model); cat=read(ROOT/'catalog'/(eid+'.json'));motion=read(ROOT/'motion/specs'/(eid+'.json'))
     names=[v['name'] if isinstance(v,dict) else v for v in views]
     if len(names)!=len(dirs) or not names:raise ValueError('views and directories must correspond')
     all_names=[v['name'] if isinstance(v,dict) else v for v in motion['views']]
     if names!=all_names:raise ValueError('delivery requires every declared view in order')
     count=sum(motion['tempo'].values()); staged=Path(tempfile.mkdtemp(prefix=eid+'-',dir=ROOT/'review'))
+    relative=f'{eid}/{model}' if model else eid
     files={};metadata={}
     try:
         for view,directory in zip(names,dirs):
@@ -99,25 +108,27 @@ def export_delivery(eid,dirs,views,qa_path=None):
             from PIL import ImageChops,ImageStat
             delta=ImageStat.Stat(ImageChops.difference(first.convert('RGB'),last.convert('RGB')))
             if max(delta.mean)>1:raise ValueError(eid+': rendered first/last frame mismatch')
-            paths={'h264':f'loop_{view}.mp4','hevc':f'loop_{view}_hevc.mp4','poster':f'poster_{view}.webp'}
-            for kind,codec in [('h264','libx264'),('hevc','libx265')]:metadata[paths[kind]]=encode_frames(folder,staged/paths[kind],codec,count)
+            tag=f'{model}_' if model else ''
+            paths={'h264':f'{tag}loop_{view}.mp4','poster':f'{tag}poster_{view}.webp'}
+            for kind,codec in [('h264','libx264')]:metadata[paths[kind]]=encode_frames(folder,staged/paths[kind],codec,count)
             for quality in (86,78,68):
                 first.convert('RGB').save(staged/paths['poster'],'WEBP',quality=quality,method=6)
                 if (staged/paths['poster']).stat().st_size<=POSTER_BUDGET:break
             if (staged/paths['poster']).stat().st_size>POSTER_BUDGET:raise ValueError('poster over budget')
             metadata[paths['poster']]={'bytes':(staged/paths['poster']).stat().st_size,'sha256':digest(staged/paths['poster'])}
-            files[view]={k:f'{eid}/{v}' for k,v in paths.items()}
-        poster=Image.open(staged/f'poster_{names[0]}.webp')
+            files[view]={k:f'{relative}/{v}' for k,v in paths.items()}
+        poster=Image.open(staged/((f'{model}_' if model else '')+f'poster_{names[0]}.webp'))
         ImageOps.pad(poster,(320,320),color='#FFFFFF').save(staged/'thumb.webp','WEBP',quality=82,method=6)
         entry={k:cat[k] for k in ('id','name','primary','secondary','equipment')}
-        entry.update(views=names,files=files,thumb=f'{eid}/thumb.webp',duration=count/30,approved=bool(motion.get('approved') and cat.get('reviewed')),
+        entry.update(views=names,files=files,thumb=f'{relative}/thumb.webp',duration=count/30,approved=bool(motion.get('approved') and cat.get('reviewed')),
                      qa=q,media=metadata,spec_sha256=spec_digest(eid),pipeline_sha256=pipeline_digest())
+        if model:entry['model']=model
         from core.approvals import is_approved
         entry['approved']=is_approved(eid,entry,ROOT)
         (staged/'asset.json').write_text(json.dumps(entry,indent=2)+'\n')
-        destination=ROOT/'dist'/eid;destination.parent.mkdir(exist_ok=True)
+        destination=asset_folder(eid,model);destination.parent.mkdir(exist_ok=True)
         # Replace this exercise only after all outputs pass validation.
-        old=destination.with_name('.'+eid+'-old')
+        old=destination.with_name('.'+destination.name+'-old')
         if old.exists():shutil.rmtree(old)
         if destination.exists():destination.rename(old)
         staged.rename(destination)
@@ -138,7 +149,7 @@ def _rebuild_manifest():
     from core.package_notices import package_notices
     package_notices()
     entries=[];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
-    for p in sorted(dist.glob('*/asset.json')):
+    for p in sorted([*dist.glob('*/asset.json'),*dist.glob('*/*/asset.json')]):
         e=read(p);eid=e['id']
         if e.get('spec_sha256')!=spec_digest(eid) or e.get('pipeline_sha256')!=pipeline_digest():continue
         if e.get('qa',{}).get('pass') is not True:continue
@@ -155,4 +166,4 @@ if __name__=='__main__':
     import sys
     if len(sys.argv)==2 and sys.argv[1]=='manifest':rebuild_manifest()
     else:
-        eid=sys.argv[1];payload=read(sys.argv[2]);export_delivery(eid,payload['dirs'],payload['views'])
+        eid=sys.argv[1];payload=read(sys.argv[2]);export_delivery(eid,payload['dirs'],payload['views'],model=payload.get('model'))

@@ -108,12 +108,12 @@ def fit_delivery_cameras(scene,cams,objects,frames,margin=1.12):
     scene.frame_set(1)
 
 
-def export_delivery(eid,dirs,views,qa_path=None):
+def export_delivery(eid,dirs,views,qa_path=None,model=None):
     """Plain-Python encoder hook; invoke after full render and successful QA."""
     import json,tempfile
     from . import ROOT
     with tempfile.NamedTemporaryFile('w',suffix='.json',dir=OUT,delete=False) as f:
-        json.dump({'dirs':dirs,'views':views},f);path=f.name
+        json.dump({'dirs':dirs,'views':views,'model':model},f);path=f.name
     try:
         subprocess.run(['/usr/bin/env','python3',ROOT+'core/delivery.py',eid,path],check=True)
     finally:os.unlink(path)

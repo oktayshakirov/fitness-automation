@@ -90,6 +90,7 @@ def main(argv=None):
         p = commands.add_parser(command)
         p.add_argument('ids', nargs='+', type=exercise_id)
     p = commands.add_parser('approve')
+    p.add_argument('--model',choices=('male','female'),required=True)
     p.add_argument('ids', nargs='*', type=exercise_id)
     p.add_argument('--all', action='store_true')
     p.add_argument('--reviewed', action='store_true', help='Explicit human review of the current versions')
@@ -111,7 +112,7 @@ def main(argv=None):
             entries = []
             for eid in ids() if args.all else args.ids:
                 validate(eid)
-                entry = delivery.read(ROOT / 'dist' / eid / 'asset.json')
+                entry = delivery.read(ROOT / 'dist' / eid / args.model / 'asset.json')
                 delivery.current_asset(eid, entry)
                 entries.append((eid, entry))
             for eid, entry in entries:
