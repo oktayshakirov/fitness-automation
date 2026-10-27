@@ -1011,3 +1011,12 @@ contract in plan.md wants 720×900.
   close-ups regenerated. Frames and backups removed; 50 GiB free. Shoes are
   appearance-approved only; no exercise delivery approval or publication.
   Await final watch/overall appearance review before remaining deliveries.
+
+- **2026-10-27 (appearance revision 18, awaiting watch review):** user requested
+  further rotation after revision 17. Doubled that signed adjustment again,
+  adding up to 20 degrees in the same direction. Refit the thin strap to skin;
+  rounded black screen and appearance-approved shoes remain unchanged.
+  Review: http://127.0.0.1:8765/review/look_v18/index.html includes wrist close-ups
+  and fresh exercise previews/video. All four full QA runs pass with matching
+  source/spec/scene hashes. Frames and backups removed; 50 GiB free. No delivery
+  approvals, publication or full-library rerender; await watch/appearance review.
