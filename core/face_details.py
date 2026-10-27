@@ -70,7 +70,7 @@ def ponytail_band(hair,rig):
     points=[ev.matrix_world@v.co for v in ev.data.vertices]
     top=max(p.z for p in points)
     # Simple elastic around the high ponytail root.
-    centre=Vector((0,.070,top-.080))
+    centre=Vector((0,.059,top-.065))
     mat=material('Ponytail elastic',(.13,.14,.15),.9)
-    pts=[centre+Vector((.019*math.cos(i*2*math.pi/48),.014*math.sin(i*2*math.pi/48),.003*math.sin(i*2*math.pi/48))) for i in range(49)]
+    pts=[centre+Vector((.017*math.cos(i*2*math.pi/48),.012*math.sin(i*2*math.pi/48),.003*math.sin(i*2*math.pi/48))) for i in range(49)]
     strand('Ponytail elastic band',pts,.0025,mat,root,False)
