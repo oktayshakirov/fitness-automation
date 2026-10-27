@@ -29,6 +29,7 @@ def validate_model(scene, body):
     assert len([o for o in scene.objects if o.name.startswith('Eyebrow ')]) == 2, 'Missing eyebrows'
     assert len([o for o in scene.objects if o.name.startswith('Upper lashes ')]) == 2, 'Missing lashes'
     if model == 'female':assert scene.objects.get('Ponytail elastic band'), 'Missing ponytail band'
+    assert len([o for o in scene.objects if o.get('nail_polish')]) == (10 if model=='female' else 0), 'Wrong nail polish count'
     hair = [o for o in scene.objects if o.type == 'MESH' and o.get('hair')]
     assert len(hair) == 1 and hair[0]['hair_style'] == STYLES[model], 'Wrong fitted hair'
     assert hair[0].data.uv_layers.active, 'Missing hair texture UVs'

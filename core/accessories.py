@@ -49,7 +49,7 @@ def add_eyes(rig, gender=1.0):
         world=eye.matrix_world.copy();eye.parent=root;eye.matrix_world=world
 
 
-def add_watch(rig, body):
+def add_watch(rig, body, model):
     from mathutils import Vector
     wrist=rig.data.bones['wrist.L']
     index=rig.data.bones['finger2-1.L'].head_local
@@ -68,7 +68,7 @@ def add_watch(rig, body):
     z=-dorsal;y=(y-z*y.dot(z)).normalized();x=y.cross(z).normalized();y=z.cross(x).normalized()
     fitted=Matrix((x,y,z)).transposed().to_4x4()
     target=fitted.to_3x3().inverted() @ (-wrist.matrix_local.to_3x3().col[2])
-    turn=4*max(-math.radians(10),min(math.radians(10),math.atan2(-target.x,-target.z)))
+    turn=(6 if model=='male' else 4)*max(-math.radians(10),min(math.radians(10),math.atan2(-target.x,-target.z)))
     fitted=fitted @ Matrix.Rotation(turn,4,'Y')
     fitted.translation=wrist.head_local-y*.018
     attachment=anchor(rig,'wrist.L','Watch follows wrist')
@@ -190,3 +190,42 @@ def add_shoes(rig, body):
             s=curve.splines.new('POLY');s.points.add(2)
             for p,co in zip(s.points,((x-.020,y,.011+h*.90+.003),(x,y-.004,.011+h+.004),(x+.020,y+.008,.011+h*.90+.003))):p.co=(*co,1)
             o=bpy.data.objects.new('Trainer lace '+side+str(j),curve);bpy.context.collection.objects.link(o);o.parent=root;o.matrix_parent_inverse=root.matrix_world.inverted();o.data.materials.append(lace);o['shoe']=True
+
+
+def add_nail_polish(body,rig):
+    """Short nail plates projected onto distal fingers, attached to each digit."""
+    from mathutils import Vector
+    from mathutils.bvhtree import BVHTree
+    bpy.context.view_layer.update();ev=body.evaluated_get(bpy.context.evaluated_depsgraph_get());me=ev.to_mesh()
+    tree=BVHTree.FromPolygons([body.matrix_world@v.co for v in me.vertices],[list(p.vertices) for p in me.polygons]);ev.to_mesh_clear()
+    polish=material('Muted rose nail polish',(.32,.065,.10),.24)
+    for side in ('L','R'):
+        wrist=rig.data.bones['wrist.'+side]
+        mid=rig.data.bones['finger3-1.'+side].head_local
+        hit,normal,_,_=tree.ray_cast((wrist.head_local+mid)/2,Vector((0,-1,0)),.10)
+        assert hit is not None
+        hand_normal=normal.normalized()
+        if hand_normal.y>0:hand_normal.negate()
+        for finger in range(1,6):
+            name=f'finger{finger}-3.{side}';bone=rig.data.bones[name]
+            along=(bone.tail_local-bone.head_local).normalized()
+            out=(hand_normal-along*hand_normal.dot(along)).normalized()
+            across=along.cross(out).normalized()
+            centre=bone.head_local.lerp(bone.tail_local,.60)
+            length=min(.0045,bone.length*.25);width=.0026 if finger<5 else .0021
+            verts=[];faces=[]
+            for ring in range(5):
+                for i in range(32):
+                    a=2*math.pi*i/32;r=max(.001,ring/4)
+                    offset=(across*(width*math.cos(a))+along*(length*math.sin(a)))*r
+                    origin=centre+offset
+                    hit,n,_,_=tree.ray_cast(origin+out*.025,-out,.05)
+                    assert hit is not None, 'Nail projection missed finger'
+                    verts.append(hit+n*.00065)
+                    if ring:
+                        faces.append(((ring-1)*32+i,(ring-1)*32+(i+1)%32,ring*32+(i+1)%32,ring*32+i))
+            mesh=bpy.data.meshes.new('Nail plate');mesh.from_pydata(verts,[],faces);mesh.update()
+            o=bpy.data.objects.new('Rose nail '+name,mesh);bpy.context.collection.objects.link(o)
+            root=anchor(rig,name,'Nail follows '+name);o.parent=root;o.matrix_parent_inverse=root.matrix_world.inverted()
+            o.data.materials.append(polish);o['nail_polish']=True
+            for p in mesh.polygons:p.use_smooth=True

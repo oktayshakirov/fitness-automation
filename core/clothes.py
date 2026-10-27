@@ -185,8 +185,11 @@ def add_clothing(body, rig, model, primary=(), secondary=()):
                                (shoulder-.225, shoulder+.10), top=True, shoulder=shoulder))
     _hide_covered_skin(body, hip, knee, shoulder, model)
     from core.accessories import add_watch, add_shoes
-    add_watch(rig, body)
+    add_watch(rig, body, model)
     add_shoes(rig, body)
+    if model == 'female':
+        from core.accessories import add_nail_polish
+        add_nail_polish(body, rig)
     return garments
 
 
