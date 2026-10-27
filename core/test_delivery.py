@@ -38,6 +38,17 @@ class ApprovalTests(unittest.TestCase):
   self.assertFalse(json.loads((self.root/'catalog/demo.json').read_text())['reviewed'])
  def test_stale_qa_blocks_approval(self):
   with patch.object(review_server,'current_asset',side_effect=ValueError('stale QA')):self.assertEqual(self.post(),400)
+ def test_http_approval_is_scoped_to_selected_model(self):
+  entry={'spec_sha256':'s','pipeline_sha256':'p','qa':{'blend_sha256':'b'}}
+  for model in ('male','female'):
+   (self.root/'dist/demo'/model).mkdir()
+   self.write(f'dist/demo/{model}/asset.json',{**entry,'model':model})
+  self.assertEqual(self.post(model='male'),200)
+  male=json.loads((self.root/'approvals/demo_male.json').read_text())
+  self.assertTrue(male['approved'])
+  self.assertFalse((self.root/'approvals/demo_female.json').exists())
+  self.assertEqual(self.post(),400)
+
  def test_cannot_serve_source_or_traverse(self):
   for path in ('/core/review_server.py','/../catalog/demo.json'):
    with self.assertRaises(urllib.error.HTTPError):urllib.request.urlopen(self.url+path)

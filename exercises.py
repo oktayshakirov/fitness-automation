@@ -103,6 +103,9 @@ def main(argv=None):
                 print(path.relative_to(ROOT))
             print('Draft created. Replace TODOs and check inherited muscles, equipment and motion parameters.')
         elif args.command == 'revise':
+            for model in ('male','female'):
+                asset=ROOT/'dist'/args.id/model/'asset.json'
+                if asset.exists():record_review(args.id,False,delivery.read(asset),args.note,ROOT)
             record_review(args.id, False, None, args.note, ROOT)
             delivery.rebuild_manifest()
             print(args.id + ': reopened for changes; approval revoked')
@@ -138,13 +141,14 @@ def main(argv=None):
                     validate(eid)
                     print(eid + ': valid')
                     continue
-                try:
-                    entry = delivery.read(ROOT / 'dist' / eid / 'asset.json')
-                    delivery.current_asset(eid, entry)
-                    state = 'APPROVED' if is_approved(eid, entry, ROOT) else 'NEEDS REVIEW'
-                except (OSError, ValueError, KeyError) as exc:
-                    state = 'NEEDS BUILD: ' + str(exc)
-                print(eid + ': ' + state)
+                for model in ('male','female'):
+                    try:
+                        entry = delivery.read(ROOT/'dist'/eid/model/'asset.json')
+                        delivery.current_asset(eid,entry)
+                        state='APPROVED' if is_approved(eid,entry,ROOT) else 'NEEDS REVIEW'
+                    except (OSError,ValueError,KeyError) as exc:
+                        state='NEEDS BUILD: '+str(exc)
+                    print(eid+' '+model+': '+state)
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as exc:
         parser.exit(1, str(exc) + '\n')
     return 0
