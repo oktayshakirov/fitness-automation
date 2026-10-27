@@ -193,39 +193,21 @@ def add_shoes(rig, body):
 
 
 def add_nail_polish(body,rig):
-    """Short nail plates projected onto distal fingers, attached to each digit."""
-    from mathutils import Vector
-    from mathutils.bvhtree import BVHTree
-    bpy.context.view_layer.update();ev=body.evaluated_get(bpy.context.evaluated_depsgraph_get());me=ev.to_mesh()
-    tree=BVHTree.FromPolygons([body.matrix_world@v.co for v in me.vertices],[list(p.vertices) for p in me.polygons]);ev.to_mesh_clear()
-    polish=material('Muted rose nail polish',(.32,.065,.10),.24)
-    for side in ('L','R'):
-        wrist=rig.data.bones['wrist.'+side]
-        mid=rig.data.bones['finger3-1.'+side].head_local
-        hit,normal,_,_=tree.ray_cast((wrist.head_local+mid)/2,Vector((0,-1,0)),.10)
-        assert hit is not None
-        hand_normal=normal.normalized()
-        if hand_normal.y>0:hand_normal.negate()
-        for finger in range(1,6):
-            name=f'finger{finger}-3.{side}';bone=rig.data.bones[name]
-            along=(bone.tail_local-bone.head_local).normalized()
-            out=(hand_normal-along*hand_normal.dot(along)).normalized()
-            across=along.cross(out).normalized()
-            centre=bone.head_local.lerp(bone.tail_local,.60)
-            length=min(.0045,bone.length*.25);width=.0026 if finger<5 else .0021
-            verts=[];faces=[]
-            for ring in range(5):
-                for i in range(32):
-                    a=2*math.pi*i/32;r=max(.001,ring/4)
-                    offset=(across*(width*math.cos(a))+along*(length*math.sin(a)))*r
-                    origin=centre+offset
-                    hit,n,_,_=tree.ray_cast(origin+out*.025,-out,.05)
-                    assert hit is not None, 'Nail projection missed finger'
-                    verts.append(hit+n*.00065)
-                    if ring:
-                        faces.append(((ring-1)*32+i,(ring-1)*32+(i+1)%32,ring*32+(i+1)%32,ring*32+i))
-            mesh=bpy.data.meshes.new('Nail plate');mesh.from_pydata(verts,[],faces);mesh.update()
-            o=bpy.data.objects.new('Rose nail '+name,mesh);bpy.context.collection.objects.link(o)
-            root=anchor(rig,name,'Nail follows '+name);o.parent=root;o.matrix_parent_inverse=root.matrix_world.inverted()
-            o.data.materials.append(polish);o['nail_polish']=True
-            for p in mesh.polygons:p.use_smooth=True
+    """Coat the authored nail beds through their exact basemesh UV mask."""
+    from pathlib import Path
+    path=Path(__file__).resolve().parents[1]/'assets/maps/fingernails.png'
+    image=bpy.data.images.load(str(path),check_existing=True)
+    image.colorspace_settings.name='Non-Color'
+    for mat in body.data.materials:
+        nt=mat.node_tree;bsdf=nt.nodes.get('Principled BSDF')
+        if bsdf is None:continue
+        mask=nt.nodes.new('ShaderNodeTexImage');mask.name='Fingernail coverage';mask.image=image
+        nail=nt.nodes.new('ShaderNodeBsdfPrincipled');nail.name='Black nail polish'
+        nail.inputs['Base Color'].default_value=(.004,.004,.004,1)
+        nail.inputs['Roughness'].default_value=.25
+        nail.inputs['Coat Weight'].default_value=.25
+        mix=nt.nodes.new('ShaderNodeMixShader')
+        nt.links.new(mask.outputs['Color'],mix.inputs[0])
+        nt.links.new(bsdf.outputs[0],mix.inputs[1]);nt.links.new(nail.outputs[0],mix.inputs[2])
+        nt.links.new(mix.outputs[0],nt.nodes.get('Material Output').inputs['Surface'])
+    body['nail_polish']='black_uv'
