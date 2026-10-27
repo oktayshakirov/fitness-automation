@@ -1071,3 +1071,13 @@ contract in plan.md wants 720×900.
   and approval records, H.264-only export, then render the library for renewed
   per-exercise/model human approval. Remaining body assets/heroes/icons/publisher
   follow the approved appearance; unrendered production content is not approved.
+
+- **2026-10-27 (focused hair revision 23):** user supplied a higher root-wrap
+  reference. Changed elastic from a near-horizontal loop across the tail into an
+  upright, slightly tilted loop around the gathered root, fitted closer to the
+  head. Side/back/three-quarter/front renders inspected. Focused review:
+  http://127.0.0.1:8765/review/look_v23/index.html. To reduce repeated work during
+  appearance iteration, only head studies were rendered; exercise QA receipts
+  from v22 are now stale after the source change and are not represented as current.
+  Production renders still require fresh QA and per-model human approval. V21
+  approval evidence remains preserved; no publishing or production batch started.
