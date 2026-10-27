@@ -1133,3 +1133,35 @@ contract in plan.md wants 720×900.
   fail again. Preserve the 35 validated exports. Correct failing scenes/specs
   before resuming; account for source fingerprint invalidation if changing shared
   pipeline code. Disk remains 49 GiB free. User informed of actual failure cause.
+
+- **2026-10-27 (repair work completed; full production refresh resumed):** user
+  said continue and asked if input was needed. No user input is required during
+  technical repair. Original 25 failures now have passing complete motion and
+  clothing/model QA outcomes recorded in review/repair_preflight_history.json
+  (historical signatures retained; only current hashes may export). No QA
+  tolerance or exclusion was relaxed. Fixes: shoe forefeet deform with toes;
+  fabric gets a final outward projection after smoothing and realistic 0.8 mm
+  thickness; high-contact bridge/swing/row tops refine one extra level; bridge
+  head contact uses the actual model's head height; supported arms clear the
+  torso. Reach/handle targets account for shoulder frame, arm reach and abdomen
+  height; pulldown equipment matches hand spacing; curls clear the thighs;
+  swing elbows bend laterally instead of into the top. Male established reach
+  targets are preserved where already correct. Inspected plank, curl, bench
+  and swing stills. Corrected swing female cached-scene H.264 export verified
+  current (3 views), with frames removed. All 17 regression tests pass.
+
+  Added core/preflight.py (two-process QA-only checks) and core/render_saved.py
+  (render only a scene with current complete QA; hashed by pipeline_digest).
+  Batch reuses these validated scenes, avoiding duplicate pose builds. Shared
+  code changes invalidate the previous 35 outputs; old files/approval history
+  are preserved, but all 60 outputs need current QA/render fingerprints again.
+
+  **ACTIVE:** runner PID 66933, review server PID 66932, caffeinate PID 66934
+  inhibits idle sleep only while the runner is alive. Batch order starts swing,
+  bridge, row, bench press, overhead press, squat and plank, then the remaining
+  catalog. Review http://127.0.0.1:8765/review/index.html; monitor run_status.json,
+  mvp_batch.log and batch/report.json. Keep fingerprinted source frozen during
+  rendering. Disk ~48 GiB free; automatic frame cleanup/disk gate remain enabled.
+  Source commits: 4a73bc0, 3e7a21d, bb9468c, d525fe6, 8217405. No production
+  approvals granted or content published. Next user action is human review of
+  refreshed loops, then remaining body assets/heroes/icons/publish envelope.
