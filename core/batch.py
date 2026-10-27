@@ -19,7 +19,11 @@ def main():
         prefix=f'{eid}_{model}';asset=ROOT/'dist'/eid/model/'asset.json';started=time.time();reused=False
         try:
             if asset.exists():
-                current_asset(eid,read(asset));reused=True
+                try:
+                    current_asset(eid,read(asset));reused=True
+                except (OSError,ValueError,KeyError):
+                    pass  # A stale export needs rebuilding, not a failed job.
+
             if not reused:
                 if shutil.disk_usage(ROOT).free<8*1024**3:raise ValueError('Less than 8 GiB free; render stopped')
                 try:

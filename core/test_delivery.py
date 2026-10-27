@@ -110,4 +110,35 @@ class ExportGateTests(unittest.TestCase):
   with patch.object(delivery,'current_qa',return_value={'pipeline_sha256':'p','blend_sha256':'new'}),patch.object(delivery,'spec_digest',return_value='s'):
    with self.assertRaisesRegex(ValueError,'scene is stale'):delivery.current_asset('demo',entry)
 
+class ResumeTests(unittest.TestCase):
+ def test_stale_export_rebuilds_instead_of_failing_job(self):
+  from core import batch
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t);(root/'catalog').mkdir();(root/'catalog/demo.json').write_text('{}')
+   (root/'review').mkdir();folder=root/'dist/demo/male';folder.mkdir(parents=True)
+   (folder/'asset.json').write_text(json.dumps({'views':[]}))
+   with patch.object(batch,'ROOT',root),patch.object(sys,'argv',['batch','demo','--models','male']),patch.object(batch,'current_asset',side_effect=[ValueError('stale'),{}]),patch.object(batch,'current_qa',side_effect=ValueError('stale')),patch.object(batch,'rebuild_manifest'),patch.object(batch.subprocess,'run') as run:
+    self.assertEqual(batch.main(),0)
+    self.assertIn('--delivery',run.call_args.args[0])
+    self.assertEqual(json.loads((root/'review/batch/report.json').read_text())[0]['status'],'PASS')
+
+ def test_current_scene_renders_without_rebuilding_pose(self):
+  from core import batch
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t);(root/'catalog').mkdir();(root/'catalog/demo.json').write_text('{}')
+   (root/'review').mkdir();folder=root/'dist/demo/female';folder.mkdir(parents=True)
+   (folder/'asset.json').write_text(json.dumps({'views':[]}))
+   with patch.object(batch,'ROOT',root),patch.object(sys,'argv',['batch','demo','--models','female']),patch.object(batch,'current_asset',side_effect=[ValueError('stale'),{}]),patch.object(batch,'current_qa',return_value={}),patch.object(batch,'rebuild_manifest'),patch.object(batch.subprocess,'run') as run:
+    self.assertEqual(batch.main(),0)
+    self.assertTrue(run.call_args.args[0][1].endswith('core/render_saved.py'))
+
+ def test_current_export_is_reused_without_rendering(self):
+  from core import batch
+  with tempfile.TemporaryDirectory() as t:
+   root=Path(t);(root/'catalog').mkdir();(root/'catalog/demo.json').write_text('{}')
+   (root/'review').mkdir();folder=root/'dist/demo/male';folder.mkdir(parents=True)
+   (folder/'asset.json').write_text(json.dumps({'views':[]}))
+   with patch.object(batch,'ROOT',root),patch.object(sys,'argv',['batch','demo','--models','male']),patch.object(batch,'current_asset',return_value={}),patch.object(batch,'rebuild_manifest'),patch.object(batch.subprocess,'run') as run:
+    self.assertEqual(batch.main(),0);run.assert_not_called()
+
 if __name__=='__main__':unittest.main()
