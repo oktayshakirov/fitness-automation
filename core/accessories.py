@@ -162,7 +162,19 @@ def add_shoes(rig, body):
         def meshpart(name,verts,faces,mat):
             me=bpy.data.meshes.new(name);me.from_pydata(verts,[],faces);me.update()
             o=bpy.data.objects.new(name,me);bpy.context.collection.objects.link(o)
-            o.parent=root;o.matrix_parent_inverse=root.matrix_world.inverted()
+            # Forefoot flexes at the metatarsal joint with the model's toes.
+            # Rest shape is unchanged; floor exercises must not drive a rigid
+            # toe box through the ground when the heel lifts.
+            o.parent=rig
+            foot_group=o.vertex_groups.new(name='foot.'+side)
+            toe_group=o.vertex_groups.new(name='toe3-1.'+side)
+            ball=rig.data.bones['toe3-1.'+side].head_local.y
+            for vertex in me.vertices:
+                t=max(0.,min(1.,(ball+.022-vertex.co.y)/.044))
+                t=t*t*(3-2*t)
+                foot_group.add([vertex.index],1-t,'REPLACE')
+                toe_group.add([vertex.index],t,'REPLACE')
+            deform=o.modifiers.new('Forefoot flex','ARMATURE');deform.object=rig
             o.data.materials.append(mat);o['shoe']=True
             for f in me.polygons:f.use_smooth=True
             return o
