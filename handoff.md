@@ -941,3 +941,26 @@ contract in plan.md wants 720×900.
   current source/spec/scene hashes. Thirteen regression tests pass. Frames
   and blend backups removed; 49 GiB free. No approvals or publication and no
   full-library rerender. Continue remaining deliveries after appearance approval.
+
+- **2026-10-27 (appearance revision 13, awaiting human review):** resumed after
+  the previous automatic permission review could not run due to the usage limit;
+  that rejected command had made no changes. Successfully applied the work now.
+  Watch straps are closed 1.2 mm shells fitted by rays to each wrist's skin,
+  with 0.7 mm clearance and a 4 mm case. Screen orientation uses dorsal hand
+  surface direction and finger direction, independent of bone roll.
+
+  Added original simple projected brows and upper lashes, feathered male beard
+  shading, and a small female ponytail elastic in core/face_details.py. All follow
+  the existing rig. Athletic macro muscle .95 / weight .40 plus slightly stronger
+  anatomy relief replace .80/.45. Shoes have shorter toe/heel allowances, reduced
+  width, mesh texture, reinforced toe/heel panels and angled laces. No new external
+  assets or reference image pixels were used; existing attribution remains.
+
+  Review: http://127.0.0.1:8765/review/look_v13/index.html with face, wrist, shoe
+  and torso close-ups, updated two-exercise sheet and H.264 squat sample. All four
+  previews pass full 72-frame motion, garment, model, accessory and floor checks;
+  eight receipts match current source/spec/scene hashes. Thirteen regression tests
+  pass. A first batch was superseded after correcting the elastic angle; the final
+  entire batch uses frozen source and passes strict review validation. Frames and
+  blend backups removed; 47 GiB free. No approvals, publication or full-library
+  rerender. Await visual approval before original remaining delivery tasks.

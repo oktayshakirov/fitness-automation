@@ -8,7 +8,7 @@ from core.hair import add_hair
 from core.clothes import add_clothing
 from core.look import muscle_material
 from core.studio import studio,camera
-OUT=ROOT/'review/look_v12';OUT.mkdir(exist_ok=True)
+OUT=ROOT/'review/look_v13';OUT.mkdir(exist_ok=True)
 checks=[]
 models=os.environ.get('STUDY_MODELS','male,female').split(',')
 assert set(models) <= {'male','female'}
