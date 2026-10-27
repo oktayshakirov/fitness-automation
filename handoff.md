@@ -1058,3 +1058,16 @@ contract in plan.md wants 720×900.
   All 13 tests pass; fresh white H.264 sample included. Frames and backups
   removed, 49 GiB free. No publication or exercise approvals. Await human review
   before full-library rendering and remaining production deliveries.
+
+- **2026-10-27 (appearance revision 22, ponytail root adjustment):** user approved
+  v21 content/look, then requested the elastic move to the start of the ponytail
+  before production. Approval evidence saved in approvals/appearance_v21.json.
+  Band moved 15 mm higher and 11 mm toward the head; ellipse reduced to fit the
+  gathered root. Side/back close-ups inspected. Review:
+  http://127.0.0.1:8765/review/look_v22/index.html. All four full exercise QA runs
+  pass; eight receipts match current hashes. Fresh white H.264 sample included.
+  Frames and backups removed; 49 GiB free. No production batch started during
+  this final adjustment. Next: enable female/model-specific production delivery
+  and approval records, H.264-only export, then render the library for renewed
+  per-exercise/model human approval. Remaining body assets/heroes/icons/publisher
+  follow the approved appearance; unrendered production content is not approved.
