@@ -96,14 +96,14 @@ def muscle_material(primary=(), secondary=(), name="body", use_normal=True,
         texture.image = bpy.data.images.load(height_path, check_existing=True)
         texture.image.colorspace_settings.name = "Non-Color"
         bump = nt.nodes.new("ShaderNodeBump")
-        bump.inputs["Strength"].default_value = .5
+        bump.inputs["Strength"].default_value = .65
         bump.inputs["Distance"].default_value = .004
         nt.links.new(texture.outputs["Color"], bump.inputs["Height"])
         nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
         # Low-contrast muscle belly shading stays readable at phone resolution.
         # It changes colour only: no alpha holes, floating layer or displaced mesh.
         anatomy = math_node("MINIMUM", math_node("MULTIPLY", combined(g for g in GROUPS if g != "neck"), 10.), 1.)
-        modulation = math_node("MULTIPLY", math_node("SUBTRACT", texture.outputs["Color"], .5), .12)
+        modulation = math_node("MULTIPLY", math_node("SUBTRACT", texture.outputs["Color"], .5), .22)
         shade = math_node("ADD", 1., math_node("MULTIPLY", anatomy, modulation))
         tint = nt.nodes.new("ShaderNodeMixRGB")
         tint.blend_type = "MULTIPLY"
@@ -111,6 +111,12 @@ def muscle_material(primary=(), secondary=(), name="body", use_normal=True,
         nt.links.new(colour.outputs[0], tint.inputs[1])
         nt.links.new(shade, tint.inputs[2])
         nt.links.new(tint.outputs[0], bsdf.inputs["Base Color"])
+    if use_normal:
+        attr=nt.nodes.new('ShaderNodeAttribute');attr.attribute_name='beard_shade'
+        source=bsdf.inputs['Base Color'].links[0].from_socket
+        beard=nt.nodes.new('ShaderNodeMixRGB');beard.inputs[2].default_value=(.035,.040,.045,1)
+        nt.links.new(attr.outputs['Fac'],beard.inputs[0]);nt.links.new(source,beard.inputs[1])
+        nt.links.new(beard.outputs[0],bsdf.inputs['Base Color'])
     return m
 
 

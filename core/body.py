@@ -9,7 +9,7 @@ def update():
     bpy.context.view_layer.update()
 
 
-def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press_proportions=False, preserve_volume=True):
+def make_human(gender=1.0, muscle=0.95, weight=0.40, shoulder_smooth=False, press_proportions=False, preserve_volume=True):
     """MPFB body + default 163-bone rig at the origin, facing -Y, feet on z=0.
     Rig object at identity, so armature space = world space."""
     from bl_ext.user_default.mpfb.services.humanservice import HumanService
@@ -116,6 +116,8 @@ def make_human(gender=1.0, muscle=0.8, weight=0.45, shoulder_smooth=False, press
     update()
     from core.accessories import add_eyes
     add_eyes(rig)
+    from core.face_details import add_face_details
+    add_face_details(body, rig, gender)
     return body, rig
 
 

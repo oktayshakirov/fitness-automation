@@ -11,6 +11,7 @@ def validate_model(scene, body):
     expected_cup, expected_firmness = (.89, .55) if model == 'female' else (.5, .5)
     assert abs(macro['cupsize']-expected_cup) < 1e-6, 'Wrong bust volume macro'
     assert abs(macro['firmness']-expected_firmness) < 1e-6, 'Wrong bust firmness macro'
+    assert abs(macro['muscle']-.95)<1e-6 and abs(macro['weight']-.40)<1e-6, 'Wrong athletic build'
     correction = TargetService.get_target_value(body, 'torso-muscle-pectoral-decr')
     assert correction == (1. if model == 'male' else 0.), 'Wrong pectoral correction'
     for detail, expected in (('breast-dist-decr', .45), ('breast-trans-up', .12), ('breast-point-decr', .85), ('nipple-point-decr', 1.0), ('breast-volume-vert-down', .10)):
@@ -24,7 +25,10 @@ def validate_model(scene, body):
     assert len([o for o in scene.objects if o.get('shoe')]) == 12, 'Missing shoes'
     assert scene.objects['Smartwatch screen'].location.z < 0, 'Watch display on palm side'
     assert scene.objects['Watch follows wrist'].constraints[0].subtarget == 'wrist.L', 'Watch must follow hand orientation'
-    assert scene.objects['Watch aligned to hand plane'].matrix_basis.to_quaternion().angle < .0002, 'Watch rotated relative to hand'
+    assert body.data.attributes.get('beard_shade'), 'Missing facial shading'
+    assert len([o for o in scene.objects if o.name.startswith('Eyebrow ')]) == 2, 'Missing eyebrows'
+    assert len([o for o in scene.objects if o.name.startswith('Upper lashes ')]) == 2, 'Missing lashes'
+    if model == 'female':assert scene.objects.get('Ponytail elastic band'), 'Missing ponytail band'
     hair = [o for o in scene.objects if o.type == 'MESH' and o.get('hair')]
     assert len(hair) == 1 and hair[0]['hair_style'] == STYLES[model], 'Wrong fitted hair'
     assert hair[0].data.uv_layers.active, 'Missing hair texture UVs'

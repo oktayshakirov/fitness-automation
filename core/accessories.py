@@ -47,12 +47,25 @@ def add_eyes(rig):
         world=eye.matrix_world.copy();eye.parent=root;eye.matrix_world=world
 
 
-def add_watch(rig):
+def add_watch(rig, body):
     from mathutils import Vector
     wrist=rig.data.bones['wrist.L']
-    # The wrist frame follows the back of the hand; forearm roll differs.
-    fitted=wrist.matrix_local.copy()
-    fitted.translation=wrist.head_local-fitted.to_3x3().col[1]*.020
+    index=rig.data.bones['finger2-1.L'].head_local
+    pinky=rig.data.bones['finger5-1.L'].head_local
+    y=((index+pinky)/2-wrist.head_local).normalized()
+    dorsal=(index-pinky).cross(y).normalized()
+    from mathutils.bvhtree import BVHTree
+    bpy.context.view_layer.update()
+    ev=body.evaluated_get(bpy.context.evaluated_depsgraph_get());me=ev.to_mesh()
+    handtree=BVHTree.FromPolygons([body.matrix_world@v.co for v in me.vertices],[list(p.vertices) for p in me.polygons]);ev.to_mesh_clear()
+    centre_hand=wrist.head_local+y*.035
+    hit,normal,_,_=handtree.ray_cast(centre_hand,Vector((0,-1,0)),.10)
+    assert hit is not None, 'Missing dorsal hand surface'
+    dorsal=normal.normalized()
+    if dorsal.y>0:dorsal.negate()
+    z=-dorsal;y=(y-z*y.dot(z)).normalized();x=y.cross(z).normalized();y=z.cross(x).normalized()
+    fitted=Matrix((x,y,z)).transposed().to_4x4()
+    fitted.translation=wrist.head_local-y*.018
     attachment=anchor(rig,'wrist.L','Watch follows wrist')
     root=bpy.data.objects.new('Watch aligned to hand plane',None)
     bpy.context.collection.objects.link(root);root.parent=attachment
@@ -61,14 +74,27 @@ def add_watch(rig):
     case=material('Watch graphite case',(.045,.055,.065),.28,.65)
     glass=material('Watch glass',(.008,.022,.030),.16,.15)
     centre=0.
+    from mathutils.bvhtree import BVHTree
+    bpy.context.view_layer.update()
+    evaluated=body.evaluated_get(bpy.context.evaluated_depsgraph_get());skin=evaluated.to_mesh()
+    tree=BVHTree.FromPolygons([fitted.inverted() @ (body.matrix_world @ v.co) for v in skin.vertices], [list(p.vertices) for p in skin.polygons])
+    evaluated.to_mesh_clear()
+    def radius(y,a):
+        hit,normal,face,distance=tree.ray_cast(Vector((0,y,0)),Vector((math.cos(a),0,math.sin(a))),.08)
+        assert hit is not None, 'Cannot fit wrist strap'
+        return distance
     verts=[];faces=[]
-    for y,scale in ((centre-.011,1),(centre+.011,1),(centre-.011,1.10),(centre+.011,1.10)):
+    for y,offset in ((-.009,.0007),(.009,.0007),(-.009,.0019),(.009,.0019)):
         for i in range(64):
-            a=2*math.pi*i/64;verts.append((.027*scale*math.cos(a),y,.021*scale*math.sin(a)))
+            a=2*math.pi*i/64;r=radius(y,a)+offset
+            verts.append((r*math.cos(a),y,r*math.sin(a)))
     for j,k in ((0,1),(2,3),(0,2),(1,3)):
         for i in range(64):faces.append((j*64+i,j*64+(i+1)%64,k*64+(i+1)%64,k*64+i))
+    face_z=-radius(0,-math.pi/2)-.002
     mesh=bpy.data.meshes.new('Watch strap');mesh.from_pydata(verts,[],faces);mesh.update()
     o=bpy.data.objects.new('Smartwatch strap',mesh);bpy.context.collection.objects.link(o);o.parent=root;o.data.materials.append(band);o['smartwatch']=True
+    import bmesh
+    bm=bmesh.new();bm.from_mesh(mesh);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(mesh);bm.free()
     for f in mesh.polygons:f.use_smooth=True
     def box(name,loc,size,mat,bevel):
         bpy.ops.mesh.primitive_cube_add(size=1)
@@ -77,25 +103,29 @@ def add_watch(rig):
         o.data.materials.append(mat);o['smartwatch']=True
         b=o.modifiers.new('Rounded corners','BEVEL');b.width=bevel;b.segments=4
         o.modifiers.new('Weighted normals','WEIGHTED_NORMAL')
-    box('Smartwatch case',(0,centre,-.024),(.036,.042,.009),case,.005)
-    box('Smartwatch screen',(0,centre,-.029),(.029,.034,.002),glass,.004)
+    box('Smartwatch case',(0,centre,face_z-.002),(.032,.037,.004),case,.005)
+    box('Smartwatch screen',(0,centre,face_z-.0043),(.027,.032,.0008),glass,.004)
     accent=material('Watch display',(.05,.45,.30),.35)
-    box('Watch activity indicator',(0,centre,-.0302),(.018,.002,.0005),accent,.0005)
+    box('Watch activity indicator',(0,centre,face_z-.0048),(.018,.002,.0005),accent,.0005)
 
 
 def add_shoes(rig):
     """Low-profile trainers fitted to foot/toe landmarks, rigid to each foot."""
     from mathutils import Vector
     upper=material('Trainer charcoal mesh',(.022,.028,.035),.85)
+    nt=upper.node_tree;noise=nt.nodes.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=180
+    bump=nt.nodes.new('ShaderNodeBump');bump.inputs['Strength'].default_value=.22;bump.inputs['Distance'].default_value=.0007
+    nt.links.new(noise.outputs['Fac'],bump.inputs['Height']);nt.links.new(bump.outputs[0],nt.nodes['Principled BSDF'].inputs['Normal'])
     sole=material('Trainer grey rubber',(.16,.18,.20),.8)
+    panel=material('Trainer reinforced toe and heel',(.012,.017,.023),.6)
     lace=material('Trainer laces',(.32,.35,.38),.8)
     for side in ('L','R'):
         foot=rig.data.bones['foot.'+side]
         toes=[b for b in rig.data.bones if b.name.startswith('toe') and b.name.endswith('.'+side)]
         points=[p for b in toes for p in (b.head_local,b.tail_local)]
         x=(min(p.x for p in points)+max(p.x for p in points))/2
-        front=min(p.y for p in points)-.017;rear=foot.head_local.y+.060
-        width=(max(p.x for p in points)-min(p.x for p in points))/2+.018
+        front=min(p.y for p in points)-.014;rear=foot.head_local.y+.050
+        width=(max(p.x for p in points)-min(p.x for p in points))/2+.016
         root=anchor(rig,'foot.'+side,'Trainer follows foot '+side)
         def meshpart(name,verts,faces,mat):
             me=bpy.data.meshes.new(name);me.from_pydata(verts,[],faces);me.update()
@@ -121,6 +151,11 @@ def add_shoes(rig):
         faces.append(tuple(range(n-1,-1,-1)))
         faces.append(tuple((len(stations)-1)*n+i for i in range(n)))
         o=meshpart('Trainer upper '+side,verts,faces,upper)
+        o.data.materials.append(panel)
+        for face in o.data.polygons:
+            c=sum((o.data.vertices[i].co for i in face.vertices),Vector())/len(face.vertices)
+            t=(c.y-front)/(rear-front)
+            if t<.16 or t>.78:face.material_index=1
         m=o.modifiers.new('Soft textile surface','SUBSURF');m.levels=2
         m=o.modifiers.new('Upper thickness','SOLIDIFY');m.thickness=.002
         # Continuous rubber outsole, kept above the existing bare-foot floor datum.
@@ -136,5 +171,5 @@ def add_shoes(rig):
             y=front+(rear-front)*t;h=.045+(t-.38)/.20*.015
             curve=bpy.data.curves.new('Lace','CURVE');curve.dimensions='3D';curve.bevel_depth=.0016;curve.bevel_resolution=2
             s=curve.splines.new('POLY');s.points.add(2)
-            for p,co in zip(s.points,((x-.020,y,.011+h*.90+.003),(x,y-.004,.011+h+.004),(x+.020,y,.011+h*.90+.003))):p.co=(*co,1)
+            for p,co in zip(s.points,((x-.020,y,.011+h*.90+.003),(x,y-.004,.011+h+.004),(x+.020,y+.008,.011+h*.90+.003))):p.co=(*co,1)
             o=bpy.data.objects.new('Trainer lace '+side+str(j),curve);bpy.context.collection.objects.link(o);o.parent=root;o.matrix_parent_inverse=root.matrix_world.inverted();o.data.materials.append(lace);o['shoe']=True
