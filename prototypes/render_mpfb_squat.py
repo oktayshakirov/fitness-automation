@@ -4,7 +4,7 @@ Run with BLENDER_USER_RESOURCES=<repo>/.blender-profile so MPFB is found."""
 import bpy, math, sys, mathutils
 from mathutils import Vector, Matrix
 
-ROOT = "/Users/oktayshakirov/Coding/fitness-automation/"
+import os; ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "")
 BVH = ROOT + "assets/mocap/13_29.bvh"
 OUT = ROOT + "review/"
 SQUAT_RANGE = (3780, 4100)  # first clean rep (31.5 s .. 34 s at 120 fps)

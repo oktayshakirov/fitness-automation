@@ -6,7 +6,7 @@ toward its own toes, so knees can't cave in or cross. Torso hinges to ~40 deg
 with a neutral spine, chest up; arms rise forward as counterbalance.
 Loop: 72 frames at 30 fps."""
 import bpy, sys, math
-sys.path.insert(0, "/Users/oktayshakirov/Coding/fitness-automation")
+import os; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
 from mathutils import Vector
 from common import (OUT, new_scene, make_human, Poser, rot_x, rot_z, muscle_material, studio,
                     camera, render_views, stitch_video, contact_sheet, update)

@@ -1,7 +1,7 @@
 """Coverage check: all 17 baked muscle groups in distinct colours on the MPFB
 body, front + back + side, rest pose."""
 import bpy, sys, colorsys
-sys.path.insert(0, "/Users/oktayshakirov/Coding/fitness-automation")
+import os; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
 from common import (OUT, GROUPS, mask_slot, new_scene, make_human, load_masks, studio, camera,
                     contact_sheet)
 

@@ -1,5 +1,5 @@
 """Machine shells with a driven pivot/slider and root-local contact contract.
-Facing -Y; metres, degrees. Update accepts Agent A's pad/plate/handle contacts.
+Facing -Y; metres, degrees. Update accepts the motion layer's pad/plate/handle contacts.
 """
 import math,json
 import bpy
@@ -150,7 +150,7 @@ class Machine:
         if 'pad' in contacts and self.kind in ('leg_extension','leg_curl'):
             c=inv@Vector(contacts['pad'][0]); d=c-self.pivot.location
             self.moving.rotation_euler.x=math.atan2(d.y,-d.z)
-            # Agent A's shin contact may vary slightly; roller + arms follow its length.
+            # The motion's shin contact may vary slightly; roller + arms follow its length.
             length=max(.15,d.length)
             self.moving.scale.z=length/.38
         elif 'plate' in contacts and self.kind=='leg_press':

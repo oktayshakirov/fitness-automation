@@ -3,7 +3,7 @@ import bpy, math
 from mathutils import Vector
 from .look import flat_material
 
-# User-selected white fallback for H.264 (2026-10-26). Shader colours are linear.
+# White background for the H.264 fallback (2026-10-26). Shader colours are linear.
 BG_HEX = "#FFFFFF"
 BG_SRGB = (1., 1., 1.)
 BG = tuple(c / 12.92 if c <= .04045 else ((c + .055) / 1.055) ** 2.4

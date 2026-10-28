@@ -122,7 +122,7 @@ local preview names do not yet change the app's content envelope.
 
 Reviewing this sheet approves only the proposed appearance. Every rebuilt exercise
 and model still needs its full delivery QA and explicit human approval. Do not run
-the full library batch until the user has reviewed the two-exercise sheet.
+the full library batch until the two-exercise sheet has been reviewed.
 
 Garment checks (`qa/check_clothes.py`, run inside each saved Blender preview) verify
 copied UVs/rig groups and sample vertices and face centres over all 72 frames. Skin
@@ -158,7 +158,7 @@ MVP Requests section. No full-library render before the revised appearance revie
 
 ### Future catalog inspiration
 
-Use https://gymfaster.com/exercises as a user-requested reference for exercise
+Use https://gymfaster.com/exercises as a reference for exercise
 ideas and presentation. Its catalog does not identify the model source; do not
 assume it uses MPFB or grants reuse rights. Build our own motion specs and retain
 our existing asset licences; inspect any new external asset licence before use.

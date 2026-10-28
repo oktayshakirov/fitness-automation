@@ -1,12 +1,12 @@
 """Equipment test: triceps pushdown on the cable tower, or dumbbell curl.
-Usage: blender -b --python arm_exercises.py -- pushdown|curl
+Usage: blender -b --python prototypes/arm_exercises.py -- pushdown|curl
 
 Form rules baked into the solver: feet planted, elbows pinned at the sides
 (upper arm fixed), only the forearm travels, wrists neutral. Pushdown uses an
 overhand grip and a slight forward lean; curl uses an underhand grip, torso
 upright. Equipment is placed from the posed hands on every frame."""
 import bpy, sys, math
-sys.path.insert(0, "/Users/oktayshakirov/Coding/fitness-automation")
+import os; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
 from mathutils import Vector, Matrix, Quaternion
 from common import (OUT, new_scene, make_human, Poser, rot_x, rot_z, muscle_material, studio,
                     camera, render_views, stitch_video, contact_sheet, update)

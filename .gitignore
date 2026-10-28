@@ -14,3 +14,7 @@ dist/
 __pycache__/
 *.pyc
 .DS_Store
+# working notes: session handoff, plan, next steps (kept local)
+/handoff.md
+/plan.md
+/docs/NEXT_STEPS.md

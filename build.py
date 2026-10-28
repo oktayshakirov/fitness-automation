@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Build one exercise: merge catalog/<id>.json (Agent B: muscles, text) with
-motion/specs/<id>.json (Agent A: pattern, params, props, tempo, views), pose and key
+"""Build one exercise: merge catalog/<id>.json (muscles, text) with
+motion/specs/<id>.json (pattern, params, props, tempo, views), pose and key
 every frame, attach the props, render, then write the review video + contact sheet.
 
     ./build.py <id> [--quick] [--views side,front] [--frames 1,20,40] [--keep-frames]
@@ -153,7 +153,7 @@ if args.delivery:
     current_qa(args.id, model=args.model)
 
 if not args.no_render:
-    res = tuple(cam_cfg.get("res", (720, 1280)))      # review size; dist/ size is Agent B's
+    res = tuple(cam_cfg.get("res", (720, 1280)))      # review size; dist/ size is set by the delivery step
     if args.delivery or args.look_preview: res=(720,900)
     dirs = render_views(scene, cams, prefix, 1, N, res=res, frames=sheet if args.quick else None)
     contact_sheet(dirs, sheet, OUT + f"{prefix}_sheet.png")

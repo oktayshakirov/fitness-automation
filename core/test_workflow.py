@@ -32,7 +32,7 @@ class WorkflowTests(unittest.TestCase):
         (self.root / path).write_text(json.dumps(value))
 
     def test_approval_expires_for_changed_spec_pipeline_or_media(self):
-        record_review('demo', True, self.entry, 'Explicit user approval', self.root)
+        record_review('demo', True, self.entry, 'Explicit reviewer approval', self.root)
         self.assertTrue(is_approved('demo', self.entry, self.root))
         for key in ('spec_sha256', 'pipeline_sha256', 'media'):
             changed = copy.deepcopy(self.entry)

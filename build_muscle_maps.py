@@ -8,7 +8,7 @@
 
 Output: assets/maps/mask_0..5.png, muscle_normal.png, fit_check renders."""
 import bpy, sys, os, math
-sys.path.insert(0, "/Users/oktayshakirov/Coding/fitness-automation")
+import os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # repo root
 from mathutils import Vector, Matrix
 from common import (ROOT, MAPS, OUT, GROUPS, mask_slot, new_scene, use_gpu, make_human,
                     frame_align, update)

@@ -2,7 +2,7 @@
 'squat targets' highlight (quads + glutes). Stills only, no video."""
 import bpy, math, sys, mathutils
 
-OUT = "/Users/oktayshakirov/Coding/fitness-automation/review/"
+import os; OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "review", "")
 HIGHLIGHT = ["rectus femoris", "vastus lateralis", "vastus medialis", "vastus intermedius",
              "gluteus maximus muscle.", "gluteus medius muscle."]
 

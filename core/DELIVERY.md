@@ -55,6 +55,6 @@ posed scene. Neither exports app media. Rebuild with `--delivery` for publicatio
 The legacy review format remains available for older scripts.
 
 
-To rebuild user-reported fixes first while still refreshing the whole MVP:
+To rebuild specific exercises first while still refreshing the whole MVP:
 `python3 core/run_mvp.py --first glute_bridge push_up leg_curl leg_extension one_arm_dumbbell_row dumbbell_shoulder_press`.
 The remaining catalog IDs are appended automatically and current outputs are reused.

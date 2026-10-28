@@ -2,7 +2,7 @@
 leg curl, 45-degree leg press.
 
 The machine is described by a contact dict in params["machine"] (seat height, back pad
-angle, pulley / rail), so Agent B's machines can hand over their real numbers; the
+angle, pulley / rail), so the equipment machines can hand over their real numbers; the
 defaults match the proxy machine in motion/props.py.
 
 mode = "pulldown": thighs under the knee pads, feet flat; torso leaning back ~12 deg and

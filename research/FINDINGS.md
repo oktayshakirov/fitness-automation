@@ -62,7 +62,8 @@ leg extension/curl). Hands IK'd to handles + grip pose; QA hand-to-implement gap
 ## Feasibility test results (2026-10-15)
 
 Built: `common.py` (body, pose solver, muscle material, studio), `build_muscle_maps.py`,
-`squat_proper.py`, `arm_exercises.py` (pushdown | curl), `equipment.py`, `check_muscles.py`.
+and the first prototypes, now in `prototypes/`: `squat_proper.py`, `arm_exercises.py`
+(pushdown | curl), `check_muscles.py`.
 
 - Muscles: Z-Anatomy fitted onto MPFB per body segment (thigh, shin, arm, forearm,
   torso, head), torso depth refitted to the measured skin (Z-Anatomy torso ~27% deeper),
@@ -107,7 +108,7 @@ and attribution in `assets/maps/LICENSE.md`. Fabric disables anatomy bump relief
 
 ## Appearance revision and alpha feasibility (2026-10-25)
 
-User-provided screenshots are style references only; no screenshot pixels, competitor
+Reference screenshots are style references only; no screenshot pixels, competitor
 textures, mesh or animation data were incorporated. Short high-cut training bottoms
 and a cropped sports bra are still procedural MPFB-surface derivatives, with shared
 UVs and rig weights. Active muscles beneath fabric use a subdued red/orange tint;
@@ -126,5 +127,5 @@ https://ffmpeg.org/doxygen/trunk/libx264_8c.html
 Apple documents a separate HEVC-with-alpha path:
 https://developer.apple.com/documentation/avfoundation/using-hevc-video-with-alpha
 That does not establish the current Expo iOS/Android player's shared support.
-Keep the user's accepted #0A0A0C H.264 fallback for loops; no envelope change yet.
+Keep the approved #0A0A0C H.264 fallback for loops; no envelope change yet.
 Transparent still previews are not a claim of native alpha-video compatibility.

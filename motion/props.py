@@ -1,4 +1,4 @@
-"""Attach equipment (built by equipment/, Agent B) to the posed body every frame.
+"""Attach equipment (built by equipment/) to the posed body every frame.
 Spec entries: {"kind": "dumbbell", "hands": ["L", "R"]}, {"kind": "cable_bar", "tower": {...}},
 {"kind": "barbell", "plates": [20]}. A pattern's pose() may return contacts, e.g.
 {"bar": (centre, axis)}: rigid implements are placed from those, hands are solved onto them."""
@@ -104,7 +104,7 @@ class CableBar:
 
 
 def _proxy_barbell(name, plates):
-    """Stand-in until equipment.barbell exists (Agent B): Olympic dimensions."""
+    """Stand-in until equipment.barbell exists: Olympic dimensions."""
     root = eq.empty(name)
     eq.cyl_x(name + "_shaft", "steel", 0.014, 1.31, parent=root)
     for sgn in (1, -1):

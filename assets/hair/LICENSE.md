@@ -12,7 +12,7 @@ CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/legalcode
 
 The pipeline uses short01 for the male and ponytail01 for the female. The assets
 are fitted using MPFB's basemesh references; textures and authored silhouettes
-are retained. Reference screenshots supplied by the user are style references
+are retained. Reference screenshots used during design are style references
 only and are not included in these assets.
 
 Pipeline modifications: short01 sides/nape are tapered toward the fitted scalp
