@@ -14,9 +14,10 @@ def _smooth(t):
 
 
 def shorts_hem(x, hip, model):
-    # Higher side openings expose the upper thigh; the centre keeps groin coverage.
+    # Higher side openings expose the upper thigh; the hem stays level across the
+    # inner thigh, so the legs don't ride up into the crotch like tight briefs.
     depth, rise = (.115, .060) if model == 'female' else (.130, .055)
-    return hip-depth + rise*_smooth(abs(x)/.14)
+    return hip-depth + rise*_smooth((abs(x)-.075)/.085)
 
 
 def bra_neck(x, shoulder):
@@ -228,6 +229,16 @@ def _hide_covered_skin(body, hip, knee, shoulder, model):
     attribute = body.data.attributes.new('clothing_covered', 'FLOAT', 'POINT')
     for index, point in enumerate(points):
         attribute.data[index].value = coverage_distance(point)
+    # The posed groin smoothing stays under the shorts, fading out 2 cm inside the
+    # hem: moving the bare inner thigh would push it through the fabric's edge.
+    groin = body.vertex_groups.get('groin_pose_surface')
+    if groin:
+        for index, point in enumerate(points):
+            try:
+                w = groin.weight(index)
+            except RuntimeError:
+                continue
+            groin.add([index], w * _smooth(coverage_distance(point) / .02), 'REPLACE')
     material = body.data.materials[0]; material.surface_render_method = 'DITHERED'
     nt = material.node_tree
     output = nt.nodes.get('Material Output')

@@ -15,13 +15,15 @@ mode = "skull_crusher": upper arms fixed, angled slightly back toward the head; 
   the elbows bend, lowering the bar to just above the forehead.
 
 params: load ("bar" | "db"), grip_w, bench_z (pad top, m), arch (deg of lower-back
-extension), elbow (fly: fixed elbow bend, deg), feet_w (ankle half-width)."""
+extension), waist_gap (m: solve the arch per model so the lower back sits this far above
+the pad, overriding arch), elbow (fly: fixed elbow bend, deg), feet_w (ankle half-width)."""
 import math
 from mathutils import Vector
 from core.solver import rot_x, rot_z
 from .floor import Pattern as Floor, smooth, lerp
 from ..stance import arm_lengths
 from ..contact import reach, bar_palm, knuckles
+from ..settle import skin, depth
 
 X = Vector((1, 0, 0))
 Y = Vector((0, 1, 0))
@@ -36,23 +38,84 @@ class Pattern(Floor):
                   "feet_w": 0.27, "feet": 0.42, **params}
         mode = params["mode"]
         params["mode"] = "supine_bench"
+        self.lumbar = params["arch"]
         super().__init__(P, params)
+        if "waist_gap" in params:
+            self.lumbar = self.solve_arch(params["waist_gap"])
+            self.solve_supine()
         self.p["mode"] = mode
         ua, fa = arm_lengths(P)
         self.ua, self.fa = ua, fa
+        self.neck = 4.0
+        self.settle()
+
+    def feet(self):
         self.ankles = {s: Vector((sg * self.p["feet_w"], a.y, a.z)) for (s, a), sg in
                        zip(self.ankles.items(), (1, -1))}
+
+    def settle(self, sink=0.012):
+        """Glutes, upper back and head on the pad, measured on the posed skin: the
+        rigid landmarks miss how the buttocks spread lying down. Seat and back sink
+        `sink` into the pad (the pad-contact modifier flattens them at render time);
+        the neck then sets the back of the head on it."""
+        P = self.P
+        pad = (Vector((0, -0.18, self.base_z)), X, Y, Z, 0.15, 0.60)
+
+        def measure():
+            self.body()
+            pts = skin(P)
+            hip = (P.head("upperleg01.L") + P.head("upperleg01.R")) / 2
+            sh = self.shoulders()
+            seat = depth(pts, pad, lambda v: hip.y - 0.20 < v.y < hip.y + 0.10)
+            back = depth(pts, pad, lambda v: hip.y + 0.25 < v.y < sh.y + 0.02)
+            return seat, back
+
+        def head_low(neck):
+            self.neck = neck
+            self.body()
+            sh = self.shoulders()
+            return depth(skin(P), pad, lambda v: v.y > sh.y + 0.09)
+
+        self.seat_dz = self.back_dz = 0.0
+        self.feet()
+        for _ in range(3):
+            seat, back = measure()
+            self.seat_dz -= seat + sink
+            self.back_dz -= back + sink
+            if "waist_gap" in self.p:
+                self.lumbar = self.solve_arch(self.p["waist_gap"])
+            self.solve_supine()
+            self.feet()
+        # scalp a hair's thickness off the pad; the pad-contact modifier presses the hair
+        # (a ponytail too) flat between them
+        self.neck = self.bisect(head_low, -30.0, 30.0, 0.006, n=12)
+        seat, back = measure()
+        P.reset()
+        self.settled = {"seat_mm": round(seat * 1000, 1), "back_mm": round(back * 1000, 1),
+                        "neck": round(self.neck, 1), "head_mm": round(head_low(self.neck) * 1000, 1)}
+        P.reset()
 
     def solve_prone(self):
         pass
 
+    def solve_arch(self, gap):
+        """Lower-back extension that leaves the waist gap above the pad, with the seat
+        and upper back on it (bodies differ in their rest lumbar curve)."""
+        def waist(arch):
+            self.lumbar = arch
+            self.solve_supine()
+            self.supine(self.phi_floor)
+            return max(self.lm[n].z for n in ("low_back", "mid_back")) - self.base_z
+        lo, hi = -24.0, 12.0
+        if waist(lo) >= gap:                  # this body can't get that flat: flattest allowed
+            return lo
+        return self.bisect(waist, lo, hi, gap, n=14)
+
     def body(self):
         """Lie on the bench with a small arch; legs to the floor."""
         P, p = self.P, self.p
-        self.supine(self.phi_floor)
-        P.local("spine03", (1, 0, 0), -p["arch"] * 0.5)          # lower back arch
-        P.local("spine04", (1, 0, 0), -p["arch"] * 0.5)
-        P.local("neck02", (1, 0, 0), 4)
+        self.supine(self.phi_floor)                  # includes the lower-back arch
+        P.local("neck02", (1, 0, 0), self.neck)
         for side, sgn in (("L", 1), ("R", -1)):
             P.limb(f"upperleg01.{side}", f"lowerleg01.{side}", f"foot.{side}", self.ankles[side],
                    Vector((sgn * 0.6, 0, 1)))

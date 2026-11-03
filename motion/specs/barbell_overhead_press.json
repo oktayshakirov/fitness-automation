@@ -4,7 +4,14 @@
   "params": {
     "load": "bar",
     "grip_w": 0.26,
-    "lean": 5
+    "lean": 0,
+    "rack_offset": 0.115,
+    "rack_z": 1.50,
+    "girdle": "relaxed",
+    "clavicle_lift": 0.6,
+    "top_shrug": 2,
+    "scapula_rotation": 1.0,
+    "rack_girdle_scale": 0.2
   },
   "props": [
     {
@@ -55,5 +62,9 @@
       "abdominals"
     ]
   },
-  "approved": true
+  "approved": true,
+  "shoulder_smooth": true,
+  "micro": 0.5,
+  "press_proportions": false,
+  "preserve_volume": false
 }

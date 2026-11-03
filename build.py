@@ -28,7 +28,7 @@ if bpy is None:
 sys.path.insert(0, HERE)
 import argparse, shutil, subprocess
 from core import OUT
-from core.body import make_human, key_pose
+from core.body import make_human, key_pose, pad_planes, add_pad_contact
 from core.solver import Poser
 from core.clothes import add_clothing
 from core.hair import add_hair
@@ -37,6 +37,7 @@ from core.studio import studio, camera
 from core.render import new_scene, render_views, stitch_video, contact_sheet, fit_delivery_cameras, export_delivery
 from motion.tempo import Tempo
 from motion import patterns, props as props_mod, micro
+from motion.contact import wrap_holds
 
 ap = argparse.ArgumentParser(prog="build.py")
 ap.add_argument("id")
@@ -77,7 +78,7 @@ tempo = Tempo(motion["tempo"])
 N = tempo.n
 
 scene = new_scene()
-body, rig = make_human(gender=1.0 if args.model == "male" else 0.0, shoulder_smooth=motion.get("shoulder_smooth", False),
+body, rig = make_human(gender=1.0 if args.model == "male" else 0.0, shoulder_smooth=motion.get("shoulder_smooth", False) in (True, args.model),
                        press_proportions=motion.get("press_proportions", False),
                        preserve_volume=motion.get("preserve_volume", True))
 body["fitness_body"] = True
@@ -103,16 +104,27 @@ for f in range(1, N + 1):
     micro.set_frame(P, f, N, micro_amp)
     P.reset()
     contacts = pattern.pose(tempo.s(f)) or {}
-    key_pose(rig, f)
     for pr in props:
         pr.attach(f, contacts)
+    wrap_holds(P)
+    key_pose(rig, f)
 for pr in props:
     pr.finish(N)
 micro.set_frame(P, 1, N, 0.0)
 for garment in garments:
     for modifier in garment.modifiers: modifier.show_viewport = True
+# Soft pads: skin, cloth and hair that sink into a seat or bench face lie flat on it.
+pads = pad_planes([o for o in scene.objects if o.get("contact_face")])
+if pads:
+    # skin stops a fabric's thickness short of the face, so cloth lies between them; a spec's
+    # "pad_contact" can press both into the cushion where the contact is seen edge-on
+    press = motion.get("pad_contact", {})
+    add_pad_contact(body, pads, lift=press.get("lift", 0.004))
+    for garment in garments: add_pad_contact(garment, pads, lift=press.get("cloth_lift", 0.001))
+    for hair in [o for o in scene.objects if o.get("hair") and o.type == "MESH"]:
+        add_pad_contact(hair, pads, lift=0.001, depth=0.12)
 scene.frame_set(1)
-print("POSED", args.id, N, "frames")
+print("POSED", args.id, N, "frames", getattr(pattern, "settled", ""))
 
 delivery_objects=list(scene.objects)
 studio(scene)

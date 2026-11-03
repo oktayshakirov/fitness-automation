@@ -64,5 +64,6 @@
     }
   },
   "approved": true,
-  "garment_refinement": 2
+  "garment_refinement": 2,
+  "shoulder_smooth": "male"
 }

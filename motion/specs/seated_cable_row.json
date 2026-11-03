@@ -15,8 +15,8 @@
       "handle": "v_handle",
       "pulley": [
         0,
-        -0.92,
-        0.3
+        -1.11,
+        0.66
       ],
       "standalone_cable": false
     }
@@ -43,11 +43,7 @@
     },
     {
       "name": "threeq",
-      "yaw": 35
-    },
-    {
-      "name": "front",
-      "yaw": 0
+      "yaw": 145
     }
   ],
   "draft_muscles": {
@@ -66,5 +62,10 @@
     ]
   },
   "approved": true,
-  "garment_refinement": 2
+  "garment_refinement": 2,
+  "shoulder_smooth": "male",
+  "pad_contact": {
+    "lift": -0.002,
+    "cloth_lift": -0.002
+  }
 }

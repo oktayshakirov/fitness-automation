@@ -20,7 +20,8 @@ def main():
         except BlockingIOError:raise SystemExit('An MVP runner is already active')
         try:
             status('running',f'Preparing {len(ordered)} exercises × 2 models')
-            with (REVIEW/'mvp_batch.log').open('w') as log:
+            with (REVIEW/'mvp_batch.log').open('a') as log:
+                log.write(f"=== run started {datetime.datetime.now().isoformat(timespec='seconds')} (pid {os.getpid()})\n")
                 for attempt in (1,2):
                     p=subprocess.Popen([sys.executable,'core/batch.py',*ordered],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)
                     for line in p.stdout:

@@ -27,6 +27,23 @@ class BentOver(Hinge):
         if params.get("load") == "db":
             params["load"] = "hang_db"
         super().__init__(P, params)
+        self.touch_fwd = self.torso_depth(self.p["touch"]) + self.p["bar_r"] + 0.008
+
+    def torso_depth(self, up):
+        """Rest-pose distance from the hip line to the front of the torso skin, `up`
+        metres above the hips, so the bar touches this model's body instead of a
+        fixed point (male 0.17, thicker on the female model's lower torso)."""
+        import bpy
+        P = self.P
+        body = next(o for o in P.rig.children if o.type == "MESH")
+        P.reset()
+        ev = body.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        me = ev.to_mesh()
+        hip = self.hip_mid()
+        ys = [w.y for w in (body.matrix_world @ v.co for v in me.vertices)
+              if abs(w.x) < 0.12 and abs(w.z - hip.z - up) < 0.03 and w.y < hip.y]
+        ev.to_mesh_clear()
+        return max(0.15, hip.y - min(ys)) if ys else 0.155
 
     def pose(self, s):
         P, p = self.P, self.p
@@ -38,7 +55,7 @@ class BentOver(Hinge):
         hip = self.hip_mid()
         up = (self.shoulders() - hip).normalized()
         fwd_body = body @ Vector((0, -1, 0))
-        touch = hip + up * p["touch"] + fwd_body * 0.17
+        touch = hip + up * p["touch"] + fwd_body * self.touch_fwd
         hang = self.hang_point()
         c = hang.lerp(touch, smooth(s * 1.05))
         out = {}

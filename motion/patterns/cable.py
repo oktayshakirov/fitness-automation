@@ -86,9 +86,10 @@ class Pattern:
         out = {}
         for side, sgn in (("L", 1), ("R", -1)):
             sh = P.head(f"upperarm01.{side}")
-            # end: elbows out at shoulder height and a little behind, hands by the ears
-            elbow_end = sh + body @ Vector((sgn * 0.85, 0.3, -0.1)).normalized() * self.ua
-            hand_end = elbow_end + body @ Vector((-sgn * 0.2, -0.7, 0.75)).normalized() * (self.fa + 0.07)
+            # end: elbows out at shoulder height and a little behind, hands just outside
+            # the ears (a moderate spread: the rope's ends a little wider than the head)
+            elbow_end = sh + body @ Vector((sgn * 0.7, 0.25, -0.1)).normalized() * self.ua
+            hand_end = elbow_end + body @ Vector((-sgn * 0.42, -0.7, 0.75)).normalized() * (self.fa + 0.07)
             hand_start = start + X * sgn * 0.05
             g = hand_start.lerp(hand_end, smooth(s))
             arm = (g - sh).normalized()

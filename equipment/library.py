@@ -64,7 +64,7 @@ def barbell(name='barbell',plates=None,kind='olympic'):
                 q=_add('primitive_torus_add',name+'_plate_rim','plate',root,major_radius=r-.012,minor_radius=.003,
                        location=(c+face*(w/2+.001),0,0),rotation=(0,math.pi/2,0))
             x+=w+.003
-        cyl_x(name+'_lock','accent',.038,.025,sign*(x+.0125),root)
+        cyl_x(name+'_lock','steel',.038,.025,sign*(x+.0125),root)
     root['plate_r']=max([PLATES[k][0] for k in plates],default=.045)
     root['kg']=20+2*sum(plates)
     return metadata(root,{'grip_axis':[1,0,0],'shaft_range':[-.655,.655],'plate_r':root['plate_r']})
@@ -87,7 +87,7 @@ def kettlebell(name='kettlebell',kg=16):
     # Flatten bottom, retain a broad stable base.
     for v in bell.data.vertices: v.co.z=max(v.co.z,-radius*.86)
     tube(name+'_handle',[(-.085,0,-.16),(-.095,0,-.035),(-.075,0,0),(.075,0,0),(.095,0,-.035),(.085,0,-.16)],.014,'dark',r)
-    cyl_x(name+'_grip_mark','accent',.0145,.025,0,r)
+    cyl_x(name+'_grip_mark','dark',.0145,.025,0,r)
     r['kg']=kg
     return metadata(r,{'grip_axis':[1,0,0],'grip_range':[-.075,.075]})
 
@@ -99,9 +99,9 @@ def bench(name='bench',incline=0,seat_z=.43,y0=-.78,y1=.42):
         cube(name+'_foot',(0,y,.025),(.48,.10,.05),parent=r)
         beam(name+'_leg',(0,y,.05),(0,y,seat_z-.08),parent=r)
     beam(name+'_spine',(0,y0,seat_z-.12),(0,y1,seat_z-.12),parent=r)
-    cube(name+'_seat',(0,(y0+hinge)/2,seat_z-.04),(.30,hinge-y0-.012,.08),'rubber',r)
+    cube(name+'_seat',(0,(y0+hinge)/2,seat_z-.04),(.30,hinge-y0-.012,.08),'rubber',r)['contact_face']='+Z'
     pivot=empty(name+'_back_pivot',(0,hinge,seat_z)); pivot.parent=r; pivot.rotation_euler.x=a
-    cube(name+'_back',(0,(y1-hinge)/2,-.04),(.30,y1-hinge-.012,.08),'rubber',pivot)
+    cube(name+'_back',(0,(y1-hinge)/2,-.04),(.30,y1-hinge-.012,.08),'rubber',pivot)['contact_face']='+Z'
     if incline:
         beam(name+'_support',(0,.25,.10),(0,hinge+(y1-hinge)*.65*math.cos(a),seat_z+(y1-hinge)*.65*math.sin(a)-.08),parent=r)
     r['seat_z']=seat_z; r['pad_y_range']=[y0,y1]
@@ -203,7 +203,7 @@ class ResistanceBand:
     def __init__(self,name='band',a=(0,0,.1),b=(0,0,1),rest_length=None):
         self.a,self.b=Vector(a),Vector(b); self.rest_length=rest_length or (self.b-self.a).length
         if self.rest_length<=0: raise ValueError('positive rest length required')
-        self.obj=tube(name,[self.a,self.b],.008,'accent'); self.update(a,b,1)
+        self.obj=tube(name,[self.a,self.b],.008,'rubber'); self.update(a,b,1)
     def update(self,a,b,frame):
         a,b=Vector(a),Vector(b); stretch=max(1,(b-a).length/self.rest_length)
         for p,v in zip(self.obj.data.splines[0].points,(a,b)):

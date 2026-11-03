@@ -10,11 +10,15 @@ the head at shoulder height, palms forward, elbows under the wrists in the scapu
 plane, press up and slightly in until the arms are straight over the shoulders.
 
 params: load ("bar" | "db"), grip_w (bar half-width / dumbbell start half-width, m),
-stance, toe_out, lean (deg back at the start), rack_z (bar height in the rack, m)."""
+stance, toe_out, lean (deg back at the start), rack_z (bar height in the rack, m),
+rack_offset (shoulders behind the bar in the barbell rack, m; the bar path bends forward
+round the face wherever the face would be in its way), girdle ("relaxed" gives
+the barbell the dumbbell press's relaxed rack girdle and gradual upward rotation)."""
 import math
 from mathutils import Vector
 from ..stance import Stance, place_pelvis, arm_lengths
 from ..contact import reach, bar_palm, grip_point
+from ..landmarks import Landmarks
 
 X = Vector((1, 0, 0))
 
@@ -32,13 +36,15 @@ class Pattern:
     def __init__(self, P, params):
         self.P = P
         self.p = p = {"load": "bar", "grip_w": 0.26, "stance": 0.12, "toe_out": 8.0, "lean": 5.0,
-                      "rack_z": 1.47, "top_reach": 0.945, "db_top_w": 0.16, **params}
+                      "rack_z": 1.47, "top_reach": 0.945, "db_top_w": 0.16, "rack_offset": 0.13,
+                      "bar_r": 0.014, **params}
         self.st = Stance(P, p["stance"], p["toe_out"])
         a = self.st.ankles["L"]
         self.midfoot_y = a.y - 0.06
         self.hip_z = self.st.hip_height(0.99, 0.0)
         ua, fa = arm_lengths(P)
         self.reach = ua + fa
+        self.lm = Landmarks(P) if p["load"] == "bar" else None
 
     def shoulders(self):
         P = self.P
@@ -52,12 +58,33 @@ class Pattern:
         dy = sh_y - self.shoulders().y
         place_pelvis(P, -tilt, hip + Vector((0, dy, 0)))
 
+    def face_clearance(self):
+        """How far forward the bar moves to pass the face over the rep: measured at each
+        height, then widened and blurred so the bar arcs smoothly round chin and nose
+        instead of tracing them."""
+        n, w = 40, 7
+        self._push = None
+        raw = []
+        for i in range(n + 1):
+            self.P.reset()
+            self.pose(i / n)
+            raw.append(self.midfoot_y - self._raw_y)
+        # windows shrink toward the rack and the lockout, which stay where they were
+        def win(i, k):
+            k = min(k, i, n - i)
+            return slice(i - k, i + k + 1)
+        wide = [max(raw[win(i, 3)]) for i in range(n + 1)]
+        self._push = [sum(wide[win(i, w)]) / len(wide[win(i, w)]) for i in range(n + 1)]
+        self.P.reset()
+
     def pose(self, s):
         P, p = self.P, self.p
+        if p["load"] == "bar" and not hasattr(self, "_push"):
+            self.face_clearance()
         tilt = p["lean"] * (1 - smooth(s * 1.2))
         bar_y = self.midfoot_y
         # shoulders behind the bar in the rack, under it at lockout
-        self.place_body(tilt, bar_y + lerp(0.13 if p["load"] == "bar" else 0.0, 0.0, smooth(s)))
+        self.place_body(tilt, bar_y + lerp(p["rack_offset"] if p["load"] == "bar" else 0.0, 0.0, smooth(s)))
         sh = self.shoulders()
         # head back while the bar passes the face, through at lockout
         z_top = sh.z + (0.14-max(0.,.186-P.rest_head("upperarm01.L").x)*1.25 if p["load"] == "bar" else 0.14) + p["top_reach"] * self.reach      # + girdle lift + hand
@@ -73,6 +100,16 @@ class Pattern:
             P.local("head", (1, 0, 0), 0)
         self.st.legs()
         if p["load"] == "bar":
+            # the bar travels round the face: in front of the chin and nose by a margin
+            front = self.lm.face_front(z, p["bar_r"] + 0.01)
+            raw = bar_y if front is None else min(bar_y, front - p["bar_r"] - 0.012)
+            self._raw_y = raw
+            if self._push is not None:
+                x = max(0.0, min(1.0, s)) * (len(self._push) - 1)
+                i = min(int(x), len(self._push) - 2)
+                bar_y = min(self.midfoot_y - lerp(self._push[i], self._push[i + 1], x - i), raw + 0.004)
+            else:
+                bar_y = raw
             return self.arms_bar(Vector((0, bar_y, z)), s)
         return self.arms_db(s, z)
 
@@ -80,7 +117,7 @@ class Pattern:
         P = self.P
         arm = (g - P.head(f"upperarm01.{side}")).normalized()
         # upward rotation follows the arm; a small active shrug at lockout
-        if self.p["load"] == "db":
+        if self.p["load"] == "db" or self.p.get("girdle") == "relaxed":
             upward = max(0.0, P.humeral_elevation(arm) - 30.0) / 3.0
             # Relax the shoulder girdle in the rack, then restore full upward
             # rotation as the bells rise. The overhead pose is unchanged.

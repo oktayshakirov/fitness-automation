@@ -9,6 +9,8 @@ Checks, every frame:
   floor     no body vertex below the floor (-1 cm)
   grip      hand grip point on its implement: dumbbell handle centre < 2 cm,
             bar axis < 1.5 cm (cable bar, barbell); goblet hands < 5 cm of the handle
+  wrap      fingers 2-5 enclose the held handle (seen along it, the handle centre is
+            inside the wrist-knuckle-finger loop)
   props     implement vertices inside the body (> 5 mm deep), away from the hands
   joints    knee/elbow flexion <= 155 deg, no knee/elbow hyperextension (> 5 deg),
             knees track the toes (bend plane within 30 deg of the foot), wrist
@@ -52,7 +54,7 @@ sys.path.insert(0, HERE)
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 from core.solver import Poser
-from motion.contact import grip_point
+from motion.contact import grip_point, wrap_open
 
 eid = sys.argv[sys.argv.index("--") + 1]
 tail = sys.argv[sys.argv.index("--") + 1:]
@@ -117,6 +119,12 @@ bone_mats = {}
 sole_prev = None
 slide_max, floor_min = 0.0, 1.0
 grip_max = {}
+wrap_max = {}
+
+
+def wrapped(key, side, modes):
+    d = min(wrap_open(P, side, m) for m in modes)
+    wrap_max[key] = max(wrap_max.get(key, 0.0), d)
 palm_height_error = {}
 pen_max = 0.0
 self_pen_max = 0.0
@@ -230,6 +238,7 @@ for f in frames:
             g, _ = grip_point(P, side, o.get("grip_mode", "hook"))
             d = (g - c).length
             grip_max[name] = max(grip_max.get(name, 0.0), d)
+            wrapped(name, side, (o.get("grip_mode", "hook"),))
         elif name in ("bar", "barbell", "pullup_bar") or name.startswith("dip_bar_"):
             for side in (("L", "R") if not name.startswith("dip_bar_") else (name[-1],)):
                 d = 9.0
@@ -238,6 +247,7 @@ for f in frames:
                     v = g - c
                     d = min(d, (v - v.project(ax)).length)
                 grip_max[f"{name}.{side}"] = max(grip_max.get(f"{name}.{side}", 0.0), d)
+                wrapped(f"{name}.{side}", side, ("hook", "press"))
         elif name == "db":
             for side in ("L", "R"):
                 g, _ = grip_point(P, side)
@@ -264,6 +274,7 @@ for f in frames:
                     local=o.matrix_world.inverted()@g;local.x=max(-.075,min(.075,local.x));local.y=0;local.z=0
                 d=(g-o.matrix_world@local).length
                 key=name+'.'+side;grip_max[key]=max(grip_max.get(key,0),d)
+                wrapped(key,side,("press",) if name=="dip_station" else ("hook",))
         if name in ("pushdown_rope","face_rope"):
             ends=[c for c in o.children if c.type=='CURVE']
             # Constructor creates R(-X) then L(+X); updater receives L then R.
@@ -271,6 +282,7 @@ for f in frames:
                 local=Vector(curve.data.splines[0].points[-1].co[:3]);g,_=grip_point(P,side)
                 d=(g-curve.matrix_world@local).length
                 key=name+'.'+side;grip_max[key]=max(grip_max.get(key,0),d)
+                wrapped(key,side,("hook",))
     # Verify moving equipment transforms close at the loop seam, too.
     moving=[o for o in scene.objects if o.animation_data and o.type!='ARMATURE']
     if f==1: prop_loop_start={o.name:o.matrix_world.copy() for o in moving}
@@ -295,8 +307,13 @@ for f in frames:
         hands = [P.head("wrist.L"), P.head("wrist.R"), grip_point(P, "L")[0], grip_point(P, "R")[0]]
         for name, meshes in prop_meshes.items():
             for m in meshes:
-                for v in m.data.vertices:
-                    w = m.matrix_world @ v.co
+                pts = [v.co for v in m.data.vertices]
+                for e in m.data.edges:
+                    a, b = (m.data.vertices[i].co for i in e.vertices)
+                    n = int((m.matrix_world.to_3x3() @ (b - a)).length / 0.01)
+                    pts += [a + (b - a) * (i / n) for i in range(1, n)] if n > 1 else []
+                for co_local in pts:
+                    w = m.matrix_world @ co_local
                     # fingers wrap the handle (and cup a two-hand dumbbell's plate)
                     if min((w - h).length for h in hands) < (0.15 if name == "db" else 0.11):
                         continue
@@ -403,6 +420,7 @@ loop_r = max(math.degrees(bone_mats[1][n].to_quaternion().rotation_difference(bo
 stats.update(prop_loop_mm=round(prop_loop_mm,3),prop_loop_deg=round(prop_loop_deg,3),hand_thigh_pen_mm=round(self_pen_max*1000,1),loop_mm=round(loop_t * 1000, 2), loop_deg=round(loop_r, 2), slide_mm=round(slide_max * 1000, 1),
              floor_mm=round(floor_min * 1000, 1), prop_pen_mm=round(pen_max * 1000, 1),
              grip_mm={k: round(v * 1000, 1) for k, v in grip_max.items()},
+             wrap_open_fingers=dict(wrap_max),
              joints={k: round(v, 1) for k, v in joint_viol.items() if v > 0},
              balance_out_mm=round(com_out * 1000, 1) if "balance" not in skip else None)
 if "loop" not in skip and (loop_t > 0.001 or loop_r > 0.5):
@@ -419,6 +437,9 @@ for k, v in grip_max.items():
     tol = 0.05 if k.startswith("db.") else 0.02 if k.startswith("db_") else 0.015
     if "grip" not in skip and v > tol:
         fail("grip", f"{k} hand {v * 1000:.0f} mm off the implement")
+for k, v in wrap_max.items():
+    if "grip" not in skip and v > 0:
+        fail("wrap", f"{k}: {v} finger(s) not closed round the handle")
 if "props" not in skip and pen_max > 0.005:
     fail("props", f"implement {pen_max * 1000:.0f} mm inside the body at {stats.get('prop_pen_at')}")
 for k, v in joint_viol.items():

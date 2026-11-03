@@ -32,10 +32,6 @@
     {
       "name": "threeq",
       "yaw": 40
-    },
-    {
-      "name": "front",
-      "yaw": 0
     }
   ],
   "draft_muscles": {
@@ -52,5 +48,6 @@
   "approved": true,
   "qa": {
     "wrist_max": 105
-  }
+  },
+  "micro": 0.0
 }

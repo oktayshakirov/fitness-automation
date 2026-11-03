@@ -115,12 +115,12 @@ class CableTower:
             if i >= n_fixed:
                 o.parent = self.moving
         self.stack_top0 = self.stack_base + plates * (self.plate_h + self.gap)
-        cap = _add("primitive_cube_add", "stack_cap", "accent", size=1,
+        cap = _add("primitive_cube_add", "stack_cap", "plate", size=1,
                    location=(0, y_stack, self.stack_top0 + 0.02), scale=(0.3, 0.17, 0.035))
         cap.parent = self.moving
         pin_z = self.stack_base + n_fixed * (self.plate_h + self.gap) + self.plate_h / 2
         # Stack front is y_stack + .085: recess 1 cm, expose only a 3 cm grip.
-        pin = _add("primitive_cylinder_add", "selector_pin", "accent", radius=0.007, depth=0.04,
+        pin = _add("primitive_cylinder_add", "selector_pin", "steel", radius=0.007, depth=0.04,
                    location=(0, y_stack + 0.095, pin_z), rotation=(math.radians(90), 0, 0))
         pin.parent = self.moving
         rod = _add("primitive_cylinder_add", "selector_rod", "steel", radius=0.008, depth=0.5,

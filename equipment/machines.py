@@ -9,7 +9,9 @@ from .library import cube,beam,tube,metadata,barbell
 
 DEFAULTS={
  'lat_pulldown':dict(seat_z=.48,lean=-12,pulley=[0,-.05,2.45]),
- 'seated_row':dict(seat_z=.42,lean=0,pulley=[0,-.95,.30]),
+ # long bench on one rail, centred under the hips; feet on two angled plates near the
+ # tower, low pulley between them on the front post
+ 'seated_row':dict(seat_z=.42,lean=0,pulley=[0,-1.11,.66],seat_y=-.02,seat_depth=.50,ankle=[-.82,.47],plate_deg=35),
  'leg_press':dict(seat_z=.45,lean=-48,rail_deg=45),
  'leg_extension':dict(seat_z=.50,lean=-10,knee_y=-.47),
  'leg_curl':dict(seat_z=.50,lean=-10,knee_y=-.47),
@@ -35,7 +37,7 @@ class Machine:
         self.contacts={**c,'units':'metres','space':'root-local','facing':[0,-1,0],
           'seat_plane':{'point':[0,-.1,z],'normal':[0,0,1]},
           'back_pad_plane':{'point':list(bp-back*.04),'normal':list(-back)},
-          'side_grips':[[-.27,-.08,z+.03],[.27,-.08,z+.03]],
+          'side_grips':[[-.27,-.08,z-.01],[.27,-.08,z-.01]],
           'handle_path':None,'foot_plate':None}
         r=self.root
         if kind=='smith_machine':
@@ -47,18 +49,21 @@ class Machine:
             beam(name+'_top',(-.78,0,2.3),(.78,0,2.3),.08,r)
             self.moving=barbell(name+'_bar',plates=[]); self.moving.parent=r; self.moving.location=(0,-.12,1.3)
             self.contacts['handle_path']={'type':'slider','origin':[0,-.12,.3],'axis':[0,0,1],'range':[0,1.8]}
+        elif kind=='seated_row':
+            self._row(name,c,z)
         else:
-            base_y=-.35 if kind in ('lat_pulldown','seated_row','leg_press','hack_squat') else -.1
-            for x in (-.33,.33): cube(name+'_base',(x,base_y,.04),(.10,1.85 if kind in ('lat_pulldown','seated_row') else 1.65,.08),parent=r)
+            base_y=-.35 if kind in ('lat_pulldown','leg_press','hack_squat') else -.1
+            for x in (-.33,.33): cube(name+'_base',(x,base_y,.04),(.10,1.85 if kind=='lat_pulldown' else 1.65,.08),parent=r)
             for yy in (-.55,.45): beam(name+'_cross',(-.33,yy,.08),(.33,yy,.08),.065,r)
             if kind!='hack_squat':
-                depth=.9 if kind=='seated_row' else .44
-                cube(name+'_seat',(0,-.12,z-.04),(.42,depth,.08),'rubber',r)
-                beam(name+'_seat_post',(0,-.08,.08),(0,-.08,z-.08),.10,r)
-                if kind not in ('lat_pulldown','seated_row'):
-                    o=cube(name+'_back',bp,(.40,.08,.68),'rubber',r); o.rotation_euler.x=a
+                sy=c.get('seat_y',-.12); py=c.get('seat_y',-.08)
+                cube(name+'_seat',(0,sy,z-.04),(.42,c.get('seat_depth',.44),.08),'rubber',r)['contact_face']='+Z'
+                beam(name+'_seat_post',(0,py,.08),(0,py,z-.08),.10,r)
+                if kind!='lat_pulldown':
+                    o=cube(name+'_back',bp,(.40,.08,.68),'rubber',r); o.rotation_euler.x=a; o['contact_face']='-Y'
                     beam(name+'_back_support',(0,.25,.08),bp,.065,r)
-                for x in (-.27,.27): tube(name+'_side_grip',[(x,.18,z+.03),(x,-.22,z+.03)],.016,'rubber',r)
+                if kind!='lat_pulldown':   # these hands are on the handle
+                    for x in (-.27,.27): tube(name+'_side_grip',[(x,.18,z-.01),(x,-.22,z-.01)],.016,'rubber',r)   # flush with the seat side: no light gap under the hips
             if kind in ('leg_extension','leg_curl'):
                 # Pivots align with the declared knee plane; one common cross shaft.
                 self.pivot=empty(name+'_pivot',(0,c['knee_y'],z+.03)); self.pivot.parent=r
@@ -98,37 +103,17 @@ class Machine:
                     plate=cube(name+'_foot_plate',(0,-1.0,.14),(.85,.65,.08),'frame',r)
                     self.contacts['foot_plate']={'point':[0,-1,.18],'normal':[0,0,1],'size':[.85,.65]}
                 self.contacts['handle_path']={'type':'slider','origin':list(origin),'axis':list(self.axis),'range':[0,1.15] if kind=='leg_press' else [.1,1.45]}
-            elif kind in ('lat_pulldown','seated_row'):
-                if kind=='lat_pulldown':
-                    pad=cyl_x(name+'_knee_pad','rubber',.06,.49,parent=r); pad.location=(0,-.38,z+.15)
-                    self.contacts['thigh_pad']=[0,-.38,z+.15]
-                    for x in (-.29,.29):
-                        tube(name+'_pad_support',[(x,.15,z+.03),(x,-.38,z+.03),(x,-.38,z+.15)],.018,'frame',r)
-                    tower_y=-1.10; p=Vector(c['pulley'])
-                    for x in (-.34,.34): beam(name+'_upright',(x,tower_y,.05),(x,tower_y,2.50),.06,r)
-                    beam(name+'_boom',(0,tower_y,2.50),p,.07,r)
-                    beam(name+'_tower_base',(-.34,tower_y,.08),(.34,tower_y,.08),.065,r)
-                    beam(name+'_pad_stem',(0,tower_y,z+.15),(0,-.38,z+.15),.045,r)
-                else:
-                    tower_y=-1.25; p=Vector(c['pulley'])
-                    for x in (-.34,.34): beam(name+'_upright',(x,tower_y,.05),(x,tower_y,1.35),.06,r)
-                    o=cube(name+'_footplate',(0,-.80,.30),(.55,.05,.35),'frame',r); o.rotation_euler.x=math.radians(20)
-                    beam(name+'_footplate_post',(0,-.80,.08),(0,-.80,.30),.07,r)
-                    self.contacts['foot_plate']={'point':[0,-.78,.3],'normal':[0,1,.34],'size':[.55,.35]}
-                top_z=2.50 if kind=='lat_pulldown' else 1.35
-                beam(name+'_top_cross',(-.34,tower_y,top_z),(.34,tower_y,top_z),.06,r)
-                for x in (-.12,.12): beam(name+'_stack_guide',(x,tower_y,.08),(x,tower_y,top_z-.08),.012,r,'steel')
-                self.rear_pulley=Vector((0,tower_y,top_z-.05))
-                rear=cyl_x(name+'_rear_pulley','dark',.05,.03,parent=r);rear.location=self.rear_pulley
-                for i in range(8): cube(name+'_weight',(0,tower_y,.13+i*.033),(.36,.18,.03),'plate',r,bevel=.003)
-                self.moving=empty(name+'_stack_cap',(0,tower_y,.54)); self.moving.parent=r
-                cube(name+'_selected',(0,0,0),(.36,.18,.10),'plate',self.moving)
-                for i in range(4): cube(name+'_lifted_weight',(0,0,-.146+i*.033),(.36,.18,.03),'plate',self.moving,bevel=.003)
-                cube(name+'_selector',(0,-.098,0),(.10,.016,.02),'accent',self.moving)
-                self.cable=tube(name+'_cable',[Vector((0,tower_y,.59)),self.rear_pulley,p,p+Vector((0,0,-.5))],.0035,'cable',r)
-                pulley=cyl_x(name+'_pulley','dark',.05,.03,parent=r); pulley.location=p
-                self.handle0=None
-                self.contacts['handle_path']={'type':'cable','pulley':list(p)}
+            elif kind=='lat_pulldown':
+                pad=cyl_x(name+'_knee_pad','rubber',.06,.49,parent=r); pad.location=(0,-.38,z+.15)
+                self.contacts['thigh_pad']=[0,-.38,z+.15]
+                for x in (-.29,.29):
+                    tube(name+'_pad_support',[(x,.15,z+.03),(x,-.38,z+.03),(x,-.38,z+.15)],.018,'frame',r)
+                tower_y=-1.10; p=Vector(c['pulley'])
+                for x in (-.34,.34): beam(name+'_upright',(x,tower_y,.05),(x,tower_y,2.50),.06,r)
+                beam(name+'_boom',(0,tower_y,2.50),p,.07,r)
+                beam(name+'_tower_base',(-.34,tower_y,.08),(.34,tower_y,.08),.065,r)
+                beam(name+'_pad_stem',(0,tower_y,z+.15),(0,-.38,z+.15),.045,r)
+                self._stack(name,tower_y,2.50,.34,[p])
             elif kind in ('chest_press','pec_deck'):
                 for s in (-1,1):
                     pivot=empty(name+'_pivot',(s*.38,.18,z+.82)); pivot.parent=r
@@ -141,12 +126,73 @@ class Machine:
                 self.contacts['handle_path']={'type':'paired_pivot','axes':[[1,0,0],[1,0,0]] if kind=='chest_press' else [[0,0,1],[0,0,1]],'origins':[[-.38,.18,z+.82],[.38,.18,z+.82]],'degrees':[0,70]}
         r['seat_z']=z; metadata(r,self.contacts)
 
+    def _stack(self,name,tower_y,top_z,half_w,via):
+        """Weight stack between two uprights; the cable runs stack -> top pulley -> via -> handle."""
+        r=self.root
+        beam(name+'_top_cross',(-half_w,tower_y,top_z),(half_w,tower_y,top_z),.06,r)
+        for x in (-.12,.12): beam(name+'_stack_guide',(x,tower_y,.08),(x,tower_y,top_z-.08),.012,r,'steel')
+        self.rear_pulley=Vector((0,tower_y,top_z-.05))
+        rear=cyl_x(name+'_rear_pulley','dark',.05,.03,parent=r);rear.location=self.rear_pulley
+        for i in range(8): cube(name+'_weight',(0,tower_y,.13+i*.033),(.36,.18,.03),'plate',r,bevel=.003)
+        self.moving=empty(name+'_stack_cap',(0,tower_y,.54)); self.moving.parent=r
+        cube(name+'_selected',(0,0,0),(.36,.18,.10),'plate',self.moving)
+        for i in range(4): cube(name+'_lifted_weight',(0,0,-.146+i*.033),(.36,.18,.03),'plate',self.moving,bevel=.003)
+        cube(name+'_selector',(0,-.098,0),(.10,.016,.02),'steel',self.moving)
+        p=via[-1];self.cable_via=via[:-1]
+        self.cable=tube(name+'_cable',[Vector((0,tower_y,.59)),self.rear_pulley,*via,p+Vector((0,0,-.5))],.0035,'cable',r)
+        pulley=cyl_x(name+'_pulley','dark',.05,.03,parent=r); pulley.location=p
+        self.handle0=None
+        self.contacts['handle_path']={'type':'cable','pulley':list(p)}
+
+    def _row(self,name,c,z):
+        """Seated row: a tall stack tower, a front post with the low pulley, one rail
+        running from the post to the bench at its far end, and two angled footplates with a
+        grab handle near the post. The legs straddle the rail. The footplate carriage
+        slides along the rail (a pattern's `feet` contact sets it, as on adjustable machines)."""
+        r=self.root;tower_y=-1.42;top_z=2.05;p=Vector(c['pulley'])
+        post=lambda zz:Vector((0,-1.12-.14*zz/top_z,zz))       # leans a little toward the stack
+        rail_z=z-.08-.04                                        # rail top carries the seat pad
+        sy,depth=c['seat_y'],c['seat_depth']; back=sy+depth/2
+        # floor frame
+        beam(name+'_floor_rail',(0,tower_y,.04),(0,back,.04),.08,r)
+        beam(name+'_tower_foot',(-.36,tower_y,.04),(.36,tower_y,.04),.07,r)
+        beam(name+'_rear_foot',(-.28,back-.05,.04),(.28,back-.05,.04),.07,r)
+        for x in (-.36,.36): cube(name+'_foot_pad',(x,tower_y,.02),(.08,.10,.04),'rubber',r)
+        for x in (-.28,.28): cube(name+'_foot_pad',(x,back-.05,.02),(.08,.08,.04),'rubber',r)
+        # tower and front post
+        for x in (-.30,.30): beam(name+'_upright',(x,tower_y,.05),(x,tower_y,top_z),.06,r)
+        beam(name+'_post',post(.05),post(top_z),.07,r)
+        beam(name+'_top_beam',(0,tower_y,top_z),post(top_z),.06,r)
+        front_top=post(top_z-.06)+Vector((0,.05,0))
+        cyl_x(name+'_front_pulley','dark',.05,.03,parent=r).location=front_top
+        cube(name+'_pulley_housing',post(p.z)+Vector((0,.02,0)),(.09,.07,.14),'frame',r)
+        # rail and bench
+        beam(name+'_rail',(0,post(rail_z).y,rail_z),(0,back-.05,rail_z),.08,r)
+        beam(name+'_rear_leg',(0,back-.05,.08),(0,back-.05,rail_z),.07,r)
+        cube(name+'_seat',(0,sy,z-.04),(.40,depth,.08),'rubber',r)['contact_face']='+Z'
+        # footplates: soles flat on plates tilted plate_deg back from vertical
+        a=math.radians(c['plate_deg']);n=Vector((0,math.cos(a),math.sin(a)));u=Vector((0,-math.sin(a),math.cos(a)))
+        ank=Vector((0,*c['ankle']));self.plates=empty(name+'_footplates',ank);self.plates.parent=r
+        centre=-n*.075+u*.07;low=centre-u*.15;rz=rail_z-ank.z     # carriage-local, origin at the ankles
+        for x in (-.12,.12):
+            o=cube(name+'_footplate',(x,centre.y,centre.z),(.13,.025,.30),'frame',self.plates);o.rotation_euler.x=a
+            for zz in (-.09,-.03,.03,.09):
+                t=cube(name+'_footplate_tread',(x,*(centre+u*zz+n*.014)[1:]),(.11,.006,.012),'rubber',self.plates,bevel=.002);t.rotation_euler.x=a
+        beam(name+'_footplate_axle',(-.19,low.y,rz+.02),(.19,low.y,rz+.02),.04,self.plates)
+        cube(name+'_carriage',(0,low.y,rz+.01),(.10,.16,.03),'frame',self.plates)
+        tube(name+'_grab_handle',[(-.07,low.y-.15,rz+.04),(-.07,low.y-.15,rz+.22),(.07,low.y-.15,rz+.22),(.07,low.y-.15,rz+.04)],.014,'frame',self.plates)
+        self.contacts['foot_plate']={'point':list(ank+centre),'normal':list(n),'size':[.13,.30],'x':[-.12,.12],'slides':'y'}
+        self._stack(name,tower_y,top_z,.30,[front_top,p])
+
     def update(self,contacts,frame):
-        """`pad`/`plate`: (world point, direction), `handle`: (point, axis, kind).
+        """`pad`/`plate`: (world point, direction), `handle`: (point, axis, kind), `feet`: ankle midpoint (row footplates).
         Other machines accept normalized `travel` in [0,1]. Does not pose the body.
         """
         if not self.moving:return
         bpy.context.view_layer.update(); inv=self.root.matrix_world.inverted()
+        if 'feet' in contacts and self.kind=='seated_row':
+            self.plates.location.y=(inv@Vector(contacts['feet'])).y
+            self.plates.keyframe_insert('location',frame=frame)
         if 'pad' in contacts and self.kind in ('leg_extension','leg_curl'):
             c=inv@Vector(contacts['pad'][0]); d=c-self.pivot.location
             self.moving.rotation_euler.x=math.atan2(d.y,-d.z)
@@ -173,7 +219,7 @@ class Machine:
             if self.handle0 is None: self.handle0=length
             self.moving.location.z=.54+max(0,length-self.handle0)
             ring=h+(p-h).normalized()*(.04 if contacts['handle'][2]=='lat_bar' else .13)
-            cable_points=(self.moving.location+Vector((0,0,.05)),self.rear_pulley,p,ring)
+            cable_points=(self.moving.location+Vector((0,0,.05)),self.rear_pulley,*self.cable_via,p,ring)
             for pt,v in zip(self.cable.data.splines[0].points,cable_points):
                 pt.co=(*v,1); pt.keyframe_insert('co',frame=frame)
         elif 'travel' in contacts:

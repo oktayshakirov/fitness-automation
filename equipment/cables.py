@@ -34,12 +34,12 @@ class CableTower(LegacyTower):
         if self.pulley=='high':
             d=Vector((0,handle.y-front.y,handle.z-front.z))
             base=math.atan2(d.z,d.y); a=base+math.acos(min(1,r/max(d.length,r)))
-            return [Vector((self.x,self.y_stack,top)),Vector((self.x,self.y_stack,rear.z))]+self._arc(rear,math.pi,math.pi/2,6)[1:]+self._arc(front,math.pi/2,a,8)+[handle]
+            return [Vector((self.x,self.y_stack,top)),Vector((self.x,self.y_stack,rear.z))]+self._arc(rear,math.pi,math.pi/2,16)[1:]+self._arc(front,math.pi/2,a,24)+[handle]
         # Run over top pulley and down the outside of the front adjustable pulley.
         d=Vector((0,handle.y-front.y,handle.z-front.z))
         base=math.atan2(d.z,d.y)
         exit_angle=base-math.acos(min(1,r/max(d.length,r)))
-        return [Vector((self.x,self.y_stack,top)),Vector((self.x,self.y_stack,rear.z))]+self._arc(rear,math.pi,math.pi/2,6)[1:]+[Vector((self.x,front.y-r,rear.z+r))]+self._arc(front,math.pi,exit_angle,10)+[handle]
+        return [Vector((self.x,self.y_stack,top)),Vector((self.x,self.y_stack,rear.z))]+self._arc(rear,math.pi,math.pi/2,16)[1:]+[Vector((self.x,front.y-r,rear.z+r))]+self._arc(front,math.pi,exit_angle,40)+[handle]
 
     def update(self,handle,frame):
         lift=super().update(Vector(handle),frame)

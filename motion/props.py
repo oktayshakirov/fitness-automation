@@ -5,7 +5,7 @@ Spec entries: {"kind": "dumbbell", "hands": ["L", "R"]}, {"kind": "cable_bar", "
 import math
 from mathutils import Vector, Matrix, Quaternion
 import equipment as eq
-from .contact import grip_point
+from .contact import grip_point, hold
 
 
 class Dumbbells:
@@ -37,6 +37,7 @@ class Dumbbells:
             self.one.keyframe_insert("rotation_quaternion", frame=f)
         for side in self.hands:
             g, w = grip_point(P, side, self.grip_mode)
+            hold(P, side, self.grip_mode)
             b = self.bells[side]
             # handle (local X) runs across the palm; the dumbbell is round about X
             x = w
@@ -72,6 +73,7 @@ class CableBar:
     def attach_rope(self, f):
         gL, _ = grip_point(self.P, "L")
         gR, _ = grip_point(self.P, "R")
+        hold(self.P, "L"); hold(self.P, "R")
         mid = (gL + gR) / 2
         up = (self.tower.front_c - mid).normalized()
         ring = mid + up * 0.16
@@ -86,6 +88,7 @@ class CableBar:
             return self.attach_rope(f)
         gL, _ = grip_point(self.P, "L")
         gR, _ = grip_point(self.P, "R")
+        hold(self.P, "L"); hold(self.P, "R")
         c = (gL + gR) / 2
         to_pulley = self.tower.front_c - c
         a = math.atan2(-to_pulley.y, to_pulley.z)
@@ -134,6 +137,7 @@ class Barbell:
         else:
             gL, _ = grip_point(self.P, "L")
             gR, _ = grip_point(self.P, "R")
+            hold(self.P, "L"); hold(self.P, "R")
             c, axis = (gL + gR) / 2, (gL - gR).normalized()
         up = Vector((0, 0, 1))
         z = (up - up.project(axis)).normalized()

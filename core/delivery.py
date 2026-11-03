@@ -24,6 +24,15 @@ def pipeline_digest():
     for p in files:
         h.update(str(p.relative_to(ROOT)).encode());h.update(p.read_bytes())
     return h.hexdigest()
+def accepted_pipelines(eid,current=None):
+    """The current digest, plus an older one for exercises that a recorded, scoped
+    pipeline change left untouched (core/pipeline_compat.json, the user's call). The
+    record names its target digest, so any later pipeline change voids it."""
+    current=current or pipeline_digest();accepted={current}
+    path=ROOT/'core/pipeline_compat.json'
+    for c in (read(path) if path.is_file() else []):
+        if c['to']==current and eid in c['unchanged']:accepted.add(c['from'])
+    return accepted
 def asset_folder(eid,model=None):
     if model not in (None,'male','female'):raise ValueError('Invalid model')
     return ROOT/'dist'/eid/model if model else ROOT/'dist'/eid
@@ -35,7 +44,7 @@ def current_qa(eid,path=None,model=None):
     if model and q.get('model')!=model:raise ValueError(eid+': wrong QA model')
     if q.get('id')!=eid or q.get('pass') is not True:raise ValueError(eid+': QA missing or failed')
     if q.get('spec_sha256')!=spec_digest(eid):raise ValueError(eid+': QA spec is stale')
-    if q.get('pipeline_sha256')!=pipeline_digest():raise ValueError(eid+': QA pipeline is stale')
+    if q.get('pipeline_sha256') not in accepted_pipelines(eid):raise ValueError(eid+': QA pipeline is stale')
     if q.get('blend_sha256')!=digest(ROOT/'review'/(prefix+'.blend')):raise ValueError(eid+': QA blend is stale')
     if q.get('clothes_required'):
         clothing=read(ROOT/'review'/(prefix+'_clothes_qa.json'))
@@ -148,10 +157,10 @@ def rebuild_manifest():
 def _rebuild_manifest():
     from core.package_notices import package_notices
     package_notices()
-    entries=[];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+    entries=[];dist=ROOT/'dist';dist.mkdir(exist_ok=True);current=pipeline_digest()
     for p in sorted([*dist.glob('*/asset.json'),*dist.glob('*/*/asset.json')]):
         e=read(p);eid=e['id']
-        if e.get('spec_sha256')!=spec_digest(eid) or e.get('pipeline_sha256')!=pipeline_digest():continue
+        if e.get('spec_sha256')!=spec_digest(eid) or e.get('pipeline_sha256') not in accepted_pipelines(eid,current):continue
         if e.get('qa',{}).get('pass') is not True:continue
         try: current_asset(eid,e)
         except (OSError,ValueError,KeyError): continue

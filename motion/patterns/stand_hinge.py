@@ -12,9 +12,11 @@ mode = "squat": hips travel back and down to the bottom (thighs parallel with
   solved every frame so the bar stays over mid-foot.
 mode = "hinge" (RDL, good morning): knees unlock to `knee` deg and stay there, the hips
   push back while the torso tilts to `hinge` deg from vertical.
-mode = "pull" (deadlift): s = 0 bar on the floor (plate radius), s = 1 lockout. Torso
-  angle `torso` at the floor, held until the bar passes the knees, then the hips drive
-  through. Arms straight and vertical, shoulders just in front of the bar at the floor.
+mode = "pull" (deadlift): s = 0 bar on the floor (plate radius), s = 1 lockout. The bar
+  rises straight up over mid-foot past the knees, then eases forward onto the thighs;
+  the knees travel back out of its way and never come forward over it again. Torso
+  angle about `torso` at the floor, steepened only where the legs need it, then the
+  hips drive through. Arms straight and vertical, shoulders just in front of the bar.
 
 load: "none" (arms per `arms`), "back_bar" (high-bar position, hands on the bar),
   "hang_bar" (barbell in straight arms), "hang_db" (a dumbbell in each hand).
@@ -65,6 +67,8 @@ class Pattern:
         # goblet dumbbell: vertical, lower head against the sternum
         self.goblet_local = sp.inverted() @ Vector((0, -.19-max(0.,.186-P.rest_head("upperarm01.L").x)*.62, self.shoulders().z-.125))
         self.arm_len = self.hang_length()
+        if p["mode"] == "pull":
+            self.leg_front = self.leg_samples()
 
     # --- helpers ------------------------------------------------------------
     def shoulders(self):
@@ -89,6 +93,58 @@ class Pattern:
         L = (g - sh).length
         P.reset()
         return L
+
+    def leg_samples(self):
+        """Front skin of both legs (shins to the top of the thighs) with its bone weights,
+        so the bar's clearance can be measured every frame without evaluating the mesh.
+        The top of the thigh is shared with the pelvis, so the weights are blended."""
+        P = self.P
+        body = next(o for o in P.rig.children if o.type == "MESH")
+        P.reset()
+        import bpy
+        # shape keys only (no mask), so evaluated vertices match the mesh's own indices
+        states = [(m, m.show_viewport) for m in body.modifiers]
+        for m, _ in states:
+            m.show_viewport = False
+        bpy.context.view_layer.update()
+        ev = body.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        me = ev.to_mesh()
+        names = {g.index: g.name for g in body.vertex_groups}
+        bones = P.rig.pose.bones
+        hip_z = P.rest_head("upperleg01.L").z
+        out = []
+        for v, src in zip(me.vertices, body.data.vertices):
+            if any(names[g.group] in ("HelperGeometry", "JointCubes") for g in src.groups):
+                continue
+            w = body.matrix_world @ v.co
+            if abs(w.x) < 0.02 or not 0.08 < w.z < hip_z + 0.02:
+                continue
+            leg = P.rest_head("upperleg01." + ("L" if w.x > 0 else "R"))
+            if w.y > leg.y + 0.02:
+                continue
+            groups = [(names[g.group], g.weight) for g in src.groups
+                      if names[g.group] in bones and g.weight > 0.01]
+            total = sum(x for _, x in groups)
+            if total <= 0 or not any(n.startswith(("upperleg", "lowerleg")) for n, _ in groups):
+                continue
+            out.append(([(n, x / total, P.rest[n].inverted() @ w) for n, x in groups]))
+        ev.to_mesh_clear()
+        for m, state in states:
+            m.show_viewport = state
+        bpy.context.view_layer.update()
+        return out
+
+    def bar_clear_y(self, zb, base):
+        """Bar y no further back than the leg skin at its height allows (shorts and
+        skinning blend near the hip: 6 mm margin on the bar radius)."""
+        P, r = self.P, self.p["bar_r"]
+        pb = P.rig.pose.bones
+        front = base + 1.0
+        for groups in self.leg_front:
+            w = sum(((pb[n].matrix @ loc) * x for n, x, loc in groups), Vector())
+            if abs(w.z - zb) < r + 0.012 and w.y < front:
+                front = w.y
+        return min(base, front - (r + 0.006))
 
     def torso_offset(self, tilt, fn):
         """Vector from the hip-joint midpoint to fn() with the pelvis tilted."""
@@ -207,6 +263,8 @@ class Pattern:
         return self.arms_hang()
 
     def bar_y(self):
+        if getattr(self, "_bar_y", None) is not None:
+            return self._bar_y
         if self.p["load"] == "hang_db":
             # dumbbell heads are fat: in front of the thighs at the top, back over
             # mid-foot as the hips hinge and the thighs lean away
@@ -214,32 +272,111 @@ class Pattern:
             return self.midfoot_y - lerp(0.11, 0.03, smooth(u * 1.3))
         return self.midfoot_y - 0.02
 
-    def pose_pull(self, s):
-        """Deadlift from the floor: s = 0 bar on the floor, 1 = lockout."""
-        P, p, st = self.P, self.p, self.st
-        z0 = p["plate_r"]
-        # lockout: standing tall, bar against the thighs, arms straight
-        self.back_set(1.0)
-        off0 = self.torso_offset(1.0, self.shoulders)
-        sh_top = self.hip_top + off0
-        dy_top = sh_top.y - self.bar_y()
-        z1 = sh_top.z - math.sqrt(self.arm_len ** 2 - dy_top ** 2)
-        zb = lerp(z0, z1, s)
-        h = (zb - z0) / (z1 - z0)
-        # torso angle: held (slight rise) until the bar passes the knees, then hips through
-        knee_h = 0.42
-        t0 = p["torso"]
-        if h < knee_h:
-            tilt = lerp(t0, t0 - 10, h / knee_h)
-        else:
-            tilt = lerp(t0 - 10, 1.0, smooth((h - knee_h) / (1 - knee_h)))
-        dy = lerp(-0.03, dy_top, smooth(h))     # shoulders just in front of the bar at the floor
-        sh_z = zb + math.sqrt(max(0.0, self.arm_len ** 2 - dy * dy))
+    def pull_frame(self, h, tilt):
+        """Legs, pelvis and spine with the bar at height fraction h (0 floor, 1 lockout)
+        and the torso tilted `tilt` deg: straight arms hang from shoulders just in front
+        of the bar, so the tilt alone sets where the hips (and so the knees) are."""
+        P = self.P
+        zb = lerp(self.z0, self.z1, h)
+        dy = lerp(-0.03, self.dy_top, smooth(h))     # shoulders just in front of the bar at the floor
+        sh = Vector((0, self.path_y(h) + dy, zb + math.sqrt(max(0.0, self.arm_len ** 2 - dy * dy))))
         self.back_set(tilt)
         off = self.torso_offset(tilt, self.shoulders)
-        hip = Vector((0, self.bar_y() + dy - off.y, sh_z - off.z))
-        place_pelvis(P, tilt, hip)
-        st.legs()
+        place_pelvis(P, tilt, sh - off)
+        self.st.legs()
+        return zb
+
+    @staticmethod
+    def lift(s):
+        """Bar height fraction over the rep: it slows into lockout, giving the hips time
+        to drive through under it."""
+        return math.sin(math.pi / 2 * max(0.0, min(1.0, s)))
+
+    def path_y(self, h):
+        """The bar's path: straight up over mid-foot, close to the shins, until it is
+        past the knees, then one gentle curve forward onto the thighs at lockout."""
+        return lerp(self.B0, self.B, smooth((h - 0.25) / 0.75))
+
+    def pull_setup(self, n=40, w=5, gap=0.006):
+        """The bar rises along path_y and the body moves around it. The path ends where
+        the thighs put the bar at lockout, the one height where the legs cannot move out
+        of its way. Each height's torso angle is the planned one or, where a shin, knee
+        or thigh would reach the bar (or the knees would bend or come forward again),
+        the smallest steeper angle that avoids it: the hips sit higher and further back,
+        so the knees travel back out of the bar's way, as in a real pull. The angles are
+        widened and blurred over the rep, so the hips and knees move in one smooth
+        motion instead of tracing every contour of the legs."""
+        P, p = self.P, self.p
+        r = p["bar_r"]
+        self._bar_y = None
+        base = self.bar_y()
+        self.z0 = p["plate_r"]
+        P.reset()
+        self.back_set(1.0)
+        # locked out on straight legs: the knees end over the ankles, where they were as
+        # the bar passed them, instead of bending forward again
+        ankle = self.st.ankles["L"]
+        place_pelvis(P, 1.0, Vector((0, ankle.y + 0.01, self.st.hip_height(0.996, 0.01))))
+        self.st.legs()
+        knee_lock = P.head("lowerleg01.L").y
+        sh = self.shoulders()
+        z1 = sh.z - math.sqrt(self.arm_len ** 2 - (sh.y - base) ** 2)
+        front = lambda zb: self.bar_clear_y(zb, 9.0) + r + 0.006     # leg skin y at the bar's height
+        # the thigh bulges forward just below the lockout height: clear its whole top
+        top = min(front(z1 - 0.10 * k / 4) for k in range(5))
+        # from the floor a centimetre ahead of the planned line, so the shins need not lean back
+        self.B0, self.B = base - 0.01, min(base - 0.01, top - r - gap)
+        self.dy_top = sh.y - self.B
+        self.z1 = sh.z - math.sqrt(self.arm_len ** 2 - self.dy_top ** 2)
+        knee_h, t0 = 0.42, p["torso"]
+
+        def planned(h):          # held (slight rise) until the bar passes the knees, then hips through
+            if h < knee_h:
+                return lerp(t0, t0 - 10, h / knee_h)
+            return lerp(t0 - 10, 1.0, smooth((h - knee_h) / (1 - knee_h)))
+
+        def ok(h, tilt, reach, knee_y):
+            # bar `gap` clear of the legs; knees no more bent than before, and once they
+            # have moved back out of the bar's way, no further forward than at lockout
+            P.reset()
+            zb = self.pull_frame(h, tilt)
+            legs = (P.head("upperleg01.L") - ankle).length
+            knee = P.head("lowerleg01.L").y
+            return front(zb) - r - self.path_y(h) >= gap and legs >= reach and knee >= knee_y, legs, knee
+
+        need, reach, back = [], 0.0, -1.0
+        for i in range(n + 1):
+            h = self.lift(i / n)
+            lo = planned(h)
+            limit = min(back, knee_lock) - 0.003
+            good, legs, knee = ok(h, lo, reach, limit)
+            if i < n and not good:
+                hi = lo + 30.0
+                for _ in range(14):
+                    mid = (lo + hi) / 2
+                    lo, hi = (lo, mid) if ok(h, mid, reach, limit)[0] else (mid, hi)
+                lo = hi
+                _, legs, knee = ok(h, lo, reach, limit)
+            need.append(lo)
+            reach, back = max(reach, legs - 0.002), max(back, knee)
+
+        def win(i, k):           # windows shrink toward lockout, so it stays upright
+            k = min(k, n - i)
+            return slice(max(0, i - k), i + k + 1)
+        wide = [max(need[win(i, 2)]) for i in range(n + 1)]
+        self._tilts = [sum(wide[win(i, w)]) / len(wide[win(i, w)]) for i in range(n + 1)]
+        P.reset()
+
+    def pose_pull(self, s):
+        """Deadlift from the floor: s = 0 bar on the floor, 1 = lockout."""
+        if not hasattr(self, "_tilts"):
+            self.pull_setup()
+        x = max(0.0, min(1.0, s)) * (len(self._tilts) - 1)
+        i = min(int(x), len(self._tilts) - 2)
+        tilt = lerp(self._tilts[i], self._tilts[i + 1], x - i)
+        h = self.lift(s)
+        zb = self.pull_frame(h, tilt)
+        self._bar_y = self.path_y(h)
         return self.arms_hang(zb)
 
     # --- arms -----------------------------------------------------------------

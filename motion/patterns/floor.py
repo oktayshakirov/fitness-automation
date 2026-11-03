@@ -4,7 +4,7 @@ mode = "pushup": rigid plank from head to heels pivoting on the tucked toes; han
   under the shoulders (a little wider), fingers forward; chest lowers to `depth` m off
   the floor with the elbows ~45 deg from the torso, then presses back to straight arms.
 mode = "plank": forearm plank, elbows under the shoulders, forearms parallel, body in a
-  straight line; a static hold (the loop only breathes).
+  straight line; a static hold.
 mode = "bridge": glute bridge. Lying on the back, knees bent, feet flat hip-width,
   arms on the floor palms down. The hips lift until shoulders, hips and knees line up;
   the upper back stays on the floor, the head stays down.
@@ -52,6 +52,8 @@ class Pattern:
             self.solve_prone()
         else:
             self.solve_supine()
+        if p["mode"] == "crunch":
+            self.solve_crunch_arms()
 
     # --- whole-body placement --------------------------------------------------
     def orient(self, deg, anchor, target):
@@ -112,7 +114,12 @@ class Pattern:
         """On the back, upper back on the floor, hips lifted phi deg."""
         P = self.P
         P.reset()
+        lumbar = getattr(self, "lumbar", 0.0)          # lower-back extension (deg), bench work
+        if lumbar:
+            for n in ("spine02", "spine03", "spine04"):
+                P.local(n, (1, 0, 0), -lumbar / 3)
         z0 = getattr(self, "base_z", 0.0) + (0.017 if self.p["mode"] == "bridge" else 0.004)          # floor, or a bench pad
+        z0 += getattr(self, "back_dz", 0.0)            # measured skin correction (bench settle)
         self.orient(-(90 + phi), lambda: self.lm["upper_back"], Vector((0, getattr(self, "back_y", 0.0), z0)))
         # the contact moves up the back as the hips rise: rest on the lowest point
         low = min(self.lm[n].z for n in ("upper_back", "upper_back_hi", "scap.L", "scap.R"))
@@ -122,8 +129,8 @@ class Pattern:
 
     def solve_supine(self):
         P, p = self.P, self.p
-        gl = lambda ph: (self.supine(ph), self.lm["glutes"].z)[1]
-        self.phi_floor = self.bisect(gl, -20.0, 30.0, getattr(self, "base_z", 0.0) + 0.004)
+        gl = lambda ph: (self.supine(ph), self.lm.seat_z())[1]
+        self.phi_floor = self.bisect(gl, -20.0, 30.0, getattr(self, "base_z", 0.0) + 0.004 + getattr(self, "seat_dz", 0.0))
         self.supine(self.phi_floor)
         hip = (P.head("upperleg01.L") + P.head("upperleg01.R")) / 2
         az = P.rest_head("foot.L").z
@@ -211,8 +218,7 @@ class Pattern:
 
     def pose_plank(self, s):
         P, p = self.P, self.p
-        th = self.theta_top + 0.6 * math.sin(math.pi * s)   # breathing
-        self.prone(th)
+        self.prone(self.theta_top)          # held still: no rocking about the toes
         P.local("neck02", (1, 0, 0), -4)
         self.tuck_toes()
         ua, fa = arm_lengths(P)
@@ -264,6 +270,36 @@ class Pattern:
         self.arms_floor()
         return {}
 
+    def solve_crunch_arms(self):
+        """How far in front of the chest point the crossed wrists sit, so the forearms
+        rest on the chest (or on the sports top) through the whole curl: solved on the
+        posed skin at the bottom, middle and top, interpolated between."""
+        import bpy
+        from ..settle import SkinGap
+        top = any(o.get("garment") and "top" in o.name.lower() for o in bpy.context.scene.objects)
+        want = 0.007 if top else 0.003
+        gap = SkinGap(self.P, ("lowerarm", "wrist"), ("spine", "breast", "clavicle"))
+        self.arm_lift = None
+        table = []
+        for s in (0.0, 0.5, 1.0):
+            def f(lift):
+                self.arm_lift = [(s, lift)]
+                self.P.reset()
+                self.pose_crunch(s)
+                return gap()
+            table.append((s, self.bisect(f, -0.02, 0.12, want, n=9)))
+        self.arm_lift = table
+        self.P.reset()
+
+    def crunch_lift(self, s):
+        t = self.arm_lift
+        if len(t) == 1:
+            return t[0][1]
+        for (s0, a), (s1, b) in zip(t, t[1:]):
+            if s <= s1:
+                return lerp(a, b, (s - s0) / (s1 - s0))
+        return t[-1][1]
+
     def pose_crunch(self, s):
         P, p = self.P, self.p
         self.supine(self.phi_floor)
@@ -274,10 +310,15 @@ class Pattern:
         self.legs_bent()
         body = P.delta("spine01")
         chest = self.lm["chest"]
+        up = body @ Vector((0, 0, 1))
+        fwd = body @ Vector((0, -1, 0))
+        lift = self.crunch_lift(s) if getattr(self, "arm_lift", None) else 0.06
         for side, sgn in (("L", 1), ("R", -1)):
             P.scap_rhythm(side, body @ Vector((-sgn * 0.6, -1, 0.3)).normalized(), protraction=10)
-            # hand on the opposite shoulder, forearms crossed over the chest
-            tgt = chest + body @ Vector((-sgn * 0.11, -0.06, 0.06))
+            # hand on the opposite shoulder, forearms crossed and resting on the chest, at
+            # a height set from the shoulders (the female chest point is lower)
+            tgt = chest + body @ Vector((-sgn * 0.11, 0, 0)) + fwd * lift
+            tgt += up * ((self.shoulders() - tgt).dot(up) - 0.06)
             P.limb(f"upperarm01.{side}", f"lowerarm01.{side}", f"wrist.{side}", tgt,
                    body @ Vector((sgn, 0, -0.5)), palm=body @ Vector((0, 1, 0)), side=side)
             P.curl_fingers(side, deg=(15, 20, 10), thumb=(5, 10, 10))

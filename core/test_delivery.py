@@ -109,6 +109,15 @@ class ExportGateTests(unittest.TestCase):
   entry={'spec_sha256':'s','pipeline_sha256':'p','qa':{'blend_sha256':'old'}}
   with patch.object(delivery,'current_qa',return_value={'pipeline_sha256':'p','blend_sha256':'new'}),patch.object(delivery,'spec_digest',return_value='s'):
    with self.assertRaisesRegex(ValueError,'scene is stale'):delivery.current_asset('demo',entry)
+ def test_scoped_pipeline_exception_only_for_listed_exercises_and_digest(self):
+  with tempfile.TemporaryDirectory() as temp:
+   root=Path(temp);(root/'core').mkdir()
+   (root/'core/pipeline_compat.json').write_text(json.dumps([{'from':'old','to':'new','unchanged':['demo']}]))
+   with patch.object(delivery,'ROOT',root),patch.object(delivery,'pipeline_digest',return_value='new'):
+    self.assertEqual(delivery.accepted_pipelines('demo'),{'new','old'})
+    self.assertEqual(delivery.accepted_pipelines('other'),{'new'})
+   with patch.object(delivery,'ROOT',root),patch.object(delivery,'pipeline_digest',return_value='newer'):
+    self.assertEqual(delivery.accepted_pipelines('demo'),{'newer'})
 
 class ResumeTests(unittest.TestCase):
  def test_stale_export_rebuilds_instead_of_failing_job(self):

@@ -6,7 +6,8 @@
     "load": "bar",
     "grip_w": 0.29,
     "chest_offset_y": 0.04,
-    "chest_clearance": 0.055
+    "chest_clearance": 0.055,
+    "waist_gap": 0.025
   },
   "props": [
     {

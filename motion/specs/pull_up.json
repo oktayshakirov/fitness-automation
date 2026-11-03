@@ -63,5 +63,7 @@
       ]
     }
   },
-  "approved": true
+  "approved": true,
+  "shoulder_smooth": true,
+  "preserve_volume": false
 }

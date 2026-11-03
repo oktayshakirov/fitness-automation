@@ -62,6 +62,7 @@ class Poser:
         return self.rig.pose.bones[n].matrix.to_3x3().col[i].normalized()
 
     def reset(self):
+        self.holds = {}
         for pb in self.rig.pose.bones:
             pb.matrix_basis = Matrix.Identity(4)
         for n, q in getattr(self, "micro", {}).items():      # micro-motion base offsets

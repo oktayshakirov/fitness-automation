@@ -6,7 +6,8 @@
     "front": "L",
     "stride": 0.85,
     "width": 0.11,
-    "arms": "hips"
+    "arms": "hips",
+    "step_phase": 0.55
   },
   "props": [],
   "tempo": {
