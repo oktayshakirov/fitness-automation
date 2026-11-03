@@ -1,0 +1,13 @@
+{
+  "id": "face_pull",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:23:34.743791+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "facccf75c9d99a035ee51a7c1ae89eaaa366fd8c701dd3952f94e136b7bf1ad2",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "bc76c04d0bdc3a1ae9ea604a69f6ef978c1ede60f19da95d6e4e9bdb63c4beff",
+    "model": "male"
+  }
+}

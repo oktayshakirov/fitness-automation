@@ -1,0 +1,13 @@
+{
+  "id": "lunge",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:27:44.097007+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "afd5f8b76974b693e33bd1d5329d155cdf3938fc07c70b89c9ca747ec6f27d47",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "fbacedbcbd67eb9a5aa11f6919208b2aaa3f33b7708102a1b9048e39113d10d5",
+    "model": "male"
+  }
+}

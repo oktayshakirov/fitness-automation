@@ -1,0 +1,13 @@
+{
+  "id": "seated_cable_row",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-31T16:20:42.735036+00:00",
+  "note": "User in chat 2026-10-31: \"Approve both\" - seated cable row rebuilt from the user's reference images (rail bench, angled footplates, tall tower, rear 3/4 view), seat centred under the hips, hips resting on the cushion",
+  "fingerprint": {
+    "spec_sha256": "9a8185c18943428e7b8a35e056e213debdf0f9d3b98aa44f1e5750050edf4e59",
+    "pipeline_sha256": "7aaa3becde909e7b270a5ea4cd20448f44b56a97f50d852146c210c2e802c118",
+    "media_sha256": "33f333296ed7f2b87975a46fb78dc8b27451bb92db3e4e72ee1545639c9a66b4",
+    "model": "female"
+  }
+}

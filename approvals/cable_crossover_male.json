@@ -1,0 +1,13 @@
+{
+  "id": "cable_crossover",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:21:10.582966+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "5706261c621dc405a3a125f51b23193ff7240d1fc5880f3a38622deb5dcbe1a1",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "1eb87280d645a91d50930f192fb1e9d0d071c20284f2d69240f6426f3dc12ef6",
+    "model": "male"
+  }
+}

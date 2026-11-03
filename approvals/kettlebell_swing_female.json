@@ -1,0 +1,13 @@
+{
+  "id": "kettlebell_swing",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:25:04.864352+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "dbda70d0875e17568e7f01933511a6a17f5cab87347a7806877e20197ace734a",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "5a7b57c0307cde46770f18655b2a184051308cbbf0d6b1cdeca0e2bfed4099e4",
+    "model": "female"
+  }
+}

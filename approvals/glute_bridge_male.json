@@ -1,0 +1,13 @@
+{
+  "id": "glute_bridge",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:23:58.133200+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "00806e9cb760bdd1d2db14e10ebc197ec8f63614b33360bda00a1d1c3ed1ce2d",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "3cdf3169d690b7d7c03839a931ef99e16f7f669941a70bc578bd65291fe2c2e3",
+    "model": "male"
+  }
+}

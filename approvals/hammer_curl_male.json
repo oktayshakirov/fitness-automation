@@ -1,0 +1,13 @@
+{
+  "id": "hammer_curl",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:24:37.357276+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "c9f80194264cb7e9cfcf9d49d6da4b5e99246ee429ff9dd87d805635e8f48891",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "6aa9df5cfb1471708a24282a47c97c6d4bb6e6dd985e59f4d438c8ba74c609a5",
+    "model": "male"
+  }
+}

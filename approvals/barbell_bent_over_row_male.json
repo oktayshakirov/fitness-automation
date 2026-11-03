@@ -1,0 +1,13 @@
+{
+  "id": "barbell_bent_over_row",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:19:04.449698+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "00c9e16723e8d705188ab2a872f4b06f48e342488bb0b5cbe97f8d0f4163f789",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "0a77fc01c82365bf8dd560ee72b06b25d50e2d37a600c502b6a6d15cf51f22d5",
+    "model": "male"
+  }
+}

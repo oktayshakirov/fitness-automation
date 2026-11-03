@@ -1,0 +1,13 @@
+{
+  "id": "lat_pulldown",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:25:41.173978+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "afe02d572cdaff7085b5dc567e84ddeab4bc3381db6cf1337bf1e23e5b7ccf5e",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "ea12da97b46b394bcedb9293ced9fd50d5c4a9330b70278073b07d61c5098e7c",
+    "model": "male"
+  }
+}

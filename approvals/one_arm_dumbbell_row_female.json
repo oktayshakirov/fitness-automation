@@ -1,0 +1,13 @@
+{
+  "id": "one_arm_dumbbell_row",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:28:35.131730+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "3c52d1125a04e87b777f9053b1ecc1714e01252d628a49cf178d2af43f3453c0",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "cedce8abcdc085c1d51d9c678c9da72bf853da074cea69a74ca41277d279da37",
+    "model": "female"
+  }
+}

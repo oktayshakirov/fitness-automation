@@ -1,0 +1,13 @@
+{
+  "id": "plank",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T16:19:35.618761+00:00",
+  "note": "User asked in chat 2026-10-30 to remove the front view; remaining side/threeq media byte-identical to the 2026-10-30 human-approved versions",
+  "fingerprint": {
+    "spec_sha256": "cbe2b5eaec8e7b13f7f991f44ff70428d0da97f2b5365da1039840b3586751c0",
+    "pipeline_sha256": "2304c7df3c59fed9cc38d56919e91ce2228bd5e60e8230f3cd65367b1f9ad627",
+    "media_sha256": "deacaf89dd2d5108a7e77e2c25e1a27016548e32709c21d30a27ca3570d80421",
+    "model": "male"
+  }
+}

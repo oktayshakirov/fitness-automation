@@ -1,0 +1,13 @@
+{
+  "id": "triceps_pushdown",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:32:16.528947+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "fef1b752e7b59900e0e22ccf53d5e20d694511fb5b65d6ac9d5437e621c98ce1",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "1df4a4fe6cbe8df09eab421a3613a22fba6417abb9f468fa00ce4e991db11689",
+    "model": "male"
+  }
+}

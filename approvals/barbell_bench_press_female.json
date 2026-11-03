@@ -1,0 +1,13 @@
+{
+  "id": "barbell_bench_press",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:18:44.548646+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "7245af853e93ff88f8754f8ebbd28f158cf056d91f212fe5bb9a723d552609c5",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "8f8d901e1d455f331ea0511cae7f9ffd504182f2b2872c530ebd39e592a34a06",
+    "model": "female"
+  }
+}

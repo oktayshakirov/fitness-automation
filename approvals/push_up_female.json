@@ -1,0 +1,13 @@
+{
+  "id": "push_up",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:30:05.760975+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "a8b0deab41c00a041f7e52b449ae8a7dceb5d5a975bda21e0809fb4e9a55448e",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "50b284e63135b7b692052fb59948d538e3207b3869a86aeb8d8480a60b714acc",
+    "model": "female"
+  }
+}

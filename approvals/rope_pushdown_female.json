@@ -1,0 +1,13 @@
+{
+  "id": "rope_pushdown",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:32:29.553962+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "dd276ca1092eab9f0cf3be518140aad96236296085df2f8e2c4aa03892b881a4",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "0defc1f655dca21b25f52090e30458b9415bb1307b43a9cf0f3c2648971e0a23",
+    "model": "female"
+  }
+}

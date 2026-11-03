@@ -1,0 +1,13 @@
+{
+  "id": "lateral_raise",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:26:07.375997+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "32a66a037571c013d49199de0a65e463c013358d60fd9f31af067382ad39cae8",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "b107b3214ec4638cf12c907e5f75820a6b13840fe433811a5cf9c9ba45f89f4e",
+    "model": "female"
+  }
+}

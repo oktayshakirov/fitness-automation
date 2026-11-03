@@ -1,0 +1,13 @@
+{
+  "id": "barbell_deadlift",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:20:13.442030+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "ff353d40b4ac3fd4aba68b77f6b24e0098d5cb007b98f2cd508f6d977237a9cf",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "ec1c835a227cd65aca8f94d0ba240b4fa9d70b050d340b0f93a3dcf2000159f1",
+    "model": "female"
+  }
+}

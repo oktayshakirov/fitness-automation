@@ -1,0 +1,13 @@
+{
+  "id": "bodyweight_squat",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:20:39.855563+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "dfcd403e6fe29560dbf2a6c1c0f70625a5bdaf24c6559cc1669b174f21076e0e",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "28eb07372b98313f2d97755cbae0dbe2a92868ecb779ba8cdfa1263358f588ef",
+    "model": "female"
+  }
+}

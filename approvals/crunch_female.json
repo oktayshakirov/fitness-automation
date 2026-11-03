@@ -1,0 +1,13 @@
+{
+  "id": "crunch",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:21:37.674239+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "1e0aa7ee48a09021c78b49de67df0cd9332608f4eecbf509d8025c934b8eb05e",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "78e142401378a0ca1df3c99dce275e1420310b8337a062f4e5625e0aebe4be71",
+    "model": "female"
+  }
+}

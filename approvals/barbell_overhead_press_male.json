@@ -1,0 +1,13 @@
+{
+  "id": "barbell_overhead_press",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:20:27.279185+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "647d1075f1f82c87e388f02e76c0b5c066df8c1cb71d1a7ee21815b1d712e275",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "904854ea3700c142c7a101079e9fbf7a8b5e027bd99bc0ffe8cd99a5e874b0a7",
+    "model": "male"
+  }
+}

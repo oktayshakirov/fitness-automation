@@ -1,0 +1,13 @@
+{
+  "id": "glute_bridge",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:24:03.451698+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "00806e9cb760bdd1d2db14e10ebc197ec8f63614b33360bda00a1d1c3ed1ce2d",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "e64e0be9ebed35327ab6485ea53794ef4d9791c5009634e2376ba54db7ae593d",
+    "model": "female"
+  }
+}

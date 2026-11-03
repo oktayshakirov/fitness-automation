@@ -1,0 +1,13 @@
+{
+  "id": "dumbbell_romanian_deadlift",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:22:54.749293+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "620a0cab39a9e63dd16e252115c3d59173a8a14ae5a6eeaf06c13ad0a642a285",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "230923d01cd56c2d271e7a7e59035fe341a7b0fec60c0c241c5ca387b1dbd5be",
+    "model": "female"
+  }
+}

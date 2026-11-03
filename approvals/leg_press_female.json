@@ -1,0 +1,13 @@
+{
+  "id": "leg_press",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:27:36.446938+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "2425665196a016600e90a52dacb4bbfa49d8c4f67fee878979de83c80e89d4b0",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "1fba61d9e4a5d241537ceb652fdd6bd0258d5facb8a1f0aa4cacde83afa9922f",
+    "model": "female"
+  }
+}

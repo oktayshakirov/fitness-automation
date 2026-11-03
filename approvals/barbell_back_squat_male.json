@@ -1,0 +1,13 @@
+{
+  "id": "barbell_back_squat",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:17:38.953850+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "53db5e80b348beef3c39c449394eff2f591904dba4ec75443eb1585bcc443692",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "220285233f1d9fbc63a9f345c08bc31ad5f3f939fa29169fabbd1dd7e0d86401",
+    "model": "male"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "dumbbell_shoulder_press",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:23:08.947194+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "5cc1ffcf03045e86fd3b30887662305f1dd818a244a9aab1271f7e9366217fb7",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "33d880f0860de76dd2499ccfa392fd5e342d740ab4b7927a88c3b23166d6e24a",
+    "model": "male"
+  }
+}

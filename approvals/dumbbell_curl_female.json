@@ -1,0 +1,13 @@
+{
+  "id": "dumbbell_curl",
+  "model": "female",
+  "approved": true,
+  "at": "2026-10-30T15:22:27.982036+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "cb57578002245dba8661a5850e3290463fe0c609bbdc8bf1f3258a3e650e826c",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "06a6e26fe5e6f737486173fb9f1eba1a68f1edbba1c09510c9f3bbfbf9f14cd9",
+    "model": "female"
+  }
+}

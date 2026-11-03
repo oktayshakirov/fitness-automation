@@ -1,0 +1,13 @@
+{
+  "id": "dips",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:21:52.643606+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "fe915c74d4dc780944b1890cc68fe0083e4924b5a8a72224c694694df2dbc6d0",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "aa745fa43367d94eef80f283954aa767eb7d7fa7f59fdfe68adf5bdd1bcb0af3",
+    "model": "male"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "one_arm_dumbbell_row",
+  "model": "male",
+  "approved": true,
+  "at": "2026-10-30T15:28:22.322761+00:00",
+  "note": "Human review in local approval page",
+  "fingerprint": {
+    "spec_sha256": "3c52d1125a04e87b777f9053b1ecc1714e01252d628a49cf178d2af43f3453c0",
+    "pipeline_sha256": "0c2d1ef8b5d79b3b77363db068efd5956367b4c1033a8d11b5b91debcf689440",
+    "media_sha256": "ff1f92f2b7b6c14e506b934aeeff2054de11e0390ce26cb8bead92eb7cdf33ac",
+    "model": "male"
+  }
+}
