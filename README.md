@@ -54,6 +54,11 @@ python3 exercises.py status                      # library state
 python3 exercises.py preview barbell_back_squat  # quick contact sheet
 python3 exercises.py render barbell_back_squat   # full QA + app media
 python3 core/review_server.py 8765               # review and approve
+Blender -b --python bodymap/render_models.py -- male   # body views, masks, tap regions
+Blender -b --python heroes/render_heroes.py -- male    # onboarding hero still
+Blender -b --python icons/render_icons.py           # equipment chip icons (icons/set)
+python3 core/stills.py approve bodymap male "note"   # human approval of a still set (heroes, icons all)
+python3 core/publish.py v0.2.0                    # immutable app release + current.json
 ```
 
 [The exercise workflow](docs/EXERCISE_WORKFLOW.md) covers revisions, adding new

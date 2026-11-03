@@ -1,0 +1,61 @@
+{
+ "model": "female",
+ "width": 800,
+ "height": 1000,
+ "camera": {
+  "target": [
+   0,
+   0,
+   0.86
+  ],
+  "ortho_scale": 1.95,
+  "projection": "orthographic"
+ },
+ "threshold": 0.3,
+ "views": {
+  "front": {
+   "yaw_deg": 0,
+   "coverage_px": {
+    "quadriceps": 18676,
+    "hamstrings": 1609,
+    "glutes": 0,
+    "adductors": 8746,
+    "abductors": 1038,
+    "calves": 3003,
+    "abs": 22800,
+    "lower_back": 0,
+    "middle_back": 0,
+    "lats": 32,
+    "traps": 602,
+    "shoulders": 3662,
+    "chest": 15082,
+    "biceps": 3724,
+    "triceps": 44,
+    "forearms": 5635,
+    "neck": 2469
+   }
+  },
+  "back": {
+   "yaw_deg": 180,
+   "coverage_px": {
+    "quadriceps": 1604,
+    "hamstrings": 13322,
+    "glutes": 17507,
+    "adductors": 2676,
+    "abductors": 43,
+    "calves": 13954,
+    "abs": 2141,
+    "lower_back": 517,
+    "middle_back": 3298,
+    "lats": 15055,
+    "traps": 11281,
+    "shoulders": 1202,
+    "chest": 316,
+    "biceps": 537,
+    "triceps": 4764,
+    "forearms": 4803,
+    "neck": 203
+   }
+  }
+ }
+}

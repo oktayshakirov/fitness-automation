@@ -1,0 +1,48 @@
+{
+ "size": 256,
+ "background": "transparent",
+ "camera": {
+  "yaw_deg": 35,
+  "elevation_deg": 24,
+  "projection": "orthographic"
+ },
+ "categories": {
+  "barbell": [
+   "barbell",
+   "power_rack"
+  ],
+  "dumbbell": [
+   "dumbbell"
+  ],
+  "kettlebell": [
+   "kettlebell"
+  ],
+  "cable": [
+   "cable_tower",
+   "dual_cable",
+   "rope",
+   "d_handle",
+   "v_bar",
+   "lat_bar",
+   "straight_bar"
+  ],
+  "machine": [
+   "seated_row",
+   "lat_pulldown",
+   "leg_curl",
+   "leg_extension",
+   "leg_press"
+  ],
+  "bench": [
+   "bench"
+  ],
+  "bodyweight": [
+   "mat",
+   "pullup_bar",
+   "dip_station"
+  ],
+  "band": [
+   "band"
+  ]
+ }
+}

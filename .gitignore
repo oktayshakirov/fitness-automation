@@ -8,6 +8,7 @@ assets/maps/muscle_normal.png
 # renders and builds
 review/
 dist/
+releases/
 *.blend1
 # local Blender profile with MPFB2
 .blender-profile/

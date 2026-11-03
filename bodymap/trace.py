@@ -4,7 +4,6 @@ Python + numpy + Pillow. Run after render.py. Outputs are CC BY-SA 4.0 derivativ
 from pathlib import Path
 import json,html,math
 import numpy as np
-from PIL import Image
 ROOT=Path(__file__).resolve().parent
 palette=json.loads((ROOT/'palette.json').read_text());colours=np.array(list(palette.values()),dtype=np.int32)
 
@@ -43,26 +42,28 @@ def loops(mask):
    mid=len(ring)//2;ring=simplify(ring[:mid+1])[:-1]+simplify(ring[mid:]);rings.append(ring)
  return rings
 
-coverage={}
-for view in ('front','back'):
- im=np.array(Image.open(ROOT/(view+'_ids.png')).convert('RGBA'));rgb=im[:,:,:3].astype(np.int32)
- d=((rgb[:,:,None,:]-colours[None,None,:,:])**2).sum(axis=-1);ids=d.argmin(axis=2)
- valid=(d.min(axis=2)<32**2)&(im[:,:,3]>200)
- paths=[];coverage[view]={}
- for i,g in enumerate(palette):
-  mask=(ids==i)&valid;rings=loops(mask);coverage[view][g]=int(mask.sum())
-  if not rings:continue
-  data=' '.join('M'+' L'.join(f'{x},{y}' for x,y in ring)+' Z' for ring in rings)
-  paths.append(f'<path id="{g.replace(" ","-")}" data-muscle="{html.escape(g)}" role="button" tabindex="0" aria-label="{html.escape(g)}" d="{data}"/>')
- svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 900" width="720" height="900">
+if __name__=='__main__':
+ from PIL import Image
+ coverage={}
+ for view in ('front','back'):
+  im=np.array(Image.open(ROOT/(view+'_ids.png')).convert('RGBA'));rgb=im[:,:,:3].astype(np.int32)
+  d=((rgb[:,:,None,:]-colours[None,None,:,:])**2).sum(axis=-1);ids=d.argmin(axis=2)
+  valid=(d.min(axis=2)<32**2)&(im[:,:,3]>200)
+  paths=[];coverage[view]={}
+  for i,g in enumerate(palette):
+   mask=(ids==i)&valid;rings=loops(mask);coverage[view][g]=int(mask.sum())
+   if not rings:continue
+   data=' '.join('M'+' L'.join(f'{x},{y}' for x,y in ring)+' Z' for ring in rings)
+   paths.append(f'<path id="{g.replace(" ","-")}" data-muscle="{html.escape(g)}" role="button" tabindex="0" aria-label="{html.escape(g)}" d="{data}"/>')
+  svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 720 900" width="720" height="900">
 <title>'''+view+''' muscle selector</title>
 <metadata>Traced from MPFB skin UV masks derived from Z-Anatomy / BodyParts3D. CC BY-SA 4.0. See LICENSE.md.</metadata>
 <image href="'''+view+'''.webp" xlink:href="'''+view+'''.webp" width="720" height="900"/>
 <g fill="#df463c" fill-opacity="0.10" stroke="#df463c" stroke-opacity="0.25" stroke-width="0.65" fill-rule="evenodd">
-'''+ '\n'.join(paths)+'\n</g>\n</svg>\n'
- (ROOT/(view+'.svg')).write_text(svg)
- Image.open(ROOT/(view+'.png')).save(ROOT/(view+'.webp'),'WEBP',quality=90,method=6)
-(ROOT/'coverage.json').write_text(json.dumps(coverage,indent=2)+'\n')
-missing=[g for g in palette if sum(coverage[v][g] for v in coverage)<12]
-if missing:raise ValueError('No tappable surface for '+str(missing))
-print('Traced all 17 groups across front/back; see coverage.json')
+ '''+ '\n'.join(paths)+'\n</g>\n</svg>\n'
+  (ROOT/(view+'.svg')).write_text(svg)
+  Image.open(ROOT/(view+'.png')).save(ROOT/(view+'.webp'),'WEBP',quality=90,method=6)
+ (ROOT/'coverage.json').write_text(json.dumps(coverage,indent=2)+'\n')
+ missing=[g for g in palette if sum(coverage[v][g] for v in coverage)<12]
+ if missing:raise ValueError('No tappable surface for '+str(missing))
+ print('Traced all 17 groups across front/back; see coverage.json')

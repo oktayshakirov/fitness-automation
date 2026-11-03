@@ -1,0 +1,23 @@
+{
+ "model": "male",
+ "width": 800,
+ "height": 1200,
+ "pose": {
+  "joint": "shoulder",
+  "plane": 10,
+  "elev": [
+   9,
+   9
+  ],
+  "elbow": 16,
+  "palm": "in",
+  "fingers": "relaxed"
+ },
+ "camera": {
+  "yaw_deg": 22,
+  "height": 0.8,
+  "ortho_scale": 1.8409,
+  "projection": "orthographic"
+ },
+ "background": "transparent"
+}
