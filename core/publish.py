@@ -6,8 +6,8 @@ Writes an immutable releases/<version>/ (content.json, H.264 loops, posters, att
 and the approved still sets of core/stills.py: body views from bodymap/<model>/, heroes
 from heroes/<model>/, equipment icons from icons/set/ as the additive `equipmentIcons`),
 verifies every file against content.json, then switches releases/current.json last.
-Contract: fitness-app/src/content/types.ts (schemaVersion 1). Uploading to static hosting
-is a separate, user-approved step: upload the release folder first, current.json last.
+Contract: fitness-app/src/content/types.ts (schemaVersion 1). Going live is a separate
+step: `cd hosting && npx wrangler deploy` (README "Hosting"), which switches every file at once.
 """
 import argparse,datetime,hashlib,json,os,re,shutil,subprocess,sys
 from pathlib import Path

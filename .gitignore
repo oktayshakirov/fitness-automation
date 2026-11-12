@@ -19,3 +19,4 @@ __pycache__/
 /handoff.md
 /plan.md
 /docs/NEXT_STEPS.md
+.wrangler/

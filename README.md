@@ -59,7 +59,20 @@ Blender -b --python heroes/render_heroes.py -- male    # onboarding hero still
 Blender -b --python icons/render_icons.py           # equipment chip icons (icons/set)
 python3 core/stills.py approve bodymap male "note"   # human approval of a still set (heroes, icons all)
 python3 core/publish.py v0.2.0                    # immutable app release + current.json
+(cd hosting && npx wrangler deploy)             # put releases/ live for the app
 ```
+
+## Hosting
+
+The app reads `https://muscle-pal-content.oktayshakirov.workers.dev/current.json`. That is an
+assets-only Cloudflare Worker (`hosting/wrangler.jsonc`) serving `releases/` as it is, on the
+account that also runs the Drone Pal weather proxy. No script runs, so requests are free and unlimited
+on the free plan; limits are 20,000 files per deploy and 25 MiB per file. A deploy uploads only new or
+changed files and switches all of them at once, so `current.json` never points at a missing file. Run
+it after `core/publish.py`, from a machine where `npx wrangler login` has been done. Phones pick a new
+release up within 6 hours (at most one check per 6 hours) and use it from the next app start. To roll back,
+point `current.json` at the previous version (or the bundled one) and deploy again. Cloudflare's bot check
+answers 403 (error 1010) to Python's default user agent; the app (okhttp, CFNetwork) and curl get through.
 
 [The exercise workflow](docs/EXERCISE_WORKFLOW.md) covers revisions, adding new
 exercises, targeted exports, version-bound approval and release checks.

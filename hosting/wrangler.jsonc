@@ -1,0 +1,14 @@
+// Muscle Pal content hosting: an assets-only Cloudflare Worker (no script runs, so requests are
+// free and unlimited on the Workers free plan). Serves ../releases as is: current.json at the root,
+// releases/<version>/... below it. One deploy uploads every file and switches them together.
+// Deploy: npx wrangler deploy (from this folder). App: EXPO_PUBLIC_CONTENT_URL in fitness-app.
+{
+  "name": "muscle-pal-content",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "../releases",
+    "not_found_handling": "none"
+  },
+  "workers_dev": true,
+  "preview_urls": false
+}
